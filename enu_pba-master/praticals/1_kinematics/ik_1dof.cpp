@@ -39,12 +39,14 @@ static void Reach(int i, const vec3 &target, std::vector<Link> &const links)
 	  float vAngle = angle(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
 
     // Turn into a Quat with our axis
-	  dquat vQuat =  normalize(angleAxis(vAngle, vLinkAxis));
+	  dquat vQuat = angleAxis(vAngle, vLinkAxis);
+
     // Multply our current Quat with it
 	  qCur *= vQuat;
-    // Pull out the angle component, set the link params
-	//  links[i].m_axis = axis(qCur);
+	  qCur = normalize(qCur);
+	  // Pull out the angle component, set the link params
 	  links[i].m_angle = angle(qCur);
+
     // *********************************
   }
 }
@@ -52,7 +54,7 @@ static void Reach(int i, const vec3 &target, std::vector<Link> &const links)
 void ik_1dof_Update(const vec3 &const target, std::vector<Link> &const links, const float linkLength) {
   numLinks = links.size();
    for (size_t i = links.size(); i >= 1; --i) {
-//  for (size_t i = 0; i < links.size() - 1; ++i) {
+  //for (size_t i = 0; i < links.size() - 1; ++i) {
     UpdateHierarchy();
     Reach(i-1, target, links);
     const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);

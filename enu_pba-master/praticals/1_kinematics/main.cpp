@@ -15,12 +15,12 @@ using namespace glm;
 int numLinks = 5;
 float linkLength = 2.0f; // Length of each link
 std::vector<Link> links;
-vec3 target = vec3(30.0f, 4.0f, 0);
+vec3 target = vec3(6.0f, 4.0f, 0);
 
 void MoveTarget() {
   target = glm::ballRand((static_cast<float>(numLinks) * linkLength) * 0.6f);
-  //target.y = abs(target.y);
-  // target.x = abs(target.x);
+  target.y = abs(target.y);
+   target.x = abs(target.x);
   cout << "boop" << endl;
 }
 
