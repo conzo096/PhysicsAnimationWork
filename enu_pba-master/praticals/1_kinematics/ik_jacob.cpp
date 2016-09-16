@@ -8,4 +8,9 @@
 using namespace std;
 using namespace glm;
 
-static void ik_jacob_Update(const glm::vec3 &const target, std::vector<Link> &const links, const float linkLength) {}
+static void ik_jacob_Update(const glm::vec3 &const target, std::vector<Link> &const links, const float linkLength)
+{
+
+
+
+}
