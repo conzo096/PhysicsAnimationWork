@@ -39,7 +39,7 @@ void UpdateHierarchy()
 		mat4 R1 = mat4_cast(angleAxis(links[i].m_angle, links[i].m_axis));
 		mat4 T1 = translate(mat4(1.0f), vec3(linkLength, 0, 0));
 		links[i].m_base = mat4(1.0) * R1;
-		links[i].m_end = links[i].m_base * T1;
+		links[i]. m_end = links[i].m_base * T1;
 		links[i].m_worldaxis = links[i].m_axis;
 		if (i > 0)
 		{
@@ -120,7 +120,8 @@ void UpdateIK()
 	// no solution found so do not update.
 	if (foundSolution == false)
 	{
-		ik_1dof_Update(target, links, linkLength);
+		FabrikUpdate(target, links, linkLength);
+	//	ik_1dof_Update(target, links, linkLength);
 		// ik_3dof_Update(target, links, linkLength);
 	}
 }
@@ -129,7 +130,7 @@ void RenderIK()
 {
   phys::DrawSphere(target, 0.2f, RED);
   
-  /*for (int i = 0; i < (int)links.size(); ++i)
+  for (int i = 0; i < (int)links.size(); ++i)
   {
     vec3 base = links[i].m_base[3];
     vec3 end = links[i].m_end[3];
@@ -137,33 +138,33 @@ void RenderIK()
     phys::DrawCube(links[i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
     phys::DrawLine(base, end);
     phys::DrawPlane(base, links[i].m_worldaxis, vec3(0.01f));
-  }*/
+  }
 
 
-  if(foundSolution == true)
-  {
-	  for (int i = 0; i < (int)lerpLink.size(); ++i)
-	  {
-		  vec3 base = lerpLink[i].m_base[3];
-		  vec3 end = lerpLink[i].m_end[3];
-		  phys::DrawCube(lerpLink[i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
-		  phys::DrawCube(lerpLink[i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
-		  phys::DrawLine(base, end);
-		  phys::DrawPlane(base, lerpLink[i].m_worldaxis, vec3(0.01f));
-	  }
-  }
-  else
-  {
-	   for (int i = 0; i < (int)pastLinks[order].size(); ++i)
-	  {
-		  vec3 base = pastLinks[order][i].m_base[3];
-		  vec3 end = pastLinks[order][i].m_end[3];
-		  phys::DrawCube(pastLinks[order][i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
-		  phys::DrawCube(pastLinks[order][i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
-		  phys::DrawLine(base, end);
-		  phys::DrawPlane(base, pastLinks[order][i].m_worldaxis, vec3(0.01f));
-	  }
-  }
+  //if(foundSolution == true)
+  //{
+	 // for (int i = 0; i < (int)lerpLink.size(); ++i)
+	 // {
+		//  vec3 base = lerpLink[i].m_base[3];
+		//  vec3 end = lerpLink[i].m_end[3];
+		//  phys::DrawCube(lerpLink[i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
+		//  phys::DrawCube(lerpLink[i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
+		//  phys::DrawLine(base, end);
+		//  phys::DrawPlane(base, lerpLink[i].m_worldaxis, vec3(0.01f));
+	 // }
+  //}
+  //else
+//  {
+//	   for (int i = 0; i < (int)pastLinks[order].size(); ++i)
+//	  {
+//		  vec3 base = pastLinks[order][i].m_base[3];
+//		  vec3 end = pastLinks[order][i].m_end[3];
+//		  phys::DrawCube(pastLinks[order][i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
+//		  phys::DrawCube(pastLinks[order][i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
+//		  phys::DrawLine(base, end);
+//		  phys::DrawPlane(base, pastLinks[order][i].m_worldaxis, vec3(0.01f));
+//	  }
+ // }
 
 }
 
