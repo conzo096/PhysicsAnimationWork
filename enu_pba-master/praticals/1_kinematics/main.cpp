@@ -121,7 +121,7 @@ void UpdateIK()
 	if (foundSolution == false)
 	{
 		FabrikUpdate(target, links, linkLength);
-	//	ik_1dof_Update(target, links, linkLength);
+		//ik_1dof_Update(target, links, linkLength);
 		// ik_3dof_Update(target, links, linkLength);
 	}
 }
@@ -154,17 +154,17 @@ void RenderIK()
 	 // }
   //}
   //else
-//  {
-//	   for (int i = 0; i < (int)pastLinks[order].size(); ++i)
-//	  {
-//		  vec3 base = pastLinks[order][i].m_base[3];
-//		  vec3 end = pastLinks[order][i].m_end[3];
-//		  phys::DrawCube(pastLinks[order][i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
-//		  phys::DrawCube(pastLinks[order][i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
-//		  phys::DrawLine(base, end);
-//		  phys::DrawPlane(base, pastLinks[order][i].m_worldaxis, vec3(0.01f));
-//	  }
- // }
+  //{
+	 //  for (int i = 0; i < (int)pastLinks[order].size(); ++i)
+	 // {
+		//  vec3 base = pastLinks[order][i].m_base[3];
+		//  vec3 end = pastLinks[order][i].m_end[3];
+		//  phys::DrawCube(pastLinks[order][i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
+		//  phys::DrawCube(pastLinks[order][i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
+		//  phys::DrawLine(base, end);
+		//  phys::DrawPlane(base, pastLinks[order][i].m_worldaxis, vec3(0.01f));
+	 // }
+  //}
 
 }
 

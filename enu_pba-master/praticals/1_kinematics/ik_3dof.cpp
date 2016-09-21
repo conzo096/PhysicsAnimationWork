@@ -42,6 +42,7 @@ static void Reach(int i, const vec3 &target, std::vector<Link> &const links) {
 	  dquat vQuat = normalize(angleAxis(vAngle, vPerp));
     // Multply our current Quat with it
 	  qCur *= vQuat;
+	  qCur = normalize(qCur);
     // Pull out the angle and axis components, set the link params
 	//  links[i] = Link(vPerp,angle(qCur));
 	  links[i].m_axis = axis(qCur);

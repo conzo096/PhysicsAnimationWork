@@ -12,81 +12,104 @@ using namespace glm;
 static unsigned int numLinks = 0;
 
 
+
+static void CalculateRotation(int i, const vec3 &target, std::vector<Link> &const links)
+{
+	// our current orientation
+	dquat qCur = angleAxis(links[i].m_angle, links[i].m_axis);
+	// current position of this effector
+	vec3 vlinkBasePos = (links[i].m_base)[3];
+	vec3 vLinkEndPos = (links[i].m_end)[3];
+	// current position of the effector at the end of the chain
+	vec3 vEndEffPos = links[links.size() - 1].m_end[3];
+	// convert our axis to world space
+	vec3 vLinkAxis = links[i].m_worldaxis;
+	// project target onto axis plane
+	vec3 vplanetarget = projectOntoPlane(target, vLinkAxis, vlinkBasePos);
+	// project vEndEffPos onto axis plane
+	vec3 vplaneEndEff = projectOntoPlane(vEndEffPos, vLinkAxis, vlinkBasePos);
+
+	// These are the two vectors we want to converge.
+	vec3 vLinkBaseToEndEffDirection = normalize(vplanetarget - vlinkBasePos);
+	vec3 vLinkBaseToTargetDirection = normalize(vplaneEndEff - vlinkBasePos);
+
+	// Get Dot of the two vectors
+	float cosAngle = dot(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
+	if (abs(cosAngle) < 1.0f) {
+		// *********************************
+		// Get the Axis perpendicular to the two vectors
+		vec3 vPerp = cross(vLinkBaseToEndEffDirection, vLinkBaseToTargetDirection);
+		// Get the Angle between the two vectors
+		float vAngle = angle(vLinkBaseToEndEffDirection, vLinkBaseToTargetDirection);
+		// Turn into a Quat
+		dquat vQuat = normalize(angleAxis(vAngle, vPerp));
+		// Multply our current Quat with it
+		qCur *= vQuat;
+		qCur = normalize(qCur);
+		// Pull out the angle and axis components, set the link params
+		links[i].m_axis = axis(qCur);
+		links[i].m_angle = angle(qCur);
+		// *********************************
+		UpdateHierarchy();
+	}
+}
 void FabrikUpdate(const vec3 &const target, std::vector<Link> &const links, const float linkLength)
 {
-	// Set numLinks.
+	// Number of tries.
+	int tries =0;
+	// Set numLinks
 	numLinks = links.size();
-
-
-	// Get distance between root link and target.
-	float dist = length(vec3(links[0].m_end[3]) - target);
-	float totDist =0;
+	// Get distance between root and target.
+	float distance = length(vec3(links[0].m_end[3]) - target);
+	// Get length of entire chain.
+	float chainLen = numLinks*linkLength;
 	// Check if target is within reach.
-	for (int i = 0; i < numLinks-1; i++)
+	if (distance > chainLen)
 	{
-		// The distance between the links.
-		totDist += linkLength;
-	}
-
-	if (dist > totDist)
-	{
-		for (int i = 0; i < numLinks-1; i++)
+		for (int i = 0; i < numLinks - 1; i++)
 		{
-			float r = length(target - vec3(links[i].m_end[3]));
-			float diff = linkLength / r;
-			// Find the new joint position.
-			vec3 newPosition = (1 - diff)*links[i].m_end[3] + vec4((diff*target),0);
-		//	links[i+1].m_end[3] = vec4(newPosition,0);
-			links[i + 1].m_angle = angle(newPosition, vec3(links[i + 1].m_end[3]));
-			links[i + 1].m_axis = newPosition;
+
+			vec3 currentPosition = (links[i].m_end)[3];
+			float lambda = linkLength / length(target - currentPosition);
+			vec3 pos = normalize((1 - lambda) * currentPosition + lambda * target);
+	//		CalculateRotation(i, pos, links);
 		}
 	}
-	else
+	else // Target within reach
 	{
-		for (int i = 0; i < numLinks; i++)
+
+		vec3 rootInitial = links[0].m_end[3];
+		float targetDelta = length(vec3(links[numLinks - 1].m_end[3])-target);
+
+		while (targetDelta > 0.5f && tries <20)
 		{
-			vec3 b = vec3(links[i].m_end[3]);
-			// Check dist between end effector and target is greater than tolerance.
-		//	float diffA = length(vec3(links[numLinks - 1].m_end[3] - vec4(target,0)));
-			float diffA = length(vec3(links[numLinks - 1].m_axis - target));
-			while (diffA > 0.5f)
+			// Forward reaching phase
+
+			// Set position of last link to target.
+			links[numLinks - 1].m_axis = target;
+
+			for (int i = numLinks - 2; i > 0; i--)
 			{
-				// Stage 1: Forward reaching.
-				// Set end effector as target.
-			//	links[numLinks - 1].m_end[3] = vec4(target,0);
-				links[numLinks - 1].m_angle = angle(vec3(links[numLinks-1].m_end[3]), target);
-				links[numLinks - 1].m_axis = target;
-				for (int i = numLinks-2 ; i >= 1; i--)
-				{
-					// Find distance between new position and joint position.
-					float r = length(vec3(links[i+1].m_end[3] - links[i].m_end[3]));
-					float diff = linkLength / r;
-				//	links[i].m_end[3] = (1 - diff)*links[i + 1].m_end[3] + (diff*links[i].m_end[3]);
-					links[i].m_axis = (1 - diff)*links[i + 1].m_end[3] + (diff*links[i].m_end[3]);
-				}
-				// Stage 2: Backward reaching.
-				// Set the root initial position.
-				//links[0].m_end[3] = vec4(b,0);
-				links[0].m_axis = b;
-				for (int i = 0; i < numLinks - 1; i++)
-				{
-					// Distance between links and target.
-					float x = length(vec3(vec4(target,0) - links[i].m_end[3]));
-					
-					// Find the distance between new joint position and the next joint in the chain.
-					float dist = length(vec3(links[i + 1].m_end[3] - links[i].m_end[3]));
-					float diff = linkLength / dist;
-					// Find new joint position.
-				//	links[i + 1].m_end[3] = (1 - diff)*links[i].m_end[3] + (diff*links[i + 1].m_end[3]);
-					links[i + 1].m_axis = (1 - diff)*links[i].m_end[3] + (diff*links[i + 1].m_end[3]);
-				}
-				//diffA = length(vec3(links[numLinks - 1].m_end[3] - vec4(target,0)));
-				UpdateHierarchy();
-				diffA = length(vec3(links[numLinks - 1].m_axis - target));
-			}
+				// Calculate angle between this link and link above it.
+				float lambda = linkLength / length(vec3(links[i + 1].m_end[3] - links[i].m_end[3]));
+				// Calculate new position of link.
+				vec3 pos = (1 - lambda) * links[i + 1].m_end[3] + lambda * links[i].m_end[3];
+	//			CalculateRotation(i, pos, links);
 
+			}
+			// Backward reaching phase
+			links[0].m_axis = rootInitial;
+			for (int i = 0; i < numLinks - 1; i++)
+			{
+				// Calculate angle.
+				float lambda = linkLength / length(vec3(links[i + 1].m_end[3] - links[i].m_end[3]));
+				// Calculate new position.
+				vec3 pos = (1 - lambda) * links[i].m_end[3] + lambda * links[i + 1].m_end[3];
+	//			CalculateRotation(i, pos, links);
+
+			}
+			targetDelta = length(target-vec3(links[linkLength - 1].m_base[3]));
+			tries++;
 		}
 	}
-	
-	return;
 }

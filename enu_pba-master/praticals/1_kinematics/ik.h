@@ -14,9 +14,14 @@ public:
 	glm::vec3 m_axis; // local axis
 	float m_angle;    // local angle
 
+
+	// Converts the local axis into world space.
 	glm::vec3 m_worldaxis;
-	 glm::mat4 m_base;
+	// Start point of the link.
+	glm::mat4 m_base;
+	// End point of the link.
 	glm::mat4 m_end;
+
 };
 
 void FabrikUpdate(const glm::vec3 &const target, std::vector<Link> &const links, const float linkLength);
