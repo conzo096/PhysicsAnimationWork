@@ -36,16 +36,26 @@ void UpdateHierarchy()
 
 	for (int i = 0; i < (int)links.size(); ++i)
 	{
+		// Calculate rotation matrix.
 		mat4 R1 = mat4_cast(angleAxis(links[i].m_angle, links[i].m_axis));
+		// Calculate Translation matrix.
 		mat4 T1 = translate(mat4(1.0f), vec3(linkLength, 0, 0));
+		// Set the start of link.
 		links[i].m_base = mat4(1.0) * R1;
+		// Set the end of link.
 		links[i]. m_end = links[i].m_base * T1;
+		// Translate axis into world space.
 		links[i].m_worldaxis = links[i].m_axis;
+		// If it is not the root node.
 		if (i > 0)
 		{
 			// Don't move the root link.
+
+			// Base of link is end of previous link.
 			links[i].m_base = links[i - 1].m_end * links[i].m_base;
+			// Calculate end of link.
 			links[i].m_end = links[i].m_base * links[i].m_end;
+			// Rotation axis in world space. Considers the previous link rotation.
 			links[i].m_worldaxis = normalize(mat3(links[i - 1].m_end) * links[i].m_axis);
 		}
 	}
@@ -95,30 +105,27 @@ bool load_content()
 
 void UpdateIK()
 {
-
 	UpdateHierarchy();
 	// distance of current link chain to target.
-  const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
+	const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
  
-  // Check if link is in reach.
-  if (distance < 0.5f)
-  {
-		  // switch order of links.
-		  order = 1 - order;
-		  // Set current link to past link.
-		  pastLinks[order] = links;
-		  foundSolution = true;
-		  moveBall = true;
-  }
-
-  
-  if (moveBall == true)
-  {
-		  MoveTarget();
-		  moveBall = false;
-  }
-	// no solution found so do not update.
-	if (foundSolution == false)
+	// Check if link is in reach.
+	if (distance < 0.5f)
+	{
+		// switch order of links.
+		order = 1 - order;
+		// Set current link to past link.
+		pastLinks[order] = links;
+		foundSolution = true;
+		moveBall = true;
+	} 
+	if (moveBall == true)
+	{
+		MoveTarget();
+		moveBall = false;
+	}
+		// no solution found so do not update.
+	//if (foundSolution == false)
 	{
 		FabrikUpdate(target, links, linkLength);
 		//ik_1dof_Update(target, links, linkLength);

@@ -22,56 +22,62 @@ chrono::time_point<chrono::high_resolution_clock> tp_end;
 
 //use this function simulate render workload
 void doWork() {
-  // this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
+   this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
 }
 
 
-bool update(double delta_time) {
-  doWork();
-  static bool done = false;
-  static uint16_t frames = 0;
-  static uint16_t ticks = 0;
-  static double t = 0.0;
-  if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE)) {
-    tp_start = chrono::high_resolution_clock::now();
-    ball.position = vec3(0, fallheight, 0);
-    done = false;
-    ticks = 0;
-    frames = 0;
-    t = 0.0;
-  }
+bool update(double delta_time)
+{
+	doWork();
+	static bool done = false;
+	static uint16_t frames = 0;
+	static uint16_t ticks = 0;
+	static double t = 0.0;
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
+	{
+		tp_start = chrono::high_resolution_clock::now();
+		ball.position = vec3(0, fallheight, 0);
+		done = false;
+		ticks = 0;
+		frames = 0;
+		t = 0.0;
+	}
 
-  if (!done) {
-    frames++;
-    double remainingTime = delta_time;
-    while (remainingTime > 0.0) {
-      ticks++;
-      double dt = glm::min(remainingTime, physics_tick);
-      remainingTime -= dt;
-      t += dt;
+	if (!done)
+	{
+		frames++;
+		double remainingTime = delta_time;
+		while (remainingTime > 0.0)
+		{
+			ticks++;
+			double dt = glm::min(remainingTime, physics_tick);
+			remainingTime -= dt;
+			t += dt;
 
-      // *********************************
-      // Apply Accleration to Velocity
+			// *********************************
+			// Apply Acceleration to Velocity
+			ball.velocity += gravity*t;
+			// Apply Velocity to position
+			ball.position += ball.velocity;
+			// *********************************
 
-      // Apply Velocity to position
-
-      // *********************************
-
-      if (ball.position.y <= 0.0f) {
-        tp_end = chrono::high_resolution_clock::now();
-        ball.velocity.y = 0;
-        done = true;
-        cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
-             << " seconds, " << ticks << " Ticks, " << frames << " frames" << endl;
-        break;
-      }
-    }
-  }
-  phys::Update(delta_time);
-  return true;
+			if (ball.position.y <= 0.0f)
+			{
+				tp_end = chrono::high_resolution_clock::now();
+				ball.velocity.y = 0;
+				done = true;
+				cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
+					<< " seconds, " << ticks << " Ticks, " << frames << " frames" << endl;
+				break;
+			}
+		}
+	}
+	phys::Update(delta_time);
+	return true;
 }
 
-bool load_content() {
+bool load_content()
+{
   phys::Init();
   ball.velocity = dvec3(0);
   ball.position = dvec3(0);
