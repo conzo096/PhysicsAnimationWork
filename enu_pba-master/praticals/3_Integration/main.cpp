@@ -18,7 +18,8 @@ void doWork() {
 }
 
 
-bool update(double delta_time) {
+bool update(double delta_time)
+{
   doWork();
 
   static uint16_t frames = 0;
@@ -31,8 +32,8 @@ bool update(double delta_time) {
 
     while (accumulator > physics_tick) {
       ticks++;
-      //UpdatePhysics_Euler(t, physics_tick);
-      //UpdatePhysics_Verlet(t, physics_tick);
+     // UpdatePhysics_Euler(t, physics_tick);
+     //UpdatePhysics_Verlet(t, physics_tick);
       UpdatePhysics_rk4(t, physics_tick);
       accumulator -= physics_tick;
       t += physics_tick;
