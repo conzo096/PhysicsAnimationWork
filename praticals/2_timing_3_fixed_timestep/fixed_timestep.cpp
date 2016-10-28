@@ -11,9 +11,10 @@ using namespace glm;
 #define physics_tick 1.0 / 60.0
 #define fallheight 20.0
 
-struct sBall {
-  glm::dvec3 velocity;
-  glm::dvec3 position;
+struct sBall
+{
+	glm::dvec3 velocity;
+	glm::dvec3 position;
 };
 static sBall ball;
 static dvec3 gravity = dvec3(0, -10.0, 0);
@@ -21,57 +22,63 @@ chrono::time_point<chrono::high_resolution_clock> tp_start;
 chrono::time_point<chrono::high_resolution_clock> tp_end;
 
 //use this function simulate render workload
-void doWork() {
-  // this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
+void doWork()
+{
+   this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
 }
 
 
-bool update(double delta_time) {
-  doWork();
-  static bool done = false;
-  static uint16_t frames = 0;
-  static uint16_t ticks = 0;
-  static double t = 0.0;
-  static double accumulator = 0.0;
+bool update(double delta_time)
+{
+	doWork();
+	static bool done = false;
+	static uint16_t frames = 0;
+	static uint16_t ticks = 0;
+	static double t = 0.0;
+	static double accumulator = 0.0;
 
-  if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE)) {
-    tp_start = chrono::high_resolution_clock::now();
-    ball.position = vec3(0, fallheight, 0);
-    done = false;
-    accumulator = 0.0;
-    ticks = 0;
-    frames = 0;
-    t = 0.0;
-  }
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
+	{
+		tp_start = chrono::high_resolution_clock::now();
+		ball.position = vec3(0, fallheight, 0);
+		done = false;
+		accumulator = 0.0;
+		ticks = 0;
+		frames = 0;
+		t = 0.0;
+	}
 
-  if (!done) {
-    frames++;
-    accumulator += delta_time;
+	if (!done)
+	{
+		frames++;
+		accumulator += delta_time;
 
-    while (accumulator > physics_tick) {
-      ticks++;
-      accumulator -= physics_tick;
-      t += physics_tick;
+		while (accumulator > physics_tick)
+		{
+			ticks++;
+			accumulator -= physics_tick;
+			t += physics_tick;
 
-      // *********************************
-      // Apply Accleration to Velocity
+			// *********************************
+			// Apply Acceleration to Velocity
+			ball.velocity += gravity*t;
+			// Apply Velocity to position
+			ball.position += ball.velocity;
+			// *********************************
 
-      // Apply Velocity to position
-
-      // *********************************
-
-      if (ball.position.y <= 0.0f) {
-        tp_end = chrono::high_resolution_clock::now();
-        ball.velocity.y = 0;
-        done = true;
-        cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
-             << " seconds, " << ticks << " Ticks, " << frames << " frames" << endl;
-        break;
-      }
-    }
-  }
-  phys::Update(delta_time);
-  return true;
+			if (ball.position.y <= 0.0f)
+			{
+				tp_end = chrono::high_resolution_clock::now();
+				ball.velocity.y = 0;
+				done = true;
+				cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
+					<< " seconds, " << ticks << " Ticks, " << frames << " frames" << endl;
+				break;
+			}
+		}
+	}
+	phys::Update(delta_time);
+	return true;
 }
 
 bool load_content() {

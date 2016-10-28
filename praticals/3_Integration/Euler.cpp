@@ -9,10 +9,11 @@ void UpdatePhysics_Euler(const double t, const double dt) {
   for (size_t i = 0; i < balls.size(); i++)
   {
     // *********************************
+
     // Apply Accleration to Velocity
-
+	balls[i].velocity += gravity*dt;
     // Apply Velocity to position
-
+	balls[i].position += balls[i].velocity * dt;
     // *********************************
     
     //super simple bounce function

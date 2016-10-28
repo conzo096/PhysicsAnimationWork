@@ -14,66 +14,99 @@ using namespace glm;
 static vector<unique_ptr<Entity>> SceneList;
 static unique_ptr<Entity> floorEnt;
 
-unique_ptr<Entity> CreateParticle() {
-  unique_ptr<Entity> ent(new Entity());
-  ent->SetPosition(vec3(0, 5.0 + (double)(rand() % 200) / 20.0, 0));
-  unique_ptr<Component> physComponent(new cPhysics());
-  unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::SPHERE));
-  renderComponent->SetColour(phys::RandomColour());
-  ent->AddComponent(physComponent);
-  ent->AddComponent(unique_ptr<Component>(new cSphereCollider()));
-  ent->AddComponent(unique_ptr<Component>(move(renderComponent)));
-  return ent;
+unique_ptr<Entity> CreateParticle()
+{
+	unique_ptr<Entity> ent(new Entity());
+	ent->SetPosition(vec3(0, 5.0 + (double)(rand() % 200) / 20.0, 0));
+	unique_ptr<Component> physComponent(new cPhysics());
+	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::SPHERE));
+	renderComponent->SetColour(phys::RandomColour());
+	ent->AddComponent(physComponent);
+	ent->AddComponent(unique_ptr<Component>(new cSphereCollider()));
+	ent->AddComponent(unique_ptr<Component>(move(renderComponent)));
+	return ent;
 }
 
-bool update(double delta_time) {
-  static double t = 0.0;
-  static double accumulator = 0.0;
-  accumulator += delta_time;
+unique_ptr<Entity> CreateBallisticParticle()
+{
+	unique_ptr<Entity> ent(new Entity());
+	ent->SetPosition(vec3(-25.0, 5.0 + (double)(rand() % 200) / 20.0, 0));
+	unique_ptr<Component> physComponent(new cPhysics());
+	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::SPHERE));
+	renderComponent->SetColour(phys::RandomColour());
+	ent->AddComponent(physComponent);
+	ent->AddComponent(unique_ptr<Component>(new cSphereCollider()));
+	ent->AddComponent(unique_ptr<Component>(move(renderComponent)));
 
-  while (accumulator > physics_tick) {
-    UpdatePhysics(t, physics_tick);
-    accumulator -= physics_tick;
-    t += physics_tick;
-  }
-
-  for (auto &e : SceneList) {
-    e->Update(delta_time);
-  }
-
-  phys::Update(delta_time);
-  return true;
+	const auto p = static_cast<cPhysics *>(ent->GetComponents("Physics")[0]);
+	p->AddImpulse(vec3(10, 5, 0));
+	return ent;
 }
 
-bool load_content() {
-  phys::Init();
-  for (size_t i = 0; i < 4; i++) {
-    SceneList.push_back(move(CreateParticle()));
-  }
-  floorEnt = unique_ptr<Entity>(new Entity());
-  floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
+bool update(double delta_time)
+{
+	static double t = 0.0;
+	static double accumulator = 0.0;
+	accumulator += delta_time;
 
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
-  InitPhysics();
-  return true;
+	while (accumulator > physics_tick)
+	{
+		UpdatePhysics(t, physics_tick);
+		accumulator -= physics_tick;
+		t += physics_tick;
+
+	}
+
+	for (auto &e : SceneList)
+	{
+		e->Update(delta_time);
+
+	}
+	phys::Update(delta_time);
+	return true;
 }
 
-bool render() {
-  for (auto &e : SceneList) {
-    e->Render();
-  }
-  phys::DrawScene();
-  return true;
+bool load_content()
+{
+	phys::Init();
+	//for (size_t i = 0; i < 4; i++)
+	//{
+	//	SceneList.push_back(move(CreateParticle()));
+//	}
+
+
+	SceneList.push_back(move(CreateBallisticParticle()));
+
+
+	// Create floor object.
+	floorEnt = unique_ptr<Entity>(new Entity());
+	// Attach plane collider to object.
+	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
+
+	phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
+	phys::SetCameraTarget(vec3(0, 10.0f, 0));
+	InitPhysics();
+	return true;
 }
 
-void main() {
-  // Create application
-  app application;
-  // Set load content, update and render methods
-  application.set_load_content(load_content);
-  application.set_update(update);
-  application.set_render(render);
-  // Run application
-  application.run();
+bool render()
+{
+	for (auto &e : SceneList)
+	{
+		e->Render();
+	}
+	phys::DrawScene();
+	return true;
+}
+
+void main()
+{
+	// Create application
+	app application;
+	// Set load content, update and render methods
+	application.set_load_content(load_content);
+	application.set_update(update);
+	application.set_render(render);
+	// Run application
+	application.run();
 }

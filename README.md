@@ -1,5 +1,3 @@
-# PhysicsAnimationWork
-Work for the physics animation module.
 # SET09119 Physics-Based Animation
 ## Games Development Module
 ### Copyright (C) 2016  Edinburgh Napier University
