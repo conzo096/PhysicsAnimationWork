@@ -52,8 +52,8 @@ namespace phys
 		glm::vec2 botXTopY = glm::vec2(botX, topY);
 
 		// Check if it is in range.
-		if (pos.x > topX | pos.x < botX) return false;
-		if (pos.y > topY | pos.y < botY) return false;
+		if (pos.x > botX | pos.x < topX) return false;
+		if (pos.y > botY | pos.y < topY) return false;
 		return true;
 	}
 

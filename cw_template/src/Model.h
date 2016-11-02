@@ -13,5 +13,11 @@ namespace phys
 	public:
 		Model();
 		~Model();
+
+
+		// Set and Gets.
+		BoundingBox GetBoundingBox() { return box; };
+		
+		void SetBoundingBox(BoundingBox bb) { box = bb; };
 	};
 }
