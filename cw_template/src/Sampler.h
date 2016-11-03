@@ -18,7 +18,7 @@ namespace phys
 		std::vector<glm::vec3> SamplePoints(Model model, int samples);
 		std::vector<glm::vec3> SampleShell(Model model);
 		std::vector<glm::vec3> SampleInterior(Model model);
-
+		glm::vec3 SampleRandomPoint(Model model, RayCast ray);
 
 	};
 }

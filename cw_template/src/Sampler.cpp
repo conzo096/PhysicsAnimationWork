@@ -9,80 +9,74 @@ namespace phys
 	{
 	}
 
-	std::vector<glm::vec3> Sampler::SamplePoints(Model model, int samples)
+	std::vector<glm::vec3> Sampler::SamplePoints(Model model, int numSamples)
 	{
+		std::vector<glm::vec3> samplePoints = std::vector<glm::vec3>();
+
 		// How many rays to be shot through each face?
-		int raysPerFace = std::min(samples, std::max(5, samples / 3));
+		int raysPerFace = std::min(numSamples, std::max(5, numSamples / 3));
 
 		int i = 0;
 		int face = 0;
-		glm::vec3 o, u, v, w;
-		while (i < samples)
+		RayCast ray;
+		while (i < numSamples)
 		{
+			// Change to a new face to initalise ray.
 			face = (face + 1) % 6;
 			switch (face)
 			{
 			case 0: // bottom face
-				o = bounds.min()
-				u = glm::vec3(extents.x, 0, 0);
-				v = glm::vec3(0, 0, extents.z);
-				w = glm::vec3(0, 1, 0);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomRight(), model.GetBoundingBox().GetBackBottomLeft());
+				ray.SetDirection(glm::vec3(0, 1, 0));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackTopRight()));
 				break;
 			case 1: // top face
-				o.x = bounds.min().x; o.y = bounds.max().y; o.z = bounds.min().z;
-				u = glm::vec3(extents.x, 0, 0);
-				v = glm::vec3(0, 0, extents.z);
-				w = glm::vec3(0, -1, 0);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontTopRight(), model.GetBoundingBox().GetBackTopLeft());
+				ray.SetDirection(glm::vec3(0, -1, 0));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackTopRight()));
+
 				break;
 			case 2: // left face
-				o = bounds.min();
-				u = glm::vec3(0, extents.y, 0);
-				v = glm::vec3(0, 0, extents.z);
-				w = glm::vec3(1, 0, 0);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomLeft(), model.GetBoundingBox().GetBackTopLeft());
+				ray.SetDirection(glm::vec3(1, 0, 0));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackBottomLeft()));
+
 				break;
 			case 3: // right face
-				o.x = bounds.max().x; o.y = bounds.min().y; o.z = bounds.min().z;
-				u = glm::vec3(0, extents.y, 0);
-				v = glm::vec3(0, 0, extents.z);
-				w = glm::vec3(-1, 0, 0);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomRight(), model.GetBoundingBox().GetBackTopRight());
+				ray.SetDirection(glm::vec3(-1, 0, 0));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackBottomLeft()));
+
 				break;
 			case 4: // front face
-				o = bounds.min();
-				u = glm::vec3(extents.x, 0, 0);
-				v = glm::vec3(0, extents.y, 0);
-				w = glm::vec3(0, 0, 1);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomLeft(), model.GetBoundingBox().GetFrontTopRight());
+				ray.SetDirection(glm::vec3(0, 0, 1));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetFrontBottomRight()));
 				break;
 			case 5: // back face
-				o.x = bounds.min().x; o.y = bounds.min().y; o.z = bounds.max().z;
-				u = glm::vec3(extents.x, 0, 0);
-				v = glm::vec3(0, extents.y, 0);
-				w = glm::vec3(0, 0, -1);
+
+				ray.SetRandomOrigin(model.GetBoundingBox().GetBackBottomLeft(), model.GetBoundingBox().GetBackTopRight());
+				ray.SetDirection(glm::vec3(0, 0, -1));
+				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetFrontBottomRight()));
 				break;
 			default: break;
 			}
-
-			RayCast ray;
+			// Sample points from the ray.
 			for (int i = 0; i < raysPerFace; i++)
 			{
-				if (originOffset < numOffsetSamples)
-				{
-					ray.SetOrigin(o + w * safetyOffset + u * originOffsets[2 * originOffset] + v * originOffsets[2 * originOffset + 1]);
-					originOffset++;
-				}
-				else
-				{
-					ray.SetOrigin(o + w * safetyOffset + u * randomFloat01() + v * randomFloat01());
-				}
-				ray.SetDirection = w;
-				ray.SetRange(99999);
-
-				samples += ray.TraceRay(Model, depthStep, points, normals);
-				if (i >= samples)
+				samplePoints.push_back(SampleRandomPoint(model, ray));
+				if (i >= numSamples)
 					break;
 
+			}
 		}
 
-		return std::vector<glm::vec3>();
+		return samplePoints;
 	}
 
 	std::vector<glm::vec3> Sampler::SampleShell(Model model)
@@ -93,5 +87,13 @@ namespace phys
 	std::vector<glm::vec3> Sampler::SampleInterior(Model model)
 	{
 		return std::vector<glm::vec3>();
+	}
+
+
+	glm::vec3 SampleRandomPoint(Model model, RayCast ray)
+	{
+
+
+		return glm::vec3(0, 0, 0);
 	}
 }
