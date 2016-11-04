@@ -16,6 +16,10 @@ namespace phys
 		~RayCast();
 
 		bool DetectCollision(glm::vec3 point);
+		bool TestBoundingBoxHit(BoundingBox bb);
+		
+		
+		
 		// Set and gets.
 
 		glm::vec3 GetDirection() { return direction; };

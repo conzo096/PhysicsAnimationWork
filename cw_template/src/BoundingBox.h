@@ -1,17 +1,20 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
+#include <glm/ext.hpp>
+#include <iostream>
+#include "ModelInfo.h"
 namespace phys
 {
 	class BoundingBox
 	{
 	private:
-		float topX, topY, topZ;
-		float botX, botY, botZ;
+		float topX = 0, topY = 0, topZ = 0;
+		float botX = 0, botY = 0, botZ = 0;
 
 		float volume;
 
-		glm::vec3 position;
+		transformInfo transformation;
 
 		// USE TRANSFORM?
 	public:
@@ -27,8 +30,6 @@ namespace phys
 
 		// Set and gets.
 		float GetVolume() { return volume; };
-		glm::vec3 GetPosition() { return position; };
-
 
 		// Corners using min x.
 		glm::vec3 GetFrontBottomLeft() { return glm::vec3(botX, botY, botZ); };
@@ -40,12 +41,14 @@ namespace phys
 		// Corners using max x.
 
 		glm::vec3 GetFrontBottomRight() { return glm::vec3(topX, botY, botZ); };
-		glm::vec3 GetFrontTopRight() { return glm::vec3(topX, botY, topZ); };
+		glm::vec3 GetFrontTopRight() { return glm::vec3(topX, topY, botZ); };
 
 		glm::vec3 GetBackBottomRight() { return glm::vec3(topX, botY, topZ); };
 		glm::vec3 GetBackTopRight() { return glm::vec3(topX, topY, topZ); };
 
 
-		void SetPosition(glm::vec3 pos) { position = pos; };
+		// Updates according to model.
+		void Update(transformInfo model) { transformation = model;};
+		void PrintCorners();
 	};
 }

@@ -24,7 +24,8 @@ public:
   Entity *GetParent();
 };
 
-class Entity {
+class Entity
+{
 protected:
   bool visible_;
   std::string name_;

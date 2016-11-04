@@ -24,6 +24,11 @@ namespace phys
 		return false;
 	}
 
+	bool RayCast::TestBoundingBoxHit(BoundingBox bb)
+	{
+		return false;
+	}
+
 	void RayCast::SetRandomOrigin(glm::vec3 minBounds, glm::vec3 maxBounds)
 	{
 		glm::vec3 point = glm::vec3(0,0,0);

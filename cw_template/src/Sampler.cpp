@@ -12,16 +12,16 @@ namespace phys
 	std::vector<glm::vec3> Sampler::SamplePoints(Model model, int numSamples)
 	{
 		std::vector<glm::vec3> samplePoints = std::vector<glm::vec3>();
-
 		// How many rays to be shot through each face?
 		int raysPerFace = std::min(numSamples, std::max(5, numSamples / 3));
-
 		int i = 0;
+		// What face to start ray from.
 		int face = 0;
+		// Ray to find intersection points.
 		RayCast ray;
 		while (i < numSamples)
 		{
-			// Change to a new face to initalise ray.
+			// Change to a new face.
 			face = (face + 1) % 6;
 			switch (face)
 			{
@@ -89,11 +89,13 @@ namespace phys
 		return std::vector<glm::vec3>();
 	}
 
-
-	glm::vec3 SampleRandomPoint(Model model, RayCast ray)
+	glm::vec3 Sampler::SampleRandomPoint(Model model, RayCast ray)
 	{
+		glm::vec3 point1, point2, point3;
+
+	//	model.GetGeometry().
 
 
-		return glm::vec3(0, 0, 0);
+		return glm::vec3();
 	}
 }
