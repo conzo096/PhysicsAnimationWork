@@ -1,3 +1,9 @@
+/*
+		CURRENT ISSUE. 
+		Need to be able to change camera and mvp matrix. Might have to rewrite that segment as well.
+*/
+
+
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <graphics_framework.h>
@@ -12,6 +18,11 @@ using namespace phys;
 
 
 Model test;
+effect eff;
+target_camera cam;
+glm::mat4 PV;
+directional_light light;
+material mat;
 
 info LoadCube(const glm::vec3 &dims)
 {
@@ -115,29 +126,67 @@ bool load_content()
 	phys::Init();
 	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
+	test.GetTransform().mPosition = glm::vec3(0, 10, 0);
+	test.UpdateBuffers();
+	eff = effect();
+	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
+	eff.add_shader("shaders/phys_phong.frag", GL_FRAGMENT_SHADER);
+	eff.build();
+	cam.set_position(vec3(10.0f, 10.0f, 10.0f));
+	cam.set_target(vec3(0.0f, 0.0f, 0.0f));
+	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
+	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
+	light.set_ambient_intensity(vec4(0.5f, 0.5f, 0.5f, 1.0f));
+	light.set_light_colour(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	light.set_direction(vec3(0.0f, 1.0f, 0.0f));
+	mat = material(vec4(0.0f, 0.0f, 0.0f, 1.0f), vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(1.0f, 1.0f, 1.0f, 1.0f), 25.0f);
 	return true;
-
 }
 
 
 
-bool update(float delta_time) {
+bool update(float delta_time)
+{
 	static float rot = 0.0f;
 	rot += 0.2f * delta_time;
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
+	//if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
+		test.GetTransform().rotate(glm::vec3(0.0f, 1, 0.0f) * delta_time);
+	PV = cam.get_projection() * cam.get_view();
+	cam.update(static_cast<float>(delta_time));
+	renderer::setClearColour(0, 0, 0);
+	// Works for now
+//	test.Update(delta_time);
+	// If changed.
+	//	test.UpdateBuffers();
 	phys::Update(delta_time);
 	return true;
 }
 
 bool render()
 {
+	
 	//phys::DrawSphere(glm::vec3(4.0f, 4.0f, 0), 1.0f, RED);
+	renderer::clear();
+	// NEED MVP.
+	renderer::bind(eff);
+	mat4 M = test.GetTransform().get_transform_matrix();
+	mat3 N = test.GetTransform().get_normal_matrix();
+	RGBAInt32 col = GREY;
+	mat.set_diffuse(col.tovec4());
+	renderer::bind(mat, "mat");
+	renderer::bind(light, "light");
+	glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV * M));
+	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
+	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 	test.Render();
-	phys::DrawScene();
+	
+//	phys::DrawScene();
 	return true;
 }
 
-void main() {
+void main()
+{
 	// Create application
 	app application;
 	// Set load content, update and render methods

@@ -7,13 +7,15 @@ using namespace graphics_framework;
 using namespace glm;
 
 namespace phys {
-target_camera cam;
-effect effP;
-effect effB;
-effect effG;
-glm::mat4 PV;
-directional_light light;
-material mat;
+
+
+	target_camera cam;
+	effect effP;
+	effect effB;
+	effect effG;
+	glm::mat4 PV;
+	directional_light light;
+	material mat;
 
 void Init() {
 
@@ -158,6 +160,8 @@ void DrawCube(const glm::mat4 &m, const RGBAInt32 col) {
   glUniformMatrix3fv(effP.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
   renderer::render(geom);
 }
+
+
 
 void DrawLineCross(const glm::vec3 &p0, float radius, const bool depth, const RGBAInt32 col) {
   DrawLine(p0 + glm::vec3(radius, 0, 0), p0 - glm::vec3(radius, 0, 0), depth, col);

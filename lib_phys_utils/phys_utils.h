@@ -1,4 +1,5 @@
 #pragma once
+#include "graphics_framework.h"
 #include <glm\glm.hpp>
 #include <iostream>
 #define RED                                                                                                            \
