@@ -11,13 +11,16 @@
 #include "Model.h"
 #include "ModelInfo.h"
 
+
+
 using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 using namespace phys;
-
+#define physics_tick 1.0 / 60.0
 
 Model test;
+Model test1;
 effect eff;
 target_camera cam;
 glm::mat4 PV;
@@ -126,8 +129,14 @@ bool load_content()
 	phys::Init();
 	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
-	test.GetTransform().mPosition = glm::vec3(0, 10, 0);
+	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
+
+
+	test1.SetModelInfo(LoadCube(glm::vec3(2, 2, 2)));
+	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
+	test1.GetTransform().translate(glm::vec3(0, 3, 0));
 	test.UpdateBuffers();
+	test1.UpdateBuffers();
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
 	eff.add_shader("shaders/phys_phong.frag", GL_FRAGMENT_SHADER);
@@ -147,16 +156,54 @@ bool load_content()
 
 bool update(float delta_time)
 {
+	
+	static double t = 0.0;
+	static double accumulator = 0.0;
+	accumulator += delta_time;
+
+	while (accumulator > physics_tick)
+	{
+		UpdatePhysics(t, physics_tick);
+		accumulator -= physics_tick;
+		t += physics_tick;
+	}
+	for (auto &e : SceneList)
+	{
+		e->Update(delta_time);
+	}
+	
 	static float rot = 0.0f;
 	rot += 0.2f * delta_time;
+
+
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
-	//if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
-		test.GetTransform().rotate(glm::vec3(0.0f, 1, 0.0f) * delta_time);
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
+		test.GetTransform().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
+		test.GetTransform().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
+		test.GetTransform().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
+		test.GetTransform().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
+	
+
+	// Test for collision.
+	if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
+	{
+		std::cout << "Collision" << std::endl;
+	}
+
+	
+	
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));
 	renderer::setClearColour(0, 0, 0);
-	// Works for now
-//	test.Update(delta_time);
+	
+	test.Update(delta_time);
+	test1.Update(delta_time);
+
+
+
 	// If changed.
 	//	test.UpdateBuffers();
 	phys::Update(delta_time);
@@ -180,8 +227,14 @@ bool render()
 	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
 	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 	test.Render();
-	
-//	phys::DrawScene();
+
+	M = test1.GetTransform().get_transform_matrix();
+	N = test1.GetTransform().get_normal_matrix();
+	glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV * M));
+	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
+	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
+	test1.Render();
+	//	phys::DrawScene();
 	return true;
 }
 

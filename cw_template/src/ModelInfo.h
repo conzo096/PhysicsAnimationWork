@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
- 
 namespace phys
 {
 	struct info
@@ -36,11 +35,15 @@ namespace phys
 		glm::vec3 mScale;
 		glm::quat mRotation;
 		
+		// Needed for physics
+		glm::vec3 prev_pos;
+		double mass;
+
 		// Creates a transform object
-		transformInfo() : mScale(glm::vec3(1.0f, 1.0f, 1.0f)) { }
+			transformInfo() : mScale(glm::vec3(1.0f, 1.0f, 1.0f)) { mPosition = glm::vec3(0, 0, 0); }
 
 		// Translates the 3D object
-		void translate(const glm::vec3 &translation) { mPosition += translation; }
+		void translate(const glm::vec3 &translation) { mPosition += translation;}
 
 		// Rotates the 3D object using Euler angles
 		void rotate(const glm::vec3 &rotation) {
@@ -65,5 +68,8 @@ namespace phys
 
 		// Gets the normal matrix representing the defined transform
 		glm::mat3 get_normal_matrix() { return glm::mat3_cast(mRotation); }
+
+		glm::vec3 GetPosition() { return mPosition; }
 	};
+
 };

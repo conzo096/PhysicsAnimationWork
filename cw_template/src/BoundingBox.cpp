@@ -68,6 +68,17 @@ namespace phys
 		return true;
 	}
 
+	bool BoundingBox::TestOBBOBB(BoundingBox b)
+	{
+		float ra, rb;
+		glm::mat3 r, absR;
+
+		// C
+
+		// No detection false.
+		return false;
+	}
+
 	void BoundingBox::PrintCorners()
 	{
 		std::cout << "Front bottom left: ";

@@ -47,8 +47,11 @@ namespace phys
 		glm::vec3 GetBackTopRight() { return glm::vec3(topX, topY, topZ); };
 
 
+		bool TestOBBOBB(BoundingBox b);
+
+
 		// Updates according to model.
-		void Update(transformInfo model) { transformation = model;};
+		void Update(transformInfo& model) { transformation = model;};
 		void PrintCorners();
 	};
 }

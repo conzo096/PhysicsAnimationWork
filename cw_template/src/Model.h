@@ -1,5 +1,6 @@
 #pragma once
-#include "..\\src\\BoundingBox.h"
+#include "BoundingBox.h"
+#include "SphereCollider.h"
 #include "ModelInfo.h"
 #include <graphics_framework.h>
 #include <glm/ext.hpp>
@@ -14,10 +15,13 @@ namespace phys
 		//Transform transform;
 	//	geometry geom;
 		BoundingBox box;
+		SphereCollider sphere;
 		info information;
 		transformInfo transformation;
 		renderInfo render;
 
+		
+		
 		//std::vector<std::unique_ptr<Component>> components_;
 	public:
 		Model();
@@ -34,18 +38,19 @@ namespace phys
 		// Adds an index buffer to the geometry object
 		bool add_index_buffer(const std::vector<GLuint> &buffer);
 
-		void Update(float deltaTime);
+		void Update(float deltaTime, const double dt);
 		void Render();
 
 
 
 		// Set and Gets.
-		BoundingBox GetBoundingBox() { return box; };
-		info GetModelInfo() { return information; }
-		transformInfo GetTransform() { return transformation; }
+		BoundingBox& GetBoundingBox() { return box; }
+		SphereCollider& GetSphereCollider() { return sphere; }
+		info& GetModelInfo() { return information; }
+		transformInfo& GetTransform() { return transformation; }
 
 		void SetBoundingBox(BoundingBox bb) { box = bb; }
-
+		void SetSphereCollider(SphereCollider sc) { sphere = sc; }
 		void SetModelInfo(info i) { information = i; }
 		void SetTransform(transformInfo ti) { transformation = ti; }
 	};
