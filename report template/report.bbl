@@ -1,0 +1,15 @@
+\begin{thebibliography}{\protect\citename{Sako and Fujimura }2000}
+
+\bibitem[\protect\citename{Day and Gastel }2012]{day2012write}
+{\sc Day, R., and Gastel, B.}
+\newblock 2012.
+\newblock {\em How to write and publish a scientific paper}.
+\newblock Cambridge University Press.
+
+\bibitem[\protect\citename{Sako and Fujimura }2000]{Sako00}
+{\sc Sako, Y., and Fujimura, K.}
+\newblock 2000.
+\newblock Shape similarity by homotropic deformation.
+\newblock {\em The Visual Computer 16}, 1, 47--61.
+
+\end{thebibliography}

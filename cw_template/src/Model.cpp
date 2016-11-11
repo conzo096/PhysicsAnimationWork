@@ -22,11 +22,16 @@ namespace phys
 		// calcualte velocity from current and previous position
 		glm::dvec3 velocity = transformation.mPosition - transformation.prev_pos;
 		// set previous position to current position
-		transformation.prev_pos = transformation.mPosition;
+	//	transformation.prev_pos = transformation.mPosition;
 		// position += v + a * (dt^2)
-		transformation.mPosition += velocity + glm::dvec3(0, -10.0, 0) * pow(dt, 2);
+	//	transformation.mPosition += velocity + glm::dvec3(0, -10.0, 0) * pow(dt, 2);
 
-		if (transformation.mPosition.y <= 0.0f)
+		if (transformation.mPosition.y <= -6.0f)
+		{
+			transformation.prev_pos = transformation.mPosition + (transformation.mPosition - transformation.prev_pos);
+		}
+
+		if (transformation.mPosition.y >= 25.0f)
 		{
 			transformation.prev_pos = transformation.mPosition + (transformation.mPosition - transformation.prev_pos);
 		}

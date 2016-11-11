@@ -26,6 +26,7 @@ target_camera cam;
 glm::mat4 PV;
 directional_light light;
 material mat;
+bool coll = false;
 
 info LoadCube(const glm::vec3 &dims)
 {
@@ -132,9 +133,9 @@ bool load_content()
 	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
 
 
-	test1.SetModelInfo(LoadCube(glm::vec3(2, 2, 2)));
+	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
-	test1.GetTransform().translate(glm::vec3(0, 3, 0));
+	test1.GetTransform().translate(glm::vec3(0, 8, 0));
 	test.UpdateBuffers();
 	test1.UpdateBuffers();
 	eff = effect();
@@ -161,21 +162,21 @@ bool update(float delta_time)
 	static double accumulator = 0.0;
 	accumulator += delta_time;
 
-	while (accumulator > physics_tick)
-	{
-		UpdatePhysics(t, physics_tick);
-		accumulator -= physics_tick;
-		t += physics_tick;
-	}
-	for (auto &e : SceneList)
-	{
-		e->Update(delta_time);
-	}
+//	while (accumulator > physics_tick)
+//	{
+//		UpdatePhysics(t, physics_tick);
+//		accumulator -= physics_tick;
+//		t += physics_tick;
+//	}
+//	for (auto &e : SceneList)
+//	{
+//		e->Update(delta_time);
+//	}
 	
 	static float rot = 0.0f;
 	rot += 0.2f * delta_time;
 
-
+	coll = false;
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
 		test.GetTransform().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
@@ -190,7 +191,7 @@ bool update(float delta_time)
 	// Test for collision.
 	if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
 	{
-		std::cout << "Collision" << std::endl;
+		coll = true;
 	}
 
 	
@@ -199,8 +200,8 @@ bool update(float delta_time)
 	cam.update(static_cast<float>(delta_time));
 	renderer::setClearColour(0, 0, 0);
 	
-	test.Update(delta_time);
-	test1.Update(delta_time);
+	test.Update(delta_time,t);
+	test1.Update(delta_time,t);
 
 
 
@@ -212,7 +213,6 @@ bool update(float delta_time)
 
 bool render()
 {
-	
 	//phys::DrawSphere(glm::vec3(4.0f, 4.0f, 0), 1.0f, RED);
 	renderer::clear();
 	// NEED MVP.
@@ -234,7 +234,29 @@ bool render()
 	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
 	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 	test1.Render();
-	//	phys::DrawScene();
+
+	if (coll == true)
+	{
+			static geometry geom = geometry_builder::create_sphere();
+			M =test.GetTransform().get_transform_matrix();
+			N = test.GetTransform().get_normal_matrix();
+			glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
+			glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
+			glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
+			renderer::render(geom);
+
+		
+			M = test1.GetTransform().get_transform_matrix();
+			N = test1.GetTransform().get_normal_matrix();
+			glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
+			glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
+			glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
+			renderer::render(geom);
+
+		//phys::DrawSphere(test.GetSphereCollider().GetCenter(), test.GetSphereCollider().GetRadius());
+		//phys::DrawSphere(test1.GetSphereCollider().GetCenter(), test1.GetSphereCollider().GetRadius());
+
+	}//	phys::DrawScene();
 	return true;
 }
 
