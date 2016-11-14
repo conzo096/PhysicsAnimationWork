@@ -68,7 +68,7 @@ namespace phys
 
 		// Gets the normal matrix representing the defined transform
 		glm::mat3 get_normal_matrix() { return glm::mat3_cast(mRotation); }
-
+		glm::quat GetQuat() { return mRotation; }
 		glm::vec3& GetPosition() { return mPosition; }
 	};
 

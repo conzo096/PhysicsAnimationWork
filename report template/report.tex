@@ -53,21 +53,11 @@ Physics-Based Animation (SET09119)}
 
 In most physics based games, any destructible objects are normally loaded in with their fractured components on runtime. This physics simulation is looking at using a 3D implementation of voronoi diagrams to create fractures patterns. This technique is known as voronoi fracturing. When an appropriate collision has occurred then the model fragments should be created using the fragment lines as an guide to how the fragments are formed.
 
-
-The abstract is typically a single paragraph.  The abstract is the first thing people read when they encounter your report; hence, it is crucial that it outlines all the important aspects of your report.  Make your abstract incredibly concise and clear.  You start with the problem and end with why your solution is interesting.  Briefly explain why your solution is valuable and how you have evaluated it.  Keep your abstract small.  Typically, the abstract should be approximately 100 words.
-
 \end{abstract}
 
 
 
 \keywordlist
-
-%% Use this only if you're preparing a technical paper to be published in the 
-%% ACM 'Transactions on Graphics' journal.
-
-% \TOGlinkslist
-
-% \copyrightspace
 
 
 \section{Introduction}
@@ -76,19 +66,19 @@ The abstract is typically a single paragraph.  The abstract is the first thing p
 \paragraph{What problem are you solving?}
 The introduction sells your physics-based simulation effect.  It tells the reader about the problems and motivation.  It tells the reader about why it is important.  Your introduction should be five clear well defined paragraphs \cite{day2012write}.
 
-I am solving the issue of me wanting a university degree so I have to do this physics simulation to pass.
-
-In most games with destructible objects the fragments have been pre-calculated a loaded into the game and when the main object is destroyed it is replaced with the fragments instead. This simulation is looking at creating the fragments using the original model data. 
+This physics-based simulation 
+In most games with destructible objects the fragments have been pre-calculated a loaded into the game and when the main object is destroyed it is replaced with the fragments instead. This simulation is looking at creating model fragments using the original model data. 
 
 
 
 \paragraph{What is the motivation? (What's so interesting and important?)}
 Explain why your simulation is important?  Why would you need it?  Where would it be used?
-My motivation for this project is ... I had to do it for coursework.
+
+What makes this simulation so interesting is the ability to create realistic destructible meshes without loading in pre fractured models. This can be used in modelling software or if done efficiently would be used in small real-time simulations 
 
 \paragraph{Challenging \& Limitations}
 Why is it hard? (e.g., why do naive approaches fail?)
-There are several issues with tackling this problem. The two main ones are generating a voronoi diagram in 3 dimensions. This can be solved using Delauney triangulation. The second issue is performance, this is due to the creation of several objects when the model fractures. Hence optimisation will be a major part of this simulation to work effectively.
+There are several issues with tackling this simulation. The two main ones are generating a voronoi diagram in three dimensions. This can be solved using Delauney triangulation. The second issue is performance, this is due to the creation of several objects when the model fractures. Hence optimisation will be a major part of this simulation to work effectively.
 
 
 \paragraph{Our Work}
@@ -112,6 +102,9 @@ Refer to literature on the particular physics-based animation effect you want to
 
 Related work should finish with a summary paragraph - emphasising the crucial similarities or differences between existing methods presented in the literature.  For example: (1) you might want to modify the technique to run on the GPU; (2) or you combine different techniques from different authors; (3) or you are simplifying the algorithm to make it run faster.
 
+
+
+The main inspiration for this physics simulation is the Maya plugin 
 % SIMULATION
 \section{Simulation}
 
@@ -181,28 +174,6 @@ At the design stage, you are not expected to provide information about the imple
 \end{itemize}
 
 In your final report, this section will present the final implementation details. You should also reflect on the differences between the approach proposed in your design document and the final implementation.
-
-% EVALUATION
-\section{Testing and evaluation}
-In this section of the {\bf Design document}, you should describe the tests that you are considering carrying out to test your evaluation and ensure that it works within its specified boundaries. In your {\bf Final report}, you will present the actual evaluation that you have carried out and reflect on its outcome. In particular, you may consider the actual performance of your simulation in relation to your initial goals. A comparison to relevant work would also be beneficial.
-
-\section{Guidelines}
-This section should be removed from your design report. Information provided here is to help you writing up your reports.
-
-\begin{itemize}
-\item Equations should be numbered and in the correct format, e.g., Equation \ref{eq:myequation} below:
-\begin{equation} \label{eq:myequation}
- \sum_{j=1}^{z} j = \frac{z(z+1)}{2}
-\end{equation}
-\item Furthermore, if you include an equation, ensure you explain what each of the variables are (e.g., $F$ is force, $m$ is mass, and $a$ is the acceleration).
-\item Don't using 'I' or 'Me'.
-\item Each paragraph should be clear and focused, with multiple sentences that help make your point - avoid lots of single line paragraph sentence.
-\item Make sure the citations are done using the correct formatting (i.e., .bib file and let LaTeX generate the references).
-\item Every figure should have a caption, explaining what the picture is and what the reader should be looking at (i.e., what is important about the figure, what does it show)
-\item A figure should also be referenced in the body of the main text (e.g., see Figure \ref{fig:teaser})
-\item Equations should be numbered, and referenced in the text. Furthermore, ensure each of the variables in the equation are explained (i.e., don't use F=ma and not say what F, a, and m are)
-\end{itemize}
-
 
 \section{Conclusion and Future work}
 The report should finish with a summary to give a brief overview of what the reader should remember most.  What was most important? The future work part only needs to be covered in your final report.

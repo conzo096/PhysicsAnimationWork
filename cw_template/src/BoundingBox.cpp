@@ -70,18 +70,60 @@ namespace phys
 
 	bool BoundingBox::TestOBBOBB(BoundingBox b)
 	{
-		float ra, rb;
-		glm::mat3 r, absR;
+		// Store original points in an array.
+		glm::vec3 aCorners[8] = {GetBackBottomLeft(),GetBackBottomRight(),GetBackTopLeft(),GetBackTopRight(),
+								GetFrontBottomLeft(),GetFrontBottomRight(),GetFrontTopLeft(),GetFrontTopRight()};
+		glm::vec3 bCorners[8] = {b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
+								b.GetFrontBottomLeft(),b.GetFrontBottomRight(),b.GetFrontTopLeft(),b.GetFrontTopRight()};
+		// Rotate using quanternion.
 
-		// C
+		for (int i = 0; i < 8; i++)
+		{
+			aCorners[i] = aCorners[i] * GetTransform().GetQuat();
+			bCorners[i] = bCorners[i] * b.GetTransform().GetQuat();
+
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			float shape1Min, shape1Max, shape2Min, shape2Max;
+			SATtest(glm::normalize(aCorners[i]), aCorners, shape1Min, shape1Max);
+			SATtest(glm::normalize(bCorners[i]), bCorners, shape2Min, shape2Max);
+			if (!overlaps(shape1Min, shape1Max, shape2Min, shape2Max))
+			{
+				return 0; // NO INTERSECTION
+			}
+
+		}
 
 		// No detection false.
 		return false;
 	}
 
+		void SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong)
+		{
+			minAlong = HUGE, maxAlong = -HUGE;
+			for (int i = 0; i < 8; i++)
+			{
+				// just dot it to get the min/max along this axis.
+				float dotVal = glm::dot(ptSet[i], axis);
+				if (dotVal < minAlong)  minAlong = dotVal;
+				if (dotVal > maxAlong)  maxAlong = dotVal;
+			}
+		}
+		bool overlaps(float min1, float max1, float min2, float max2)
+		{
+			return isBetweenOrdered(min2, min1, max1) || isBetweenOrdered(min1, min2, max2);
+		}
+
+		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound)
+		{
+			return lowerBound <= val && val <= upperBound;
+		}
+
+		
 	void BoundingBox::PrintCorners()
 	{
-		std::cout << "Front bottom left: ";
+	/*	std::cout << "Front bottom left: ";
 		std::cout << glm::to_string(GetFrontBottomLeft()) << std::endl;;
 		std::cout << "Front bottom right: ";
 		std::cout << glm::to_string(GetFrontBottomRight()) << std::endl;;
@@ -99,7 +141,7 @@ namespace phys
 		std::cout << "Back bottom left: ";
 		std::cout << glm::to_string(GetBackBottomLeft()) << std::endl;;
 
-
+		*/
 	}
 
 

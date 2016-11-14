@@ -4,6 +4,8 @@
 #include <glm/ext.hpp>
 #include <iostream>
 #include "ModelInfo.h"
+#include "SphereCollider.h"
+
 namespace phys
 {
 	class BoundingBox
@@ -30,6 +32,7 @@ namespace phys
 
 		// Set and gets.
 		float GetVolume() { return volume; };
+		transformInfo GetTransform() { return transformation; }
 
 		// Corners using min x.
 		glm::vec3 GetFrontBottomLeft() { return glm::vec3(botX, botY, botZ); };
@@ -48,7 +51,7 @@ namespace phys
 
 
 		bool TestOBBOBB(BoundingBox b);
-
+		bool TestOBBSphere(SphereCollider s);
 
 		// Updates according to model.
 		void Update(transformInfo& model) { transformation = model;};

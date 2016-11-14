@@ -154,7 +154,6 @@ bool load_content()
 }
 
 
-
 bool update(float delta_time)
 {
 	
@@ -189,12 +188,16 @@ bool update(float delta_time)
 	
 
 	// Test for collision.
-	if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
-	{
-		coll = true;
-	}
+//	if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
+//	{
+	//	coll = true;
+	//}
 
-	
+	if (test.GetBoundingBox().TestOBBOBB(test1.GetBoundingBox()))
+		{
+			coll = true;
+		}
+
 	
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));
@@ -253,8 +256,6 @@ bool render()
 			glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 			renderer::render(geom);
 
-		//phys::DrawSphere(test.GetSphereCollider().GetCenter(), test.GetSphereCollider().GetRadius());
-		//phys::DrawSphere(test1.GetSphereCollider().GetCenter(), test1.GetSphereCollider().GetRadius());
 
 	}//	phys::DrawScene();
 	return true;
