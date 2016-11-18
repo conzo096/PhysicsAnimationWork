@@ -52,6 +52,7 @@ namespace phys
 
 		bool TestOBBOBB(BoundingBox b);
 		bool TestOBBSphere(SphereCollider s);
+		bool BoundingBox::CheckCorner(float val, float minBound, float maxBound);
 		void SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong);
 		bool overlaps(float min1, float max1, float min2, float max2);
 		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound);

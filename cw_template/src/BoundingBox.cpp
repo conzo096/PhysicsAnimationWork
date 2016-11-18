@@ -55,7 +55,7 @@ namespace phys
 
 	bool BoundingBox::TestMouseCollision(glm::vec2 pos)
 	{
-
+		 // Need to add transfrom.
 		glm::vec2 topXY = glm::vec2(topX, topY);
 		glm::vec2 botXY = glm::vec2(botX, botY);
 		glm::vec2 topXBotY = glm::vec2(topX, botY);
@@ -74,40 +74,73 @@ namespace phys
 								GetFrontBottomLeft(),GetFrontBottomRight(),GetFrontTopLeft(),GetFrontTopRight()};
 		glm::vec3 bCorners[8] = {b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
 								b.GetFrontBottomLeft(),b.GetFrontBottomRight(),b.GetFrontTopLeft(),b.GetFrontTopRight()};
-		// Rotate using quanternion.
 
 		for (int i = 0; i < 8; i++)
 		{
-			aCorners[i] = aCorners[i] * GetTransform().GetQuat();
-			bCorners[i] = bCorners[i] * b.GetTransform().GetQuat();
+
+			// Need to apply rotation to this.
+			aCorners[i] = glm::vec3(aCorners[i] + GetTransform().GetPosition());
+			bCorners[i] = glm::vec3(bCorners[i] + b.GetTransform().GetPosition());
 
 		}
+
+		float xMin = b.GetTransform().GetPosition().x + b.GetBackBottomLeft().x,
+			  xMax = b.GetTransform().GetPosition().x + b.GetBackBottomRight().x,
+			  yMin = b.GetTransform().GetPosition().y + b.GetBackBottomLeft().y,
+			  yMax = b.GetTransform().GetPosition().y + b.GetBackTopLeft().y,
+			  zMin = b.GetTransform().GetPosition().z + b.GetFrontBottomLeft().z,
+			  zMax = b.GetTransform().GetPosition().z + b.GetBackBottomLeft().z;
+		
+		float col = false;
+
+		// For each corner of the box b.
 		for (int i = 0; i < 8; i++)
 		{
-			float shape1Min, shape1Max, shape2Min, shape2Max;
-			SATtest(glm::normalize(aCorners[i]), aCorners, shape1Min, shape1Max);
-			SATtest(glm::normalize(bCorners[i]), bCorners, shape2Min, shape2Max);
-			if (!overlaps(shape1Min, shape1Max, shape2Min, shape2Max))
-			{
-				return 0; // NO INTERSECTION
-			}
+			if (CheckCorner(aCorners[i].x, xMin, xMax))
+				if (CheckCorner(aCorners[i].y, yMin, yMax))
+					if (CheckCorner(aCorners[i].z, zMin, zMax))
+						return true;
+		}
+				
 
+		//Find effect of b on a.
+			xMin = GetTransform().GetPosition().x + GetBackBottomLeft().x,
+			xMax = GetTransform().GetPosition().x + GetBackBottomRight().x,
+			yMin = GetTransform().GetPosition().y + GetBackBottomLeft().y,
+			yMax = GetTransform().GetPosition().y + GetBackTopLeft().y,
+			zMin = GetTransform().GetPosition().z + GetFrontBottomLeft().z,
+			zMax = GetTransform().GetPosition().z + GetBackBottomLeft().z;
+
+		for (int i = 0; i < 8; i++)
+		{
+			// Check x axis. 
+			if (CheckCorner(bCorners[i].x, xMin, xMax))
+				if (CheckCorner(bCorners[i].y, yMin, yMax))
+					if (CheckCorner(bCorners[i].z, zMin, zMax))
+						return true;
 		}
 
-		// No detection false.
+		// Intersects on all 3 axis.
 		return false;
 	}
 
-		void BoundingBox::SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong)
+		//void BoundingBox::SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong)
+		bool BoundingBox::CheckCorner(float val, float minBound, float maxBound)
 		{
-			minAlong = HUGE, maxAlong = -HUGE;
-			for (int i = 0; i < 8; i++)
-			{
-				// just dot it to get the min/max along this axis.
-				float dotVal = glm::dot(ptSet[i], axis);
-				if (dotVal < minAlong)  minAlong = dotVal;
-				if (dotVal > maxAlong)  maxAlong = dotVal;
-			}
+			return minBound <= val && val <= maxBound;
+
+
+			//minAlong = HUGE, maxAlong = -HUGE;
+			//for (int i = 0; i < 8; i++)
+			//{
+			//	// just dot it to get the min/max along this axis.
+			//	float dotVal = glm::dot(ptSet[i], axis);
+			//	if (dotVal < minAlong)  minAlong = dotVal;
+			//	if (dotVal > maxAlong)  maxAlong = dotVal;
+			//}
+
+			// intersection.
+		//	return true;
 		}
 		bool BoundingBox::overlaps(float min1, float max1, float min2, float max2)
 		{

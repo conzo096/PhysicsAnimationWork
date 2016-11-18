@@ -15,7 +15,6 @@ namespace phys
 
 	void Model::Update(float deltaTime, const double dt)
 	{
-		box.Update(transformation);
 		// Center is wherever object is.
 		sphere.SetCenter(transformation.GetPosition());
 
@@ -41,6 +40,7 @@ namespace phys
 		{
 			transformation.prev_pos = transformation.mPosition + ((transformation.mPosition - transformation.prev_pos)/1.2);
 		}
+		box.Update(transformation);
 	}
 
 
@@ -60,13 +60,13 @@ namespace phys
 	void Model::Render()
 	{
 		#ifdef _DEBUG
-	/*	for (int i = 0; i < information.positions.size(); i++)
-		{
-			glm::vec3 point = information.positions[i];
-			std::cout << glm::to_string(point) << std::endl;
-		}
-		std::cout << "Bounding Box" << std::endl;
-		box.PrintCorners();*/
+	//	for (int i = 0; i < information.positions.size(); i++)
+	//	{
+	//		glm::vec3 point = information.positions[i];
+	//		std::cout << glm::to_string(point) << std::endl;
+	//	}
+	//	std::cout << "Bounding Box" << std::endl;
+	//	box.PrintCorners();
 		#endif
 
 		glBindVertexArray(render._vao);
