@@ -1,6 +1,6 @@
 #pragma once
 #include "game.h"
-
+#include "stdafx.h"
 enum PHYSICSMODEL { SPHERE, BOX, POINT };
 
 class cPhysics : public Component {

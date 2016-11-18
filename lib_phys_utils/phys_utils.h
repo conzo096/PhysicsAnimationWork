@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include "graphics_framework.h"
 #include <glm\glm.hpp>
 #include <iostream>

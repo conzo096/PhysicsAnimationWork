@@ -4,6 +4,7 @@
 #include "RayCast.h"
 #include <glm/glm.hpp>
 #include <algorithm>
+#include "stdafx.h"
 
 namespace phys
 {

@@ -1,5 +1,5 @@
 #pragma once
-#pragma once
+#include "stdafx.h"
 #include <glm/gtc/quaternion.hpp>
 #include <memory>
 #include <phys_utils.h>

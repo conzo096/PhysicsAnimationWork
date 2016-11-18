@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Model.h"
+#include "stdafx.h"
 namespace phys
 {
 	class RayCast

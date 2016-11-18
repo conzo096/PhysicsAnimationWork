@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "BoundingBox.h"
 #include "SphereCollider.h"
 #include "ModelInfo.h"

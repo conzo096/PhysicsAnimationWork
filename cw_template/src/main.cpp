@@ -135,7 +135,8 @@ bool load_content()
 
 	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
-	test1.GetTransform().translate(glm::vec3(0, 8, 0));
+	test1.SetBoundingBox(BoundingBox(test1.GetModelInfo().positions));
+	test1.GetTransform().translate(glm::vec3(0, 2, 0));
 	test.UpdateBuffers();
 	test1.UpdateBuffers();
 	eff = effect();
@@ -161,12 +162,6 @@ bool update(float delta_time)
 	static double accumulator = 0.0;
 	accumulator += delta_time;
 
-//	while (accumulator > physics_tick)
-//	{
-//		UpdatePhysics(t, physics_tick);
-//		accumulator -= physics_tick;
-//		t += physics_tick;
-//	}
 //	for (auto &e : SceneList)
 //	{
 //		e->Update(delta_time);
@@ -188,13 +183,14 @@ bool update(float delta_time)
 	
 
 	// Test for collision.
-//	if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
-//	{
+	//if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
+	//{
 	//	coll = true;
 	//}
 
 	if (test.GetBoundingBox().TestOBBOBB(test1.GetBoundingBox()))
 		{
+		std::cout << "Coll" << endl;
 			coll = true;
 		}
 
@@ -203,9 +199,14 @@ bool update(float delta_time)
 	cam.update(static_cast<float>(delta_time));
 	renderer::setClearColour(0, 0, 0);
 	
-	test.Update(delta_time,t);
-	test1.Update(delta_time,t);
 
+	while (accumulator > physics_tick)
+	{
+		test.Update(delta_time, physics_tick);
+		test1.Update(delta_time, physics_tick);
+		accumulator -= physics_tick;
+		t += physics_tick;
+	}
 
 
 	// If changed.

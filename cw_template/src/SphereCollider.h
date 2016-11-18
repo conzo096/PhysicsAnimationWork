@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "stdafx.h"
 namespace phys
 {
 	class SphereCollider

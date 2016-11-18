@@ -1,5 +1,4 @@
 #include "BoundingBox.h"
-
 namespace phys
 {
 
@@ -63,14 +62,14 @@ namespace phys
 		glm::vec2 botXTopY = glm::vec2(botX, topY);
 
 		// Check if it is in range.
-		if (pos.x > botX | pos.x < topX) return false;
-		if (pos.y > botY | pos.y < topY) return false;
+		if (pos.x > botX || pos.x < topX) return false;
+		if (pos.y > botY || pos.y < topY) return false;
 		return true;
 	}
 
 	bool BoundingBox::TestOBBOBB(BoundingBox b)
 	{
-		// Store original points in an array.
+		// Store original corners in an array.
 		glm::vec3 aCorners[8] = {GetBackBottomLeft(),GetBackBottomRight(),GetBackTopLeft(),GetBackTopRight(),
 								GetFrontBottomLeft(),GetFrontBottomRight(),GetFrontTopLeft(),GetFrontTopRight()};
 		glm::vec3 bCorners[8] = {b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
@@ -99,7 +98,7 @@ namespace phys
 		return false;
 	}
 
-		void SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong)
+		void BoundingBox::SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong)
 		{
 			minAlong = HUGE, maxAlong = -HUGE;
 			for (int i = 0; i < 8; i++)
@@ -110,12 +109,12 @@ namespace phys
 				if (dotVal > maxAlong)  maxAlong = dotVal;
 			}
 		}
-		bool overlaps(float min1, float max1, float min2, float max2)
+		bool BoundingBox::overlaps(float min1, float max1, float min2, float max2)
 		{
 			return isBetweenOrdered(min2, min1, max1) || isBetweenOrdered(min1, min2, max2);
 		}
 
-		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound)
+		inline bool BoundingBox::isBetweenOrdered(float val, float lowerBound, float upperBound)
 		{
 			return lowerBound <= val && val <= upperBound;
 		}
