@@ -38,6 +38,8 @@ namespace phys
 		// Needed for physics
 		glm::vec3 prev_pos;
 		double mass;
+		// Forces
+		std::vector<glm::dvec3> forces;
 
 		// Creates a transform object
 			transformInfo() : mScale(glm::vec3(1.0f, 1.0f, 1.0f)) { mPosition = glm::vec3(0, 0, 0); }

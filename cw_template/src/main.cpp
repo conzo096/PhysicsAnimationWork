@@ -26,7 +26,6 @@ target_camera cam;
 glm::mat4 PV;
 directional_light light;
 material mat;
-bool coll = false;
 
 info LoadCube(const glm::vec3 &dims)
 {
@@ -167,11 +166,24 @@ bool update(float delta_time)
 //	{
 //		e->Update(delta_time);
 //	}
-	
+	test.GetTransform().forces.clear();
+	test1.GetTransform().forces.clear();
+	if (test.GetBoundingBox().TestOBBOBB(test1.GetBoundingBox()))
+	{
+		glm::vec3 dir1 = test.GetTransform().mPosition - test.GetTransform().prev_pos;
+		test.GetTransform().forces.push_back(-dir1+glm::vec3(0, 10, 0));
+	}
+	else if (test1.GetBoundingBox().TestOBBOBB(test.GetBoundingBox()))
+	{
+		glm::vec3 dir2 = test1.GetTransform().mPosition - test1.GetTransform().prev_pos;
+		test1.GetTransform().forces.push_back(-dir2 + glm::vec3(0,10,0));
+
+	}
+
+
+
 	static float rot = 0.0f;
 	rot += 0.2f * delta_time;
-
-	coll = false;
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
 		test.GetTransform().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
@@ -182,29 +194,6 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		test.GetTransform().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
 	
-
-	// Test for collision.
-	//if (test.GetSphereCollider().SphereSphereCollision(test1.GetSphereCollider()))
-	//{
-	//	coll = true;
-	//}
-
-	if (test.GetBoundingBox().TestOBBOBB(test1.GetBoundingBox()))
-		{
-		std::cout << "Coll" << endl;
-		std::cout << "t" + to_string(test.GetBoundingBox().GetTransform().GetPosition()) << endl;
-		std::cout << "t1" + to_string(test1.GetBoundingBox().GetTransform().GetPosition()) << endl;
-
-		coll = true;
-		}
-	if (test1.GetBoundingBox().TestOBBOBB(test.GetBoundingBox()))
-	{
-		std::cout << "Coll1" << endl;
-		std::cout << "t1" + to_string(test.GetBoundingBox().GetTransform().GetPosition()) << endl;
-		std::cout << "t11" + to_string(test1.GetBoundingBox().GetTransform().GetPosition()) << endl;
-
-		coll = true;
-	}
 
 	
 	PV = cam.get_projection() * cam.get_view();
@@ -250,44 +239,6 @@ bool render()
 	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 	test1.Render();
 
-	if (coll == true)
-	{
-
-		static geometry geom = geometry_builder::create_sphere();
-		M = test.GetBoundingBox().GetTransform().get_transform_matrix();
-		N = test.GetBoundingBox().GetTransform().get_normal_matrix();
-		glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
-		glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-		glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-		renderer::render(geom);
-
-
-		M = test1.GetBoundingBox().GetTransform().get_transform_matrix();
-		N = test1.GetBoundingBox().GetTransform().get_normal_matrix();
-		glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
-		glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-		glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-		renderer::render(geom);
-
-			//static geometry geom = geometry_builder::create_sphere();
-			//M =test.GetTransform().get_transform_matrix();
-			//N = test.GetTransform().get_normal_matrix();
-			//glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
-			//glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-			//glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-			//renderer::render(geom);
-
-		
-			//M = test1.GetTransform().get_transform_matrix();
-			//N = test1.GetTransform().get_normal_matrix();
-			//glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV*M));
-			//glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-			//glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-			//renderer::render(geom);
-
-
-
-	}//	phys::DrawScene();
 	return true;
 }
 

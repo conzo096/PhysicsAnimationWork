@@ -19,30 +19,34 @@ namespace phys
 		sphere.SetCenter(transformation.GetPosition());
 
 		// calcualte velocity from current and previous position
+		glm::dvec3 totForce = glm::dvec3(0, -10, 0);
+		for each(glm::dvec3 f in transformation.forces)
+		{
+			totForce +=f;
+		}
 		glm::dvec3 velocity = transformation.mPosition - transformation.prev_pos;
 		// set previous position to current position
 		transformation.prev_pos = transformation.mPosition;
-		//transformation.mposition += v + a * (dt ^ 2);
-
+	
 		if (transformation.mPosition.y > -6.0f)
-			transformation.mPosition += velocity + glm::dvec3(0, -10.0, 0) * pow(dt, 2);
+			transformation.mPosition += velocity + totForce * pow(dt, 2);
 
+		// Stop it if it is on the floor.
 		if (transformation.mPosition.y <= -6.0f)
 		{
-			if (transformation.mPosition.y = 0-6)
-				transformation.mPosition += glm::dvec3(0,0,0) + glm::dvec3(0, 10.0, 0) * pow(dt, 2);
-
-			transformation.prev_pos = transformation.mPosition + ((transformation.mPosition - transformation.prev_pos)/1.2);
-			// If on floor velocity counters gravity.
+			transformation.mPosition += glm::dvec3(0, 10.0, 0) * pow(dt, 2);
+			transformation.prev_pos = transformation.mPosition + (glm::vec3(velocity)/1.2f);
 		}
 
 		if (transformation.mPosition.y >= 25.0f)
 		{
-			transformation.prev_pos = transformation.mPosition + ((transformation.mPosition - transformation.prev_pos)/1.2);
+			transformation.prev_pos = transformation.mPosition + (glm::vec3(velocity) / 1.2f);
 		}
 		box.Update(transformation);
 	}
 
+	
+	
 
 	void Model::UpdateBuffers()
 	{

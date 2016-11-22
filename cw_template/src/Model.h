@@ -40,6 +40,7 @@ namespace phys
 		bool add_index_buffer(const std::vector<GLuint> &buffer);
 
 		void Update(float deltaTime, const double dt);
+		void Update(float deltaTime, const double dt,Model col);
 		void Render();
 
 
