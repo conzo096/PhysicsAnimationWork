@@ -18,12 +18,8 @@ namespace phys
 		BoundingBox box;
 		SphereCollider sphere;
 		info information;
-		transformInfo transformation;
+		RigidBody transformation;
 		renderInfo render;
-
-		
-		
-		//std::vector<std::unique_ptr<Component>> components_;
 	public:
 		Model();
 		~Model();
@@ -31,29 +27,28 @@ namespace phys
 
 		void UpdateBuffers();
 		// Adds a buffer of vec2 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
+		bool add_buffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
 		// Adds a buffer of vec3 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
+		bool add_buffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
 		// Adds a buffer of vec4 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
+		bool add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
 		// Adds an index buffer to the geometry object
 		bool add_index_buffer(const std::vector<GLuint> &buffer);
 
-		void Update(float deltaTime, const double dt);
-		void Update(float deltaTime, const double dt,Model col);
+		void Update(float deltaTime);
 		void Render();
 
 
 
 		// Set and Gets.
 		BoundingBox& GetBoundingBox() { return box; }
-		SphereCollider& GetSphereCollider() { return sphere; }
+		SphereCollider GetSphereCollider() { return sphere; }
 		info& GetModelInfo() { return information; }
-		transformInfo& GetTransform() { return transformation; }
+		RigidBody& GetRigidBody() { return transformation; }
 
 		void SetBoundingBox(BoundingBox bb) { box = bb; }
 		void SetSphereCollider(SphereCollider sc) { sphere = sc; }
 		void SetModelInfo(info i) { information = i; }
-		void SetTransform(transformInfo ti) { transformation = ti; }
+		void SetRigidBody(RigidBody ti) { transformation = ti; }
 	};
 }

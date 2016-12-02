@@ -10,7 +10,7 @@
 #include <phys_utils.h>
 #include "Model.h"
 #include "ModelInfo.h"
-
+#include "Game.h"
 
 
 using namespace std;
@@ -19,8 +19,8 @@ using namespace glm;
 using namespace phys;
 #define physics_tick 1.0 / 60.0
 
-Model test;
-Model test1;
+//static vector<unique_ptr<Model>> sceneList;
+static vector<Model> sceneList;
 effect eff;
 target_camera cam;
 glm::mat4 PV;
@@ -127,18 +127,37 @@ info LoadCube(const glm::vec3 &dims)
 bool load_content()
 {
 	phys::Init();
-	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
+	/*unique_ptr<Model> test(new Model());
+	test->SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
+	test->SetBoundingBox(BoundingBox(test->GetModelInfo().positions));
+	test->SetSphereCollider(SphereCollider(test->GetModelInfo().positions));
+	test->UpdateBuffers();
+	sceneList.push_back(move(test));
+	
+	unique_ptr<Model> test1(new Model());
+	test1->SetBoundingBox(BoundingBox(test1->GetModelInfo().positions));
+	test1->SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
+	test1->SetSphereCollider(SphereCollider(test1->GetModelInfo().positions));	
+	test1->GetRigidBody().translate(glm::vec3(0, 2, 0));
+	test1->UpdateBuffers();
+	sceneList.push_back(move(test1));*/
+
+	Model test;
+	test.SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
 	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
 	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-
-
-	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-	test1.SetBoundingBox(BoundingBox(test1.GetModelInfo().positions));
-	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
-	
-	test1.GetTransform().translate(glm::vec3(0, 2, 0));
+	//test.GetRigidBody().GetPosition() = glm::dvec3(0,2,0);
 	test.UpdateBuffers();
+	sceneList.push_back(test);
+
+	Model test1;
+	test1.SetBoundingBox(BoundingBox(test1.GetModelInfo().positions));
+	test1.SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
+	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
+	test1.GetRigidBody().translate(glm::vec3(0, 0, 0));
 	test1.UpdateBuffers();
+	sceneList.push_back(test1); 
+
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
 	eff.add_shader("shaders/phys_phong.frag", GL_FRAGMENT_SHADER);
@@ -166,33 +185,24 @@ bool update(float delta_time)
 //	{
 //		e->Update(delta_time);
 //	}
-	test.GetTransform().forces.clear();
-	test1.GetTransform().forces.clear();
-	if (test.GetBoundingBox().TestOBBOBB(test1.GetBoundingBox()))
-	{
-		glm::vec3 dir1 = test.GetTransform().mPosition - test.GetTransform().prev_pos;
-		test.GetTransform().forces.push_back(-dir1+glm::vec3(0, 10, 0));
-	}
-	else if (test1.GetBoundingBox().TestOBBOBB(test.GetBoundingBox()))
-	{
-		glm::vec3 dir2 = test1.GetTransform().mPosition - test1.GetTransform().prev_pos;
-		test1.GetTransform().forces.push_back(-dir2 + glm::vec3(0,10,0));
-
-	}
-
 
 
 	static float rot = 0.0f;
 	rot += 0.2f * delta_time;
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
-		test.GetTransform().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
+		//sceneList[0]->GetRigidBody().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
-		test.GetTransform().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
+	//	sceneList[0]->GetRigidBody().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
-		test.GetTransform().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+		//sceneList[0]->GetRigidBody().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
-		test.GetTransform().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
+
+		//sceneList[0]->GetRigidBody().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
 	
 
 	
@@ -203,15 +213,16 @@ bool update(float delta_time)
 
 	while (accumulator > physics_tick)
 	{
-		test.Update(delta_time, physics_tick);
-		test1.Update(delta_time, physics_tick);
+		UpdatePhysics(sceneList,t, physics_tick);
 		accumulator -= physics_tick;
 		t += physics_tick;
 	}
 
-
-	// If changed.
-	//	test.UpdateBuffers();
+	for (auto &e : sceneList)
+	{
+		e.Update(delta_time);
+	}
+	std::cout << to_string(sceneList[0].GetRigidBody().GetPosition()) << std::endl;
 	phys::Update(delta_time);
 	return true;
 }
@@ -219,26 +230,20 @@ bool update(float delta_time)
 bool render()
 {
 	renderer::clear();
-	// NEED MVP.
 	renderer::bind(eff);
-	mat4 M = test.GetTransform().get_transform_matrix();
-	mat3 N = test.GetTransform().get_normal_matrix();
-	RGBAInt32 col = GREY;
-	mat.set_diffuse(col.tovec4());
-	renderer::bind(mat, "mat");
-	renderer::bind(light, "light");
-	glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV * M));
-	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-	test.Render();
-
-	M = test1.GetTransform().get_transform_matrix();
-	N = test1.GetTransform().get_normal_matrix();
-	glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV * M));
-	glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
-	glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
-	test1.Render();
-
+	for (auto &e : sceneList)
+	{
+		RGBAInt32 col = GREY;
+		mat.set_diffuse(col.tovec4());
+		renderer::bind(mat, "mat");
+		renderer::bind(light, "light");
+		mat4 M = e.GetRigidBody().get_transform_matrix();
+		mat3 N = e.GetRigidBody().get_normal_matrix();
+		glUniformMatrix4fv(eff.get_uniform_location("MVP"), 1, GL_FALSE, value_ptr(PV * M));
+		glUniformMatrix4fv(eff.get_uniform_location("M"), 1, GL_FALSE, value_ptr(M));
+		glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
+		e.Render();
+	}
 	return true;
 }
 

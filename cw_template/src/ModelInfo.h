@@ -1,7 +1,10 @@
 #pragma once
 #include "stdafx.h"
+enum PHYSICSMODEL { SPHERE, BOX, POINT };
+
 namespace phys
 {
+	static glm::dvec3 GRAVITY =  glm::dvec3(0,-10,0);
 	struct info
 	{
 		// Information for model.
@@ -25,53 +28,80 @@ namespace phys
 		GLuint _vertices;
 		// The number of indices in the index buffer
 		GLuint _indices;
-		renderInfo() {}
+		renderInfo() throw(...) : _vao(0), _index_buffer(0), _vertices(0), _indices(0) {}
 	};
 
-	struct transformInfo
+	struct RigidBody
 	{
 		// Current position of model.
-		glm::vec3 mPosition;
-		glm::vec3 mScale;
-		glm::quat mRotation;
+		glm::dvec3 position;
+		glm::dvec3 scale;
+		glm::dquat orientation;
 		
 		// Needed for physics
-		glm::vec3 prev_pos;
+		glm::dvec3 prev_pos;
 		double mass;
-		// Forces
-		std::vector<glm::dvec3> forces;
+		double inverseMass;
+		glm::dvec3 forces;
+		glm::dmat3 localInvInertia;
+		glm::dmat3 worldInvInertia;
+		glm::dvec3 angVelocity;
+		glm::dvec3 torques;
+		double angularDamping;
 
 		// Creates a transform object
-			transformInfo() : mScale(glm::vec3(1.0f, 1.0f, 1.0f)) { mPosition = glm::vec3(0, 0, 0); }
+		RigidBody() : scale(glm::vec3(1.0f, 1.0f, 1.0f)), angularDamping(0.9), position(glm::vec3(0,0,0)) { }
 
 		// Translates the 3D object
-		void translate(const glm::vec3 &translation) { mPosition += translation;}
+		void translate(const glm::vec3 &translation) { position += translation;}
 
 		// Rotates the 3D object using Euler angles
-		void rotate(const glm::vec3 &rotation) {
+		void rotate(const glm::vec3 &rotation)
+		{
 			glm::quat rot(rotation);
 			rotate(rot);
 		}
 
 		// Rotate the 3D object using the given quaternion
-		void rotate(const glm::quat &q) {
-			mRotation = mRotation * q;
-			mRotation = glm::normalize(mRotation);
+		void rotate(const glm::dquat &q)
+		{
+			orientation = orientation * q;
+			orientation = glm::normalize(orientation);
 		}
 
 		// Gets the transformation matrix representing the defined transform
-		glm::mat4 get_transform_matrix() {
-			auto T = glm::translate(glm::mat4(1.0f), mPosition);
-			auto S = glm::scale(glm::mat4(1.0f),mScale);
-			auto R = glm::mat4_cast(mRotation);
+		glm::mat4 get_transform_matrix()
+		{
+			auto T = glm::translate(glm::dmat4(1.0f), position);
+			auto S = glm::scale(glm::dmat4(1.0f),scale);
+			auto R = glm::mat4_cast(orientation);
 			auto matrix = T * R * S;
 			return matrix;
 		}
 
 		// Gets the normal matrix representing the defined transform
-		glm::mat3 get_normal_matrix() { return glm::mat3_cast(mRotation); }
-		glm::quat GetQuat() { return mRotation; }
-		glm::vec3& GetPosition() { return mPosition; }
+		glm::dmat3 get_normal_matrix() { return glm::mat3_cast(orientation); }
+		glm::dquat GetQuat() { return orientation; }
+		glm::dvec3& GetPosition() { return position; }
+
+
+
+
+		void AddForceAt(const glm::dvec3 &force, const glm::dvec3 &point);
+		void AddAngularForce(const glm::dvec3 &i);
+		void AddLinearImpulse(const glm::dvec3 &v);
+		virtual void ComputeLocalInvInertiaTensor();
+		void Integrate(const double dt);
 	};
 
+
+	class Collider;
+	struct CollisionInfo
+	{
+		RigidBody *c1;
+		RigidBody *c2;
+		glm::dvec3 position;
+		glm::dvec3 normal;
+		double depth;
+	};
 };

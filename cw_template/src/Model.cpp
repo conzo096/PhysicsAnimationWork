@@ -13,41 +13,16 @@ namespace phys
 	{
 	}
 
-	void Model::Update(float deltaTime, const double dt)
+	void Model::Update(float deltaTime)
 	{
+	
 		// Center is wherever object is.
 		sphere.SetCenter(transformation.GetPosition());
 
-		// calcualte velocity from current and previous position
-		glm::dvec3 totForce = glm::dvec3(0, -10, 0);
-		for each(glm::dvec3 f in transformation.forces)
-		{
-			totForce +=f;
-		}
-		glm::dvec3 velocity = transformation.mPosition - transformation.prev_pos;
-		// set previous position to current position
-		transformation.prev_pos = transformation.mPosition;
-	
-		if (transformation.mPosition.y > -6.0f)
-			transformation.mPosition += velocity + totForce * pow(dt, 2);
-
-		// Stop it if it is on the floor.
-		if (transformation.mPosition.y <= -6.0f)
-		{
-			transformation.mPosition += glm::dvec3(0, 10.0, 0) * pow(dt, 2);
-			transformation.prev_pos = transformation.mPosition + (glm::vec3(velocity)/1.2f);
-		}
-
-		if (transformation.mPosition.y >= 25.0f)
-		{
-			transformation.prev_pos = transformation.mPosition + (glm::vec3(velocity) / 1.2f);
-		}
 		box.Update(transformation);
 	}
 
 	
-	
-
 	void Model::UpdateBuffers()
 	{
 		// Add the buffers to the geometry
@@ -188,7 +163,8 @@ namespace phys
 	}
 
 	// Adds a buffer to the geometry object
-	bool Model::add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type) {
+	bool Model::add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type)
+	{
 		// Check that index is viable
 		assert(index < 16);
 		// Check that buffer is not empty

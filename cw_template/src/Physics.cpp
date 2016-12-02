@@ -1,45 +1,74 @@
 #include "physics.h"
-#include <glm/glm.hpp>
-using namespace std;
-using namespace glm;
-static vector<cPhysics *> physicsScene;
 
-static dvec3 gravity = dvec3(0, -10.0, 0);
 
-cPhysics::cPhysics() : pm(POINT), Component("Physics") { physicsScene.push_back(this); }
+const double coef = 0.5;
+const double rigidcoef = 0.0;
 
-cPhysics::~cPhysics() {
-	auto position = std::find(physicsScene.begin(), physicsScene.end(), this);
-	if (position != physicsScene.end()) {
-		physicsScene.erase(position);
+void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
+{
+	// TODO: Fix.
+	const double w = (which ? -1.0 : 1.0);
+
+	dvec3 dv = b->position - b->prev_pos;
+	dvec3 r0 = b->position - ci.position;
+	dvec3 v0 = dv + cross(b->angVelocity, r0);
+
+	// I've butchered this formula pretty bad.
+	double j = -1.0 * (rigidcoef)+
+		dot(dv, ci.normal) /
+		(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
+
+	// stop sinking
+	j = j - (ci.depth * 0.1);
+
+	// linear impulse
+	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
+	b->AddLinearImpulse(-newVel);
+	
+	// angular impulse
+	auto gg = cross(r0, ci.normal);
+	b->angVelocity += b->worldInvInertia * cross(r0, ci.normal * j);
+}
+
+
+void Resolve(CollisionInfo &ci)
+{
+
+	auto body1 = ci.c1;
+	auto body2 = ci.c2;
+	
+	if (body1 != NULL)
+	{
+		ResolveRB(body1, ci, false);
+	}
+	if (body2 != NULL)
+	{
+		ResolveRB(body2, ci, true);
 	}
 }
 
-void cPhysics::Update(double delta) {
-	for (auto &e : physicsScene) {
-		e->GetParent()->SetPosition(e->position);
+
+
+
+
+void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const double dt)
+{
+	std::vector<CollisionInfo> collisions;
+	// Check for collisions. 
+//	for (int i = 0; i < physicsScene.size(); i++)
+//		for (int j = i + 1; j < physicsScene.size(); j++)
+//			collision::IsColliding(collisions,physicsScene[i], physicsScene[j]);
+
+	for (auto &c : collisions)
+	{
+		Resolve(c);
+		
 	}
-}
 
-void cPhysics::SetParent(Entity *p) {
-	Component::SetParent(p);
-	position = Ent_->GetPosition();
-	prev_position = position;
-}
-
-void UpdatePhysics(const double t, const double dt) {
-	for (auto &e : physicsScene) {
-		e->Render();
-		// calcualte velocity from current and previous position
-		dvec3 velocity = e->position - e->prev_position;
-		// set previous position to current position
-		e->prev_position = e->position;
-		// position += v + a * (dt^2)
-		e->position += velocity + gravity * pow(dt, 2);
-
-		if (e->position.y <= 0.0f) {
-			e->prev_position = e->position + (e->position - e->prev_position);
-		}
+	for (auto &e : physicsScene)
+	{
+		//std::cout << to_string(physicsScene[0].GetRigidBody().GetPosition()) << std::endl;
+		e.GetRigidBody().Integrate(dt);
 	}
 }
 

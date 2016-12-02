@@ -1,145 +1,122 @@
-#include "game.h"
-#include <algorithm>
-#include <glm/gtx/transform.hpp>
-using namespace glm;
-using namespace std;
-Component::Component(const string &token) {
-	token_ = token;
-	Ent_ = nullptr;
-	active_ = false;
-}
+#include "Game.h"
+//
+//bool IsCollidingCheck(std::vector<CollisionInfo> &civ, SphereCollider &c1, SphereCollider &c2)
+//{
+//	const dvec3 p1 = c1.GetCenter();
+//	const dvec3 p2 = c2.GetCenter();
+//	const dvec3 d = p2 - p1;
+//	const double distance = glm::length(d);
+//	const double sumRadius = c1.GetRadius() + c2.GetRadius();
+//	if (distance < sumRadius)
+//	{
+//		auto depth = sumRadius - distance;
+//		auto norm = -glm::normalize(d);
+//		auto pos = p1 - norm * (c1.GetRadius() - depth * 0.5f);
+//		civ.push_back({ &c1, &c2, pos, norm, depth });
+//		return true;
+//	}
+//	return false;
+//}
 
-Component::~Component() {}
-
-bool Component::IsActive() { return active_; }
-
-void Component::SetActive(bool b) { active_ = b; }
-
-void Component::SetParent(Entity *p) { Ent_ = p; }
-
-Entity *Component::GetParent() { return Ent_; }
-
-//############## Entity ###################
-
-Entity::Entity() {
-	visible_ = true;
-	changed_ = true;
-	transform.scale = vec3(1.0f, 1.0f, 1.0f);
-	transform.position = vec3(0.0f, 0.0f, 0.0f);
-	transform.orientation = quat();
-	colour = RED;
-}
-
-Entity::~Entity() {}
-
-const vec3 Entity::GetScale() const { return transform.scale; }
-
-const vec3 Entity::GetPosition() const { return transform.position; }
-
-const quat Entity::GetRotation() const { return transform.orientation; }
-const vec3 Entity::GetRotationV3() const { return glm::eulerAngles(GetRotation()); }
-
-const mat4 Entity::GetTranform() {
-	if (changed_)
+bool collision::IsColliding(std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
+{
+	enum shape { UNKOWN = 0, PLANE, SPHERE, BOX };
+	shape s1 = UNKOWN;
+	shape s2 = UNKOWN;
+	if (dynamic_cast<const SphereCollider *>(&c1.GetSphereCollider()))
 	{
-		transform.get_transform_matrix();
-		changed_ = false;
+		s1 = SPHERE;
 	}
-	return transform.get_transform_matrix();
-}
-
-const bool Entity::IsVisible() const { return false; }
-
-const string Entity::GetName() const { return name_; }
-
-void Entity::SetTransform(const mat4 m4) { assert(false); }
-
-void Entity::SetScale(const vec3 &v3)
-{
-	transform.scale = v3;
-	changed_ = true;
-}
-
-void Entity::SetPosition(const vec3 &v3)
-{
-	transform.scale = v3;
-	changed_ = true;
-}
-
-void Entity::SetRotation(const vec3 &v3)
-{
-	transform.orientation = glm::quat(v3);
-	changed_ = true;
-}
-
-void Entity::SetRotation(const quat &q)
-{
-	transform.orientation = q;
-	changed_ = true;
-}
-
-void Entity::SetVisibility(const bool b) {}
-
-void Entity::SetName(string const &name) { name_ = name; }
-
-void Entity::Update(const double delta) {
-	for (auto &c : components_) {
-		c->Update(delta);
-	}
-}
-
-void Entity::Render()
-{
-	for (auto &c : components_)
+	else if (dynamic_cast<const BoundingBox *>(&c1.GetSphereCollider()))
 	{
-		c->Render();
+		s1 = BOX;
 	}
-}
 
-void Entity::AddComponent(unique_ptr<Component> &c)
-{
-	c->SetParent(this);
-	components_.push_back(move(c));
-}
+//	else if (dynamic_cast<const cPlaneCollider *>(&c1)) {
+//		s1 = PLANE;
+//	}
+//
 
-void Entity::RemoveComponent(Component &c)
-{
-	// Todo: Test This
-	auto position =
-		find_if(components_.begin(), components_.end(), [c](unique_ptr<Component> &p) { return p.get() == &c; });
-	if (position != components_.end())
-		components_.erase(position);
-}
-
-// be careful what you do with this function...
-vector<Component *> Entity::GetComponents(string const &name) const
-{
-	vector<Component *> list;
-	if (components_.size() < 1)
+	if (dynamic_cast<const SphereCollider *>(&c2.GetSphereCollider()))
 	{
-		return list;
+		s2 = SPHERE;
 	}
-	for (auto &c : components_)
+	else if (dynamic_cast<const BoundingBox *>(&c2.GetSphereCollider()))
 	{
-		if (c->token_ == name)
+		s2 = BOX;
+	}
+//	else if (dynamic_cast<const cPlaneCollider *>(&c2)) {
+//		s2 = PLANE;
+//	}
+//
+	if (!s1 || !s2)
+	{
+		std::cout << "Routing Error" << std::endl;
+		return false;
+	}
+//	if (s1 == PLANE) {
+//		if (s2 == PLANE) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c1), dynamic_cast<const cPlaneCollider &>(c2));
+//		}
+//		else if (s2 == SPHERE) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c1), dynamic_cast<const cPlaneCollider &>(c2));
+//		}
+//		else if (s2 == BOX) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c1), dynamic_cast<const cBoxCollider &>(c2));
+//		}
+//		else {
+//			cout << "Routing Error" << endl;
+//			return false;
+//		}
+//	}
+	if (s1 == SPHERE)
+	{
+		if (s2 == PLANE)
 		{
-			list.push_back(c.get()); // It's not like we want to make safe programs anyway...
+		//	return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c1), dynamic_cast<const cPlaneCollider &>(c2));
+		}
+		else if (s2 == SPHERE)
+		{
+			const dvec3 p1 = c1.GetSphereCollider().GetCenter();
+			const dvec3 p2 = c2.GetSphereCollider().GetCenter();
+			const dvec3 d = p2 - p1;
+			const double distance = glm::length(d);
+			const double sumRadius = c1.GetSphereCollider().GetRadius() + c2.GetSphereCollider().GetRadius();
+			if (distance < sumRadius)
+			{
+				auto depth = sumRadius - distance;
+				auto norm = -glm::normalize(d);
+				auto pos = p1 - norm * (c1.GetSphereCollider().GetRadius() - depth * 0.5f);
+				civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
+				return true;
+			}
+			//return IsCollidingCheck(civ,c1.GetSphereCollider(), c2.GetSphereCollider());
+			return false;
+		}
+		else if (s2 == BOX)
+		{
+		//	return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c1), dynamic_cast<const cBoxCollider &>(c2));
+		}
+		else
+		{
+			std::cout << "Routing Error" << std::endl;
+			return false;
 		}
 	}
-	return list;
-}
-
-const vector<unique_ptr<Component>> *Entity::GetComponents() const { return &components_; }
-
-//############## Shape Renderer ###################
-
-cShapeRenderer::cShapeRenderer() : Component("ShapeRenderer") {}
-
-cShapeRenderer::~cShapeRenderer() {}
-
-void cShapeRenderer::Update(double delta) {}
-
-void cShapeRenderer::Render()
-{
-	phys::DrawSphere(Ent_->GetPosition(), 1.0f, RED);
+//	else if (s1 == BOX) {
+//		if (s2 == PLANE) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
+//		}
+//		else if (s2 == SPHERE) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
+//		}
+//		else if (s2 == BOX) {
+//			return IsCollidingCheck(civ, dynamic_cast<const cBoxCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
+//		}
+//		else {
+//			cout << "Routing Error" << endl;
+//			return false;
+//		}
+//	}
+	return false;
 }

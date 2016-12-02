@@ -56,10 +56,10 @@ namespace phys
 	bool BoundingBox::TestMouseCollision(glm::vec2 pos)
 	{
 		 // Need to add transfrom.
-		glm::vec2 topXY = glm::vec2(topX, topY);
-		glm::vec2 botXY = glm::vec2(botX, botY);
-		glm::vec2 topXBotY = glm::vec2(topX, botY);
-		glm::vec2 botXTopY = glm::vec2(botX, topY);
+		glm::dvec2 topXY = glm::dvec2(topX, topY);
+		glm::dvec2 botXY = glm::dvec2(botX, botY);
+		glm::dvec2 topXBotY = glm::dvec2(topX, botY);
+		glm::dvec2 botXTopY = glm::dvec2(botX, topY);
 
 		// Check if it is in range.
 		if (pos.x > botX || pos.x < topX) return false;
@@ -70,17 +70,17 @@ namespace phys
 	bool BoundingBox::TestOBBOBB(BoundingBox b)
 	{
 		// Store original corners in an array.
-		glm::vec3 aCorners[8] = {GetBackBottomLeft(),GetBackBottomRight(),GetBackTopLeft(),GetBackTopRight(),
+		glm::dvec3 aCorners[8] = {GetBackBottomLeft(),GetBackBottomRight(),GetBackTopLeft(),GetBackTopRight(),
 								GetFrontBottomLeft(),GetFrontBottomRight(),GetFrontTopLeft(),GetFrontTopRight()};
-		glm::vec3 bCorners[8] = {b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
+		glm::dvec3 bCorners[8] = {b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
 								b.GetFrontBottomLeft(),b.GetFrontBottomRight(),b.GetFrontTopLeft(),b.GetFrontTopRight()};
 
 		for (int i = 0; i < 8; i++)
 		{
 
 			// Need to apply rotation to this.
-			aCorners[i] = glm::vec3(aCorners[i] + GetTransform().GetPosition());
-			bCorners[i] = glm::vec3(bCorners[i] + b.GetTransform().GetPosition());
+			aCorners[i] = glm::dvec3(aCorners[i] + GetTransform().GetPosition());
+			bCorners[i] = glm::dvec3(bCorners[i] + b.GetTransform().GetPosition());
 
 		}
 

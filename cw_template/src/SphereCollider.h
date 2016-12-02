@@ -1,14 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "stdafx.h"
+#include "Collider.h"
 namespace phys
 {
-	class SphereCollider
+	class SphereCollider : public Collider
 	{
 	private:
-		glm::vec3 center;
-		float radius;
-
+		glm::dvec3 center;
 	public:
 		SphereCollider();
 		SphereCollider(std::vector<glm::vec3> points);
@@ -19,9 +18,8 @@ namespace phys
 		// Set and gets.
 
 		glm::vec3 GetCenter() { return center; };
-		float GetRadius() { return radius; };
-
 		void SetCenter(glm::vec3 c) { center = c; };
-		void SetRadius(float r) { radius = r; };
+
+		void Update(double delta) {};
 	};
 }

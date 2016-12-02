@@ -6,9 +6,10 @@
 #include <iostream>
 #include "ModelInfo.h"
 #include "SphereCollider.h"
+#include "Collider.h"
 namespace phys
 {
-	class BoundingBox
+	class BoundingBox : public Collider
 	{
 	private:
 		float topX = 0, topY = 0, topZ = 0;
@@ -16,7 +17,7 @@ namespace phys
 
 		float volume;
 
-		transformInfo transformation;
+		RigidBody transformation;
 
 		// USE TRANSFORM?
 	public:
@@ -32,7 +33,7 @@ namespace phys
 
 		// Set and gets.
 		float GetVolume() { return volume; };
-		transformInfo GetTransform() { return transformation; }
+		RigidBody GetTransform() { return transformation; }
 
 		// Corners using min x.
 		glm::vec3 GetFrontBottomLeft() { return glm::vec3(botX, botY, botZ); };
@@ -48,16 +49,16 @@ namespace phys
 
 		glm::vec3 GetBackBottomRight() { return glm::vec3(topX, botY, topZ); };
 		glm::vec3 GetBackTopRight() { return glm::vec3(topX, topY, topZ); };
+		void Update(double delta) {};
 
 
 		bool TestOBBOBB(BoundingBox b);
-		bool TestOBBSphere(SphereCollider s);
 		bool BoundingBox::CheckCorner(float val, float minBound, float maxBound);
-		void SATtest(const glm::vec3& axis, const glm::vec3 ptSet[], float& minAlong, float& maxAlong);
+		void SATtest(const glm::vec3& axis, const glm::dvec3 ptSet[], float& minAlong, float& maxAlong);
 		bool overlaps(float min1, float max1, float min2, float max2);
 		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound);
 		// Updates according to model.
-		void Update(transformInfo& model) { transformation = model;};
+		void Update(RigidBody& model) { transformation = model;};
 		void PrintCorners();
 	};
 }
