@@ -20,8 +20,23 @@ void phys::RigidBody::AddLinearImpulse(const glm::dvec3& v)
 
 void phys::RigidBody::ComputeLocalInvInertiaTensor()
 {
-	localInvInertia = glm::inverse(glm::dmat3(1.0));
-	worldInvInertia = mat4_cast(orientation) * glm::dmat4(localInvInertia) * transpose(mat4_cast(orientation));
+	 //localInvInertia = glm::inverse(glm::dmat3(1.0));
+	//worldInvInertia = mat4_cast(orientation) * glm::dmat4(localInvInertia) * glm::transpose(mat4_cast(orientation));
+	if (inverseMass == 0)
+	{
+		localInvInertia = glm::dmat3(0.0);
+		worldInvInertia = localInvInertia;
+	}
+
+	// hard coded need to add radius to this?
+	const double x2 = 4.0 * ( 5*5);
+	const double ix = (x2 + x2) / (inverseMass * 12.0);
+
+	glm::dmat3 localInvInertia = glm::dmat3(0.0);
+	localInvInertia[0][0] = 1.0 / ix;
+	localInvInertia[1][1] = 1.0 / ix;
+	localInvInertia[2][2] = 1.0 / ix;
+	worldInvInertia = mat4_cast(orientation) * glm::dmat4(localInvInertia) * glm::transpose(mat4_cast(orientation));
 }
 
 void phys::RigidBody::Integrate(const double dt)
@@ -31,8 +46,8 @@ void phys::RigidBody::Integrate(const double dt)
 	// set previous position to current position
 	prev_pos = position;
 	// position += v + a * (dt^2)
-//	position += velocity + ((forces + glm::dvec3(0,-10,0)) * inverseMass) * pow(dt, 2);
-	position += velocity + (forces + GRAVITY) * pow(dt, 2);
+	position += velocity + (forces + GRAVITY * inverseMass) * pow(dt, 2);
+	//position += velocity + (forces + GRAVITY) * pow(dt, 2);
 	
 	
 	// Remove once floor plane in.

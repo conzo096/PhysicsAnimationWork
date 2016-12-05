@@ -144,9 +144,9 @@ bool load_content()
 
 	Model test;
 	test.SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
+	test.GetRigidBody().SetInitialPosition(glm::dvec3(5, 2, 0));
 	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
 	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-	//test.GetRigidBody().GetPosition() = glm::dvec3(0,2,0);
 	test.UpdateBuffers();
 	sceneList.push_back(test);
 
@@ -191,20 +191,15 @@ bool update(float delta_time)
 	rot += 0.2f * delta_time;
 	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
-		//sceneList[0]->GetRigidBody().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
-		sceneList[0].GetRigidBody().translate(glm::vec3(0.0f, 1, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, 1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
-	//	sceneList[0]->GetRigidBody().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
-		sceneList[0].GetRigidBody().translate(glm::vec3(0.0f, -1, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, -1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
-		sceneList[0].GetRigidBody().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
-		//sceneList[0]->GetRigidBody().translate(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
-		sceneList[0].GetRigidBody().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
-
-		//sceneList[0]->GetRigidBody().translate(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
-	
-
+		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
+		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));

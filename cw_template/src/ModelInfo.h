@@ -50,7 +50,7 @@ namespace phys
 		double angularDamping;
 
 		// Creates a transform object
-		RigidBody() : scale(glm::vec3(1.0f, 1.0f, 1.0f)), angularDamping(0.9), position(glm::vec3(0,0,0)) { }
+		RigidBody() : scale(glm::vec3(1.0f, 1.0f, 1.0f)), angularDamping(0.9), position(glm::vec3(0,0,0)), mass(5), inverseMass(0.2) { }
 
 		// Translates the 3D object
 		void translate(const glm::vec3 &translation) { position += translation;}
@@ -79,12 +79,15 @@ namespace phys
 			return matrix;
 		}
 
+		void SetInitialPosition(glm::vec3 pos)
+		{
+			position = pos;
+			prev_pos = pos;
+		}
 		// Gets the normal matrix representing the defined transform
 		glm::dmat3 get_normal_matrix() { return glm::mat3_cast(orientation); }
 		glm::dquat GetQuat() { return orientation; }
 		glm::dvec3& GetPosition() { return position; }
-
-
 
 
 		void AddForceAt(const glm::dvec3 &force, const glm::dvec3 &point);
@@ -96,7 +99,7 @@ namespace phys
 
 
 	class Collider;
-	struct CollisionInfo
+	const struct CollisionInfo
 	{
 		RigidBody *c1;
 		RigidBody *c2;

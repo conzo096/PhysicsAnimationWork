@@ -64,6 +64,7 @@ namespace phys
 				ray.SetDirection(glm::vec3(0, 0, -1));
 				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetFrontBottomRight()));
 				break;
+		
 			default: break;
 			}
 			// Sample points from the ray.
@@ -92,9 +93,6 @@ namespace phys
 	glm::vec3 Sampler::SampleRandomPoint(Model model, RayCast ray)
 	{
 		glm::vec3 point1, point2, point3;
-
-	//	model.GetGeometry().
-
 
 		return glm::vec3();
 	}

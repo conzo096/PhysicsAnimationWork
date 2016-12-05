@@ -1,22 +1,6 @@
 #include "Game.h"
-//
-//bool IsCollidingCheck(std::vector<CollisionInfo> &civ, SphereCollider &c1, SphereCollider &c2)
-//{
-//	const dvec3 p1 = c1.GetCenter();
-//	const dvec3 p2 = c2.GetCenter();
-//	const dvec3 d = p2 - p1;
-//	const double distance = glm::length(d);
-//	const double sumRadius = c1.GetRadius() + c2.GetRadius();
-//	if (distance < sumRadius)
-//	{
-//		auto depth = sumRadius - distance;
-//		auto norm = -glm::normalize(d);
-//		auto pos = p1 - norm * (c1.GetRadius() - depth * 0.5f);
-//		civ.push_back({ &c1, &c2, pos, norm, depth });
-//		return true;
-//	}
-//	return false;
-//}
+
+
 
 bool collision::IsColliding(std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
 {
@@ -103,20 +87,24 @@ bool collision::IsColliding(std::vector<CollisionInfo> &civ, Model &c1,Model &c2
 			return false;
 		}
 	}
-//	else if (s1 == BOX) {
+	else if (s1 == BOX) {
 //		if (s2 == PLANE) {
 //			return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
 //		}
 //		else if (s2 == SPHERE) {
 //			return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
 //		}
-//		else if (s2 == BOX) {
-//			return IsCollidingCheck(civ, dynamic_cast<const cBoxCollider &>(c2), dynamic_cast<const cBoxCollider &>(c1));
-//		}
-//		else {
-//			cout << "Routing Error" << endl;
-//			return false;
-//		}
-//	}
+		if (s2 == BOX)
+		{
+			// CODE FOR BOX TO BOX COLLISIONS.
+
+			return false;
+		}
+		else
+		{
+			cout << "Routing Error" << endl;
+			return false;
+		}
+	}
 	return false;
 }
