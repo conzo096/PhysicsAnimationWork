@@ -11,7 +11,7 @@
 #include "Model.h"
 #include "ModelInfo.h"
 #include "Game.h"
-
+#include "MeshCut.h"
 
 using namespace std;
 using namespace graphics_framework;
@@ -200,7 +200,15 @@ bool update(float delta_time)
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
 		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
-	
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_M))
+	{
+		std::cout << "HERE WE GO" << std::endl;
+		Plane testPlane(glm::vec3(0, -5, 5), glm::vec3(0, 5, -5), glm::vec3(0, 5, 5));
+		SliceModel(sceneList[1], testPlane);
+
+	}
+
+
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));
 	renderer::setClearColour(0, 0, 0);

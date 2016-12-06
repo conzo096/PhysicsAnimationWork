@@ -9,15 +9,6 @@
 
 namespace phys
 {
-	class MeshCut
-	{
-
-	public:
-		MeshCut();
-		~MeshCut();
-
-
 		std::vector<Model> SliceModel(Model m,Plane p);
 
-	};
 }

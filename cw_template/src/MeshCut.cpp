@@ -1,80 +1,69 @@
 #include "MeshCut.h"
 namespace phys
 {
-	MeshCut::MeshCut()
+
+	glm::vec3  RayPlaneResult(RayCast ray, Plane pl)
 	{
-	}
-	MeshCut::~MeshCut()
-	{
+		float scale = -(glm::dot(ray.GetOrigin(), pl.GetNormal() + pl.GetDistance()));
+		scale /= glm::dot(ray.GetDirection(), pl .GetNormal());
+		return ray.GetOrigin() + (scale*ray.GetDirection());
+		
 	}
 
-	std::vector<Model> MeshCut::SliceModel(Model m,Plane p)
+	std::vector<Model> SliceModel(Model m,Plane p)
 	{
 		// List of new model objects. - Only two.
 		std::vector<Model> models = std::vector<Model>();
 		
-		info oldModel;
-		info meshFrag;
+		std::vector<glm::vec3> meshFrag;
 
-		glm::vec3 pointA, pointB, pointC;
-		// For each triangle.
-		for (int i = 0; i < m.GetModelInfo().positions.size()-3; i++)
+		glm::vec3 curPos = m.GetModelInfo().positions[0];
+		int side;
+		// Find starting point.
+		if (glm::dot(p.GetNormal(), curPos - p.GetPoint()) > 0)
 		{
-			pointA = m.GetModelInfo().positions[i];
-			pointB = m.GetModelInfo().positions[i+1];
-			pointC = m.GetModelInfo().positions[i+2];
-			// Keep track of what side the previous point was on.
-			int prevSide;
-
-			// Check the first point of triangle.
-			if (p.SideOfPlane(pointA) == BEHIND)
-			{
-				oldModel.positions.push_back(pointA);
-				prevSide == BEHIND;
-			}
-			else if (p.SideOfPlane(pointA) == INFRONT)
-			{
-				meshFrag.positions.push_back(pointA);
-				prevSide == INFRONT;
-			}
-			// If there is an intersection add the point to both.
-			else if (p.SideOfPlane(pointA) == ON)
-			{
-
-				oldModel.positions.push_back(pointA);
-				prevSide == ON;
-			}
-			// Check second point.
-			if (p.SideOfPlane(pointB) == BEHIND && prevSide == BEHIND)
-			{
-				oldModel.positions.push_back(pointB);
-				prevSide = BEHIND;
-			}
-			else if (p.SideOfPlane(pointB) == BEHIND && prevSide == INFRONT)
-			{
-				// INTERSECTION.
-				oldModel.positions.push_back(pointB);
-				prevSide = INFRONT;
-			}
-			else if (p.SideOfPlane(pointB) == INFRONT && prevSide == BEHIND)
-			{
-				// INTERSECTION.
-				oldModel.positions.push_back(pointB);
-				prevSide = INFRONT;
-			}
-			else if (p.SideOfPlane(pointB) == BEHIND && prevSide == INFRONT)
-			{
-				// INTERSECTION.
-				oldModel.positions.push_back(pointB);
-				prevSide = INFRONT;
-			}
-			else if (p.SideOfPlane(pointB) == BEHIND && prevSide == INFRONT)
-			{
-				// INTERSECTION.
-				oldModel.positions.push_back(pointB);
-				prevSide = INFRONT;
-			}
+			side = INFRONT;
+			meshFrag.push_back(curPos);
 		}
+		// If meshFrag is null here then starting position must be on plane.
+		else
+		{
+			side = BEHIND;
+			meshFrag.push_back(p.ClosestPointOnPlane(curPos));
+		}
+
+		// For rest of vertices in the model.
+		for (int i = 1; i < m.GetModelInfo().positions.size(); i++)
+		{
+			glm::vec3 curPos = m.GetModelInfo().positions[i];
+
+		
+			if (glm::dot(p.GetNormal(), curPos - p.GetPoint()) > 0)
+			{
+				// Same side.
+				if (side == INFRONT)
+				{
+					meshFrag.push_back(curPos);
+				}
+				// IF ON ANOTHER SIDE CALCULATE WHERE IT INTERSECTS WITH THE PLANE.
+				else
+				{
+					RayCast ray; 
+					ray.SetOrigin(curPos);
+					ray.SetDirection(curPos - m.GetModelInfo().positions[i - 1]);
+					meshFrag.push_back(RayPlaneResult(ray,p));
+				}
+			}
+			else
+			{
+				side = BEHIND;
+			}
+
+
+			std::cout << meshFrag.size() << std::endl;
+
+		}
+
 
 		return models;
 	}
