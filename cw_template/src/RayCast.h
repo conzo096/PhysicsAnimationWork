@@ -9,7 +9,7 @@ namespace phys
 	private:
 		glm::vec3 direction;
 		glm::vec3 origin;
-		float range;
+		float range = 150000;
 
 	public:
 		RayCast();

@@ -12,34 +12,26 @@ namespace phys
 
 	info SliceModel(Model m,Plane p)
 	{
-		// List of new model objects. - Only two.
-		std::vector<Model> models = std::vector<Model>();
 		
 		std::vector<glm::vec3> meshFrag;
 		std::vector<glm::vec3> meshold;
-		glm::vec3 curPos = m.GetModelInfo().positions[0];
-		int side;
-	
+		glm::vec3 curPos;
+
 		// For each triangle in the mesh.
-		for (int i = 0; i < m.GetModelInfo().positions.size()-2; i++)
+		for (int i = 0; i < m.GetModelInfo().positions.size(); i+=3)
 		{
 			// Get mesh triangle.
 			Triangle tri = Triangle(m.GetModelInfo().positions[i], m.GetModelInfo().positions[i+1], m.GetModelInfo().positions[i+2]);
 			// Check how many points of the triangle are on the correct side of the plane.
 			int pointsInfront = 0;
-			if (glm::dot(p.GetNormal(), tri.GetA()-p.GetPoint()) > 0)
-			{
+			if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) + p.GetDistance() > 0)
 				pointsInfront++;
-				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) > 0)
-				{
-					pointsInfront++;
-					if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) > 0)
-					{
-						pointsInfront++;
-					}
-				}
-			}
-			// If no points are on the correct side ignore.
+			if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) + p.GetDistance() > 0)
+				pointsInfront++;
+			if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) + p.GetDistance() > 0)
+				pointsInfront++;
+
+			// If no points are on the correct side add points which would lie on the plane.
 			if (pointsInfront == 0)
 			{
 				meshFrag.push_back(p.ClosestPointOnPlane(tri.GetA()));
@@ -68,9 +60,11 @@ namespace phys
 						ray.SetDirection(tri.GetB() - ray.GetOrigin());
 						meshFrag.push_back(RayPlaneResult(ray, p));
 					
+						ray.SetOrigin(meshFrag[meshFrag.size() - 1]);
 						ray.SetDirection(tri.GetC() - ray.GetOrigin());
 						meshFrag.push_back(RayPlaneResult(ray, p));
 					}
+					// fix this.
 					if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) + p.GetDistance() > 0)
 					{
 						ray.SetOrigin(tri.GetB());
@@ -78,10 +72,17 @@ namespace phys
 						meshFrag.push_back(RayPlaneResult(ray, p));
 
 						meshFrag.push_back(tri.GetB());
+
+						// THIS IS INCORRECT.
 						
-						ray.SetDirection(tri.GetC() - ray.GetOrigin());
-						meshFrag.push_back(RayPlaneResult(ray, p));
+						//ray.SetDirection(ray.GetOrigin() - tri.GetC());
+						//meshFrag.push_back(RayPlaneResult(ray, p));
+
+						// This should not work?
+						meshFrag.push_back(p.ClosestPointOnPlane(tri.GetC()));
 					}
+
+
 					if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) + p.GetDistance() > 0)
 					{
 						
@@ -89,13 +90,22 @@ namespace phys
 						ray.SetDirection(tri.GetA() - ray.GetOrigin());
 						meshFrag.push_back(RayPlaneResult(ray, p));
 					
+						ray.SetOrigin(meshFrag[meshFrag.size() - 1]);
 						ray.SetDirection(tri.GetB() - ray.GetOrigin());
 						meshFrag.push_back(RayPlaneResult(ray, p));
 
 						meshFrag.push_back(tri.GetC());
 					}
+
+					/*std::cout << "T" << to_string(tri.GetA()) << std::endl;
+					std::cout << "M" << to_string(meshFrag[meshFrag.size() - 3]) << std::endl;
+					std::cout << "T" << to_string(tri.GetB()) << std::endl;
+					std::cout << "M" << to_string(meshFrag[meshFrag.size() - 2]) << std::endl;
+					std::cout << "T" << to_string(tri.GetC()) << std::endl;
+					std::cout << "M" << to_string(meshFrag[meshFrag.size()-1]) << std::endl;*/
+
 				}
-				// Find intersection point. - could find what point is on the incorrect side then correct it?
+				// Find intersection point. - THIS IS WHAT IS BORKEN
 				else if (pointsInfront == 2)
 				{
 					if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) + p.GetDistance() < 0)
@@ -116,19 +126,23 @@ namespace phys
 						meshFrag.push_back(tri.GetB());
 						meshFrag.push_back(p.ClosestPointOnPlane(tri.GetC()));
 					}
+					//std::cout << "T" << to_string(tri.GetA()) << std::endl;
+					//std::cout << "M" << to_string(meshFrag[meshFrag.size()-3]) << std::endl;
+					//std::cout << "T" << to_string(tri.GetB()) << std::endl;
+					//std::cout << "M" << to_string(meshFrag[meshFrag.size() - 2]) << std::endl;
+					//std::cout << "T" << to_string(tri.GetC()) << std::endl;
+					//std::cout << "M" << to_string(meshFrag[meshFrag.size()-1]) << std::endl;
 				}
 			}
 		}
 
 
-		std::cout << "Frag:"  + std::to_string(meshFrag.size()) << std::endl;
-		std::cout << "old:" + std::to_string(meshold.size()) << std::endl;
-		std::cout << "Tot:" + std::to_string(meshFrag.size() + meshold.size()) << std::endl;
-
-		for (int i = 0; i < meshFrag.size() - 1; i++)
-			std::cout << glm::to_string(meshFrag[i]) << std::endl;
-
-		info newFragment = info(meshFrag);
+		for (int i = 0; i < m.GetModelInfo().positions.size() - 1; i++)
+		{
+			std::cout << "OLD: " << glm::to_string(m.GetModelInfo().positions[i]) << std::endl;
+			std::cout <<"NEW: " << glm::to_string(meshFrag[i]) << std::endl;
+		}
+			info newFragment = info(meshFrag);
 
 		return newFragment;
 	}

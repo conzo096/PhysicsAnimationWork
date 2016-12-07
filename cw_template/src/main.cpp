@@ -103,12 +103,13 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
+		sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
 		std::cout << "HERE WE GO" << std::endl;
 		Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
+		//Plane testPlane(glm::vec3(-0.5, 0,0), glm::vec3(0.5, 0.5, 0), glm::vec3(0, 0.5, 0));
 		Model test;
 		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
 		test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 20, 0));
