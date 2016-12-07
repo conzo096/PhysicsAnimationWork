@@ -6,9 +6,9 @@
 #include <algorithm>
 #include "stdafx.h"
 #include "Plane.h"
-
+#include "Triangle.h"
 namespace phys
 {
-		std::vector<Model> SliceModel(Model m,Plane p);
+		info SliceModel(Model m,Plane p);
 
 }

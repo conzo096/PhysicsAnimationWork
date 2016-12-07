@@ -8,6 +8,11 @@ namespace phys
 
 	}
 
+	Model::Model(std::vector<glm::vec3> pos)
+	{
+
+	}
+
 
 	Model::~Model()
 	{

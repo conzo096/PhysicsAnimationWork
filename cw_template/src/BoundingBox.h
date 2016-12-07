@@ -16,8 +16,7 @@ namespace phys
 		float botX = 0, botY = 0, botZ = 0;
 
 		float volume;
-
-		RigidBody transformation;
+		glm::dquat rotation;
 
 		// USE TRANSFORM?
 	public:
@@ -33,7 +32,6 @@ namespace phys
 
 		// Set and gets.
 		float GetVolume() { return volume; };
-		RigidBody GetTransform() { return transformation; }
 
 		// Corners using min x.
 		glm::vec3 GetFrontBottomLeft() { return glm::vec3(botX, botY, botZ); };
@@ -58,7 +56,7 @@ namespace phys
 		bool overlaps(float min1, float max1, float min2, float max2);
 		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound);
 		// Updates according to model.
-		void Update(RigidBody& model) { transformation = model;};
+		void Update(RigidBody& model) { rotation = model.GetQuat(); SetPosition(model.GetPosition()); };
 		void PrintCorners();
 	};
 }

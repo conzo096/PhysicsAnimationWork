@@ -9,15 +9,6 @@ namespace phys
 
 	BoundingBox::BoundingBox(std::vector<glm::vec3> points)
 	{
-	//	glm::vec3 maxPoint, minPoint;
-	//	for (auto &v : points)
-	//	{
-	//		minPoint = glm::min(minPoint, v);
-	//		maxPoint = glm::max(maxPoint, v);
-	//	}
-		
-	///*
-		//THIS IS WRONG FIX IT.
 		// Find top x,y,z.
 		for (glm::vec3 pos : points)
 		{
@@ -37,14 +28,13 @@ namespace phys
 				botZ = pos.z;
 		}
 
-	//*/
 			// Square and square root to ensure it is a positive number?
 			float length = topX - botX;
 			float width = topY - botY;
 			float height = topZ - botZ;
 
 			CalculateVolume(length,width,height);
-
+			SetRadius(glm::length(glm::dvec3(GetFrontTopLeft()) - GetPosition()));
 	}
 
 
@@ -79,17 +69,17 @@ namespace phys
 		{
 
 			// Need to apply rotation to this.
-			aCorners[i] = glm::dvec3(aCorners[i] + GetTransform().GetPosition());
-			bCorners[i] = glm::dvec3(bCorners[i] + b.GetTransform().GetPosition());
+			aCorners[i] = glm::dvec3(aCorners[i] + GetPosition());
+			bCorners[i] = glm::dvec3(bCorners[i] + GetPosition());
 
 		}
 
-		float xMin = b.GetTransform().GetPosition().x + b.GetBackBottomLeft().x,
-			  xMax = b.GetTransform().GetPosition().x + b.GetBackBottomRight().x,
-			  yMin = b.GetTransform().GetPosition().y + b.GetBackBottomLeft().y,
-			  yMax = b.GetTransform().GetPosition().y + b.GetBackTopLeft().y,
-			  zMin = b.GetTransform().GetPosition().z + b.GetFrontBottomLeft().z,
-			  zMax = b.GetTransform().GetPosition().z + b.GetBackBottomLeft().z;
+		float xMin = b.GetPosition().x + b.GetBackBottomLeft().x,
+			  xMax = b.GetPosition().x + b.GetBackBottomRight().x,
+			  yMin = b.GetPosition().y + b.GetBackBottomLeft().y,
+			  yMax = b.GetPosition().y + b.GetBackTopLeft().y,
+			  zMin = b.GetPosition().z + b.GetFrontBottomLeft().z,
+			  zMax = b.GetPosition().z + b.GetBackBottomLeft().z;
 		
 		float col = false;
 
@@ -104,12 +94,12 @@ namespace phys
 				
 
 		//Find effect of b on a.
-			xMin = GetTransform().GetPosition().x + GetBackBottomLeft().x,
-			xMax = GetTransform().GetPosition().x + GetBackBottomRight().x,
-			yMin = GetTransform().GetPosition().y + GetBackBottomLeft().y,
-			yMax = GetTransform().GetPosition().y + GetBackTopLeft().y,
-			zMin = GetTransform().GetPosition().z + GetFrontBottomLeft().z,
-			zMax = GetTransform().GetPosition().z + GetBackBottomLeft().z;
+			xMin = GetPosition().x + GetBackBottomLeft().x,
+			xMax = GetPosition().x + GetBackBottomRight().x,
+			yMin = GetPosition().y + GetBackBottomLeft().y,
+			yMax = GetPosition().y + GetBackTopLeft().y,
+			zMin = GetPosition().z + GetFrontBottomLeft().z,
+			zMax = GetPosition().z + GetBackBottomLeft().z;
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -128,19 +118,6 @@ namespace phys
 		bool BoundingBox::CheckCorner(float val, float minBound, float maxBound)
 		{
 			return minBound <= val && val <= maxBound;
-
-
-			//minAlong = HUGE, maxAlong = -HUGE;
-			//for (int i = 0; i < 8; i++)
-			//{
-			//	// just dot it to get the min/max along this axis.
-			//	float dotVal = glm::dot(ptSet[i], axis);
-			//	if (dotVal < minAlong)  minAlong = dotVal;
-			//	if (dotVal > maxAlong)  maxAlong = dotVal;
-			//}
-
-			// intersection.
-		//	return true;
 		}
 		bool BoundingBox::overlaps(float min1, float max1, float min2, float max2)
 		{

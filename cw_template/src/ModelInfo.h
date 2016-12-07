@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include <set>
 enum PHYSICSMODEL { SPHERE, BOX, POINT };
 
 namespace phys
@@ -14,6 +15,8 @@ namespace phys
 		std::vector<glm::vec4> colours;
 		std::vector<GLuint> indices;
 		info() {}
+
+		info(std::vector <glm::vec3> pos);
 	};
 
 	struct renderInfo

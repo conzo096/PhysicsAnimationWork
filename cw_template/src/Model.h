@@ -13,8 +13,6 @@ namespace phys
 	{
 	private:
 
-		//Transform transform;
-	//	geometry geom;
 		BoundingBox box;
 		SphereCollider sphere;
 		info information;
@@ -22,6 +20,7 @@ namespace phys
 		renderInfo render;
 	public:
 		Model();
+		Model(std::vector<glm::vec3> pos);
 		~Model();
 
 

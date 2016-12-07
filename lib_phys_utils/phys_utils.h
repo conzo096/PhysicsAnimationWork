@@ -3,6 +3,7 @@
 #include "graphics_framework.h"
 #include <glm\glm.hpp>
 #include <iostream>
+#include "..\\cw_template\src\ModelInfo.h"
 #define RED                                                                                                            \
   { 4278190335 }
 #define GREEN                                                                                                          \
@@ -54,4 +55,5 @@ void DrawCube(const glm::mat4 &m, const RGBAInt32 col = RED);
 glm::vec3 projectOntoPlane(const glm::vec3 &point, const glm::vec3 &planeNormal,
                            const glm::vec3 &planePosition = glm::vec3(0));
 
+phys::info LoadCube(glm::vec3 &dims);
 std::ostream &operator<<(std::ostream &out, const glm::vec3 &v);
