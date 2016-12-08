@@ -29,7 +29,6 @@ material mat;
 
 bool load_content()
 {
-	glDisable(GL_CULL_FACE);
 	phys::Init();
 	/*unique_ptr<Model> test(new Model());
 	test->SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
@@ -51,7 +50,7 @@ bool load_content()
 	test.GetRigidBody().SetInitialPosition(glm::dvec3(5, 2, 0));
 	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
 	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-	test.UpdateBuffers();
+	test.CreateBuffers();
 	sceneList.push_back(test);
 
 	Model test1;
@@ -59,8 +58,9 @@ bool load_content()
 	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
 	test1.GetRigidBody().translate(glm::vec3(0, 0, 0));
-	test1.UpdateBuffers();
+	test1.CreateBuffers();
 	sceneList.push_back(test1); 
+
 
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
@@ -106,17 +106,18 @@ bool update(float delta_time)
 		sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
-		std::cout << "HERE WE GO" << std::endl;
-		Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
-		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
-		//Plane testPlane(glm::vec3(-0.5, 0,0), glm::vec3(0.5, 0.5, 0), glm::vec3(0, 0.5, 0));
-		Model test;
-		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
-		test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 20, 0));
-		test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
-		test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-		test.UpdateBuffers();
-		sceneList.push_back(test);
+		//std::cout << "HERE WE GO" << std::endl;
+		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
+		////Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
+		////Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		//Model test;
+		//test.SetModelInfo(SliceModel(sceneList[1], testPlane));
+		//test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
+		//std::cout << to_string(test.GetRigidBody().position) << std::endl;
+		//test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
+		//test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
+		//test.CreateBuffers();
+		//sceneList.push_back(test);
 	}
 
 

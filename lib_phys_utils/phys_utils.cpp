@@ -1,3 +1,4 @@
+#pragma once
 #include "phys_utils.h"
 #include <glm\glm.hpp>
 #include <graphics_framework.h>

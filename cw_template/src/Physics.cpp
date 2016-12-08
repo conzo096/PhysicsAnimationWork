@@ -6,8 +6,6 @@ const double rigidcoef = 0.0;
 
 void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
 {
-	// TODO: Fix.
-	//const double w = (which ? -1.0 : 1.0);
 
 	dvec3 dv = b->position - b->prev_pos;
 	dvec3 r0 = b->position - ci.position;
@@ -19,7 +17,7 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
 		(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking
-	j = j - (ci.depth * 1.1);
+	j = j - (ci.depth * 0.1);
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
@@ -57,7 +55,7 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 	// Check for collisions. 
 	for (int i = 0; i < physicsScene.size(); i++)
 		for (int j = i + 1; j < physicsScene.size(); j++)
-			collision::IsColliding(collisions,physicsScene[i], physicsScene[j]);
+			collision::IsColliding(physicsScene,collisions,physicsScene[i], physicsScene[j]);
 
 	for (auto &c : collisions)
 	{

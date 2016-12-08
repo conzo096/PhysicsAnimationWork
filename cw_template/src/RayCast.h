@@ -27,7 +27,7 @@ namespace phys
 		glm::vec3 GetOrigin() { return origin; };
 		float GetRange() { return range; };
 
-		void SetDirection(glm::vec3 dir) { direction = dir; };
+		void SetDirection(glm::vec3 dir) { glm::normalize(direction = dir); };
 		void SetOrigin(glm::vec3 ori) { origin = ori; };
 		void SetRange(float r) { range = r; };
 		void SetRandomOrigin(glm::vec3 minBounds, glm::vec3 maxBounds);

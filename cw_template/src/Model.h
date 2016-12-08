@@ -24,13 +24,23 @@ namespace phys
 		~Model();
 
 
+		// Update buffers.
+		void CreateBuffers();
 		void UpdateBuffers();
-		// Adds a buffer of vec2 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
 		// Adds a buffer of vec3 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
 		// Adds a buffer of vec4 data to the geometry object
-		bool add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+
+
+
+		// Adds a buffer of vec2 data to the geometry object
+		bool add_buffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+		// Adds a buffer of vec3 data to the geometry object
+		bool add_buffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+		// Adds a buffer of vec4 data to the geometry object
+		bool add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
 		// Adds an index buffer to the geometry object
 		bool add_index_buffer(const std::vector<GLuint> &buffer);
 

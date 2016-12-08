@@ -80,7 +80,7 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model c1, Model c2)
 }
 
 
-bool collision::IsColliding(std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
+bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
 {
 	
 	// Check sphere sphere collision before box collision.
@@ -96,7 +96,21 @@ bool collision::IsColliding(std::vector<CollisionInfo> &civ, Model &c1,Model &c2
 		auto norm = -glm::normalize(d);
 		auto pos = p1 - norm * (c1.GetSphereCollider().GetRadius() - depth * 0.5f);
 		civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
-		return true;
+		
+		// BAD CONNER - infinite loop.
+		//std::cout << "HERE WE GO" << std::endl;
+		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
+		////Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
+		////Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		//Model test;
+		//test.SetModelInfo(SliceModel(sceneList[1], testPlane));
+		//test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3, 0, 0));
+		//std::cout << to_string(test.GetRigidBody().position) << std::endl;
+		//test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
+		//test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
+		//test.CreateBuffers();
+		//sceneList.push_back(test);
+		//return true;
 	}
 
 

@@ -1,5 +1,4 @@
 #include "Plane.h"
-
 phys::Plane::Plane(glm::vec3 a, glm::vec3 b, glm::vec3 c)
 {
 	glm::vec3 ba = b - a;
@@ -15,11 +14,11 @@ int phys::Plane::SideOfPlane(glm::vec3 p)
 	int side = 0;
 
 	if (glm::dot((p - point), normal) + distance > 0)
-		return INFRONT;
+		return 1;
 	else if (glm::dot((p - point), normal) + distance < 0)
-		return BEHIND;
+		return -1;
 	else
-		return ON;
+		return 0;
 
 }
 

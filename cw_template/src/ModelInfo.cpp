@@ -70,6 +70,9 @@ void phys::RigidBody::Integrate(const double dt)
 	
 }
 
+#pragma once
+#include "Plane.h"
+
 phys::info::info(std::vector<glm::vec3> pos)
 {
 	// Find corners. 
@@ -89,6 +92,15 @@ phys::info::info(std::vector<glm::vec3> pos)
 	{
 		colours.push_back(glm::vec4(1.0f, 0,0,1.0f));
 		normals.push_back(box_normals[i/4]);
+	}
+	// NEED TO FIX NORMALS.
+	for (int i = 0; i < pos.size(); i += 3)
+	{
+		phys::Plane tri = phys::Plane(pos[i], pos[i + 1], pos[i + 2]);
+		normals.push_back(tri.GetNormal());
+		normals.push_back(tri.GetNormal());
+		normals.push_back(tri.GetNormal());
+
 	}
 	for (unsigned int i = 0; i < 4; ++i)
 		tex_coords.push_back(box_texcoords[i] * glm::vec2(1));

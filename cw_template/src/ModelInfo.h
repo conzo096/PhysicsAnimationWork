@@ -1,7 +1,5 @@
 #pragma once
 #include "stdafx.h"
-#include <set>
-enum PHYSICSMODEL { SPHERE, BOX, POINT };
 
 namespace phys
 {

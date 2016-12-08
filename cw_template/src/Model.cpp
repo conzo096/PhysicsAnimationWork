@@ -1,4 +1,4 @@
-#include "Model.h"
+﻿#include "Model.h"
 #include "stdafx.h"
 #define GLM_ENABLE_EXPERIMENTAL
 namespace phys
@@ -28,7 +28,7 @@ namespace phys
 	}
 
 	
-	void Model::UpdateBuffers()
+	void Model::CreateBuffers()
 	{
 		// Add the buffers to the geometry
 		add_buffer(information.positions, BUFFER_INDEXES::POSITION_BUFFER);
@@ -40,19 +40,38 @@ namespace phys
 		if (information.indices.size() != 0)
 			add_index_buffer(information.indices);
 	}
+	void Model::UpdateBuffers()
+	{
+		// Update model buffers.
+		UpdateBuffer(information.positions, BUFFER_INDEXES::POSITION_BUFFER);
+		UpdateBuffer(information.colours, BUFFER_INDEXES::COLOUR_BUFFER);
+		if (information.normals.size() != 0)
+			UpdateBuffer(information.normals, BUFFER_INDEXES::NORMAL_BUFFER);
+		if (information.tex_coords.size() != 0)
+			UpdateBuffer(information.tex_coords, BUFFER_INDEXES::TEXTURE_COORDS_0);
+		if (information.indices.size() != 0)
+			add_index_buffer(information.indices);
+	}
 
+	bool Model::UpdateBuffer(const std::vector<glm::vec2>& buffer, GLuint index, GLenum buffer_type)
+	{
+		glBufferSubData(GL_ARRAY_BUFFER,0, buffer.size() * sizeof(glm::vec2), &buffer[0]);
+		return true;
+	}
+	bool Model::UpdateBuffer(const std::vector<glm::vec3>& buffer, GLuint index, GLenum buffer_type)
+	{
+		//glClearBufferData​(GLenum target​​, GLenum internalformat​, GLenum format​, GLenum type​, const void * data​);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size() * sizeof(glm::vec3), &buffer[0]);
+		return true;
+	}	
+	bool Model::UpdateBuffer(const std::vector<glm::vec4>& buffer, GLuint index, GLenum buffer_type)
+	{
+		//glClearBufferData​(GLenum target​​, GLenum internalformat​, GLenum format​, GLenum type​, const void * data​);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size() * sizeof(glm::vec4), &buffer[0]);
+		return true;
+	}
 	void Model::Render()
 	{
-		#ifdef _DEBUG
-	//	for (int i = 0; i < information.positions.size(); i++)
-	//	{
-	//		glm::vec3 point = information.positions[i];
-	//		std::cout << glm::to_string(point) << std::endl;
-	//	}
-	//	std::cout << "Bounding Box" << std::endl;
-	//	box.PrintCorners();
-		#endif
-
 		glBindVertexArray(render._vao);
 		// If there is an index buffer then use to render
 		if (render._index_buffer != 0)
@@ -70,7 +89,7 @@ namespace phys
 	}
 
 
-
+	
 	// Adds a buffer to the geometry object
 	bool Model::add_buffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type) {
 		// Check that index is viable

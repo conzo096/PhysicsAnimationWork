@@ -2,7 +2,7 @@
 
 namespace phys
 {
-	enum side {BEHIND = -1, ON = 0, INFRONT = 1};
+//	enum side {BEHIND = -1, ON = 0, INFRONT = 1};
 
 	class Plane
 	{

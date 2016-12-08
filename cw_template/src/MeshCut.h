@@ -9,6 +9,6 @@
 #include "Triangle.h"
 namespace phys
 {
-		info SliceModel(Model m,Plane p);
+		info SliceModel(Model& m,Plane p);
 
 }
