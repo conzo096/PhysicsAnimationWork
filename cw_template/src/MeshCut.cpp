@@ -254,15 +254,19 @@ namespace phys
 		}
 
 
-		// Create mesh fragment.
-//		Model newMod = Model(meshFrag);
-//		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition());
-	
-		// Update original model.
-		Model updateMod = Model(meshFrag);
-	//	updateMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition()+glm::dvec3(0,2,0));
-		m = updateMod;
+		info updatedModel = info(updateOrigMesh);
+		//Model newMod = Model(updatedModel);
+		/*newMod.SetModelInfo(updatedModel);
+		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition());
+		newMod.SetBoundingBox(BoundingBox(newMod.GetModelInfo().positions));
+		newMod.SetSphereCollider(SphereCollider(newMod.GetModelInfo().positions));*/
+		//newMod.CreateBuffers();
 
-		return info(updateOrigMesh);
+				m.SetModelInfo(updatedModel);
+				m.UpdateBuffers();
+
+		info newFragment = info(meshFrag);
+	//	m = newMod;
+		return newFragment;
 	}
 }

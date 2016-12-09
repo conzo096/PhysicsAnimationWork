@@ -14,7 +14,7 @@ namespace phys
 		// Create bounding volumes.
 		sphere = SphereCollider(pos);
 		box = BoundingBox(pos);
-		CreateBuffers();
+	//	CreateBuffers();
 
 	}
 
@@ -23,7 +23,7 @@ namespace phys
 		information = i;
 		sphere = SphereCollider(i.positions);
 		box = BoundingBox(i.positions);
-		CreateBuffers();
+		//CreateBuffers();
 
 	}
 
@@ -44,6 +44,7 @@ namespace phys
 	
 	void Model::CreateBuffers()
 	{
+		//render._vao = 0;
 		// Add the buffers to the geometry
 		add_buffer(information.positions, BUFFER_INDEXES::POSITION_BUFFER);
 		add_buffer(information.colours, BUFFER_INDEXES::COLOUR_BUFFER);

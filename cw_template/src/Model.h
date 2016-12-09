@@ -63,7 +63,7 @@ namespace phys
 			information = i;
 			sphere = SphereCollider(information.positions);
 			box = BoundingBox(information.positions);
-			CreateBuffers();
+			//CreateBuffers();
 		}
 		void SetRigidBody(RigidBody ti) { rigidBody = ti; }
 	};
