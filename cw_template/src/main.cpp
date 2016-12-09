@@ -93,13 +93,10 @@ bool update(float delta_time)
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
 		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		Model test;
-		info i = SliceModel(sceneList[1], testPlane);
-		test.SetModelInfo(i);
+		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
 		test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
-		std::cout << to_string(test.GetRigidBody().position) << std::endl;
-		//test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
-		//test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
 		test.CreateBuffers();
+		test.Update(0);
 		sceneList.push_back(test);
 	}
 

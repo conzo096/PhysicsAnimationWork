@@ -20,6 +20,7 @@ namespace phys
 		renderInfo render;
 	public:
 		Model();
+//		Model(Model& m);
 		Model(std::vector<glm::vec3> pos);
 		Model(info i);
 		~Model();
@@ -55,6 +56,8 @@ namespace phys
 		SphereCollider GetSphereCollider() { return sphere; }
 		info& GetModelInfo() { return information; }
 		RigidBody& GetRigidBody() { return rigidBody; }
+		renderInfo& GetRender() { return render; }
+
 
 		void SetBoundingBox(BoundingBox bb) { box = bb; }
 		void SetSphereCollider(SphereCollider sc) { sphere = sc; }

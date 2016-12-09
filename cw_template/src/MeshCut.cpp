@@ -255,18 +255,13 @@ namespace phys
 
 
 		info updatedModel = info(updateOrigMesh);
-		//Model newMod = Model(updatedModel);
-		/*newMod.SetModelInfo(updatedModel);
-		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition());
-		newMod.SetBoundingBox(BoundingBox(newMod.GetModelInfo().positions));
-		newMod.SetSphereCollider(SphereCollider(newMod.GetModelInfo().positions));*/
-		//newMod.CreateBuffers();
+		Model newMod = Model(updateOrigMesh);
+		newMod.SetRigidBody(m.GetRigidBody());
+		m = newMod;
+		m.CreateBuffers();
+		m.Update(0);
 
-				m.SetModelInfo(updatedModel);
-				m.UpdateBuffers();
+		return info(meshFrag);
 
-		info newFragment = info(meshFrag);
-	//	m = newMod;
-		return newFragment;
 	}
 }

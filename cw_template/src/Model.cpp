@@ -8,14 +8,21 @@ namespace phys
 
 	}
 
+	//Model::Model(Model& m)
+	//{
+	//	box = m.GetBoundingBox();
+	//	sphere = m.GetSphereCollider();
+	//	information = m.GetModelInfo();
+	//	rigidBody = m.GetRigidBody();
+	//	render = m.GetRender();
+	//}
+
 	Model::Model(std::vector<glm::vec3> pos)
 	{
 		information = info(pos);
 		// Create bounding volumes.
 		sphere = SphereCollider(pos);
 		box = BoundingBox(pos);
-	//	CreateBuffers();
-
 	}
 
 	Model::Model(info i)
@@ -23,8 +30,7 @@ namespace phys
 		information = i;
 		sphere = SphereCollider(i.positions);
 		box = BoundingBox(i.positions);
-		//CreateBuffers();
-
+	
 	}
 
 
@@ -52,8 +58,8 @@ namespace phys
 			add_buffer(information.normals, BUFFER_INDEXES::NORMAL_BUFFER);
 		if (information.tex_coords.size() != 0)
 			add_buffer(information.tex_coords, BUFFER_INDEXES::TEXTURE_COORDS_0);
-		if (information.indices.size() != 0)
-			add_index_buffer(information.indices);
+		//if (information.indices.size() != 0)
+		//	add_index_buffer(information.indices);
 	}
 	void Model::UpdateBuffers()
 	{
@@ -156,7 +162,8 @@ namespace phys
 		// Check that buffer is not empty
 		assert(buffer.size() > 0);
 		// Check if geometry initialised
-		if (render._vao == 0) {
+		if (render._vao == 0)
+ {
 			// Create the vertex array object
 			glGenVertexArrays(1, &render._vao);
 			// Check for any OpenGL error

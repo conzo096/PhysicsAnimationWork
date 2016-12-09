@@ -53,8 +53,8 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					// Direction that the object is to be pushed towards.
 					auto norm = glm::normalize(d);
 					// How far the object is the be moved in order to be out of the model.
-					auto pos = p1 - norm * (c1.GetBoundingBox().GetRadius() - depth * 0.1f);
-					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
+					auto pos = p1 - norm * (c1.GetBoundingBox().GetRadius() - depth);
+					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth*1.1 });
 					return true;
 				}
 	}
@@ -67,6 +67,7 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 		yMax = a.GetPosition().y + a.GetBackTopLeft().y,
 		zMin = a.GetPosition().z + a.GetFrontBottomLeft().z,
 		zMax = a.GetPosition().z + a.GetBackBottomLeft().z;
+
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -81,11 +82,12 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					const dvec3 p2 = b.GetPosition();
 					const dvec3 d = p2 - p1;
 					const double distance = glm::length(d);
+					
 					const double sumRadius = a.GetRadius() + b.GetRadius();
 					auto depth = sumRadius - distance;
-					auto norm = -glm::normalize(d);
-					auto pos = p1 - norm * (c1.GetBoundingBox().GetRadius() - depth * 0.5f);
-					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
+					auto norm = glm::normalize(d);
+					auto pos = p1 - norm * (c1.GetBoundingBox().GetRadius() + depth*1.1);
+					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth*0.1f });
 					return true;
 
 				}
@@ -93,6 +95,35 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 
 }
 
+
+
+bool collision::OnFloor(Model &c1, PlaneCollider &pc)
+{
+	BoundingBox a = c1.GetBoundingBox();
+	
+	glm::dvec3 aCorners[8] = { a.GetBackBottomLeft(),a.GetBackBottomRight(),a.GetBackTopLeft(),a.GetBackTopRight(),
+		a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
+
+	for (int i = 0; i < 8; i++)
+		aCorners[i] = glm::dvec3(aCorners[i] + a.GetPosition()) *c1.GetRigidBody().orientation;
+
+
+
+	double distances[8];
+	bool isCollided = false;
+	for (int i = 0; i < 8; i++) {
+		dvec3 planeNormal = pc.GetNormal();
+
+		distances[i] = dot(a.GetPosition() - pc.GetPosition(), pc.GetNormal()) + dot(pc.GetNormal(), pc.GetPosition());
+
+		if (distances[i] > 0)
+		{
+			//civ.push_back({ &p, &b, points[i] + planeNormal * distances[i], planeNormal, distances[i] });
+			isCollided = true;
+		}
+	}
+	return isCollided;
+}
 
 bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
 {

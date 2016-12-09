@@ -17,11 +17,11 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
 		(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking
-	j = j - (ci.depth * 0.1);
+	j = j - (ci.depth * 0.05);
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
-	b->AddLinearImpulse(-newVel);
+	b->AddLinearImpulse(-newVel/1.2);
 	
 	// angular impulse
 	auto gg = cross(r0, ci.normal);

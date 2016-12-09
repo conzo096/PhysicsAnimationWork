@@ -20,8 +20,8 @@ void phys::RigidBody::AddLinearImpulse(const glm::dvec3& v)
 
 void phys::RigidBody::ComputeLocalInvInertiaTensor()
 {
-	 localInvInertia = glm::inverse(glm::dmat3(1.0));
-	worldInvInertia = mat4_cast(orientation) * glm::dmat4(localInvInertia) * glm::transpose(mat4_cast(orientation));
+//	 localInvInertia = glm::inverse(glm::dmat3(1.0));
+//	worldInvInertia = mat4_cast(orientation) * glm::dmat4(localInvInertia) * glm::transpose(mat4_cast(orientation));
 	if (inverseMass == 0)
 	{
 		localInvInertia = glm::dmat3(0.0);

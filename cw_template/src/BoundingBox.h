@@ -49,14 +49,7 @@ namespace phys
 		glm::vec3 GetBackTopRight() { return glm::vec3(topX, topY, topZ); };
 		void Update(double delta) {};
 
-
-		bool TestOBBOBB(BoundingBox b);
-		bool BoundingBox::CheckCorner(float val, float minBound, float maxBound);
-		void SATtest(const glm::vec3& axis, const glm::dvec3 ptSet[], float& minAlong, float& maxAlong);
-		bool overlaps(float min1, float max1, float min2, float max2);
-		inline bool isBetweenOrdered(float val, float lowerBound, float upperBound);
 		// Updates according to model.
 		void Update(RigidBody& model) { rotation = model.GetQuat(); SetPosition(model.GetPosition()); };
-		void PrintCorners();
 	};
 }
