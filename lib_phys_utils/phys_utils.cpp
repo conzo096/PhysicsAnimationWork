@@ -46,8 +46,8 @@ void Init() {
 
 
 void Update(double delta_time) {
-  PV = cam.get_projection() * cam.get_view();
-  cam.update(static_cast<float>(delta_time));
+ // PV = cam.get_projection() * cam.get_view();
+  //cam.update(static_cast<float>(delta_time));
   renderer::setClearColour(0, 0, 0);
 }
 
@@ -225,7 +225,8 @@ void DrawScene() {
   glBlendEquation(GL_FUNC_ADD);
   static geometry geom = geometry_builder::create_plane();
   renderer::bind(effG);
-  auto M = glm::scale(mat4(1.0f), vec3(10.0f, 1.0, 10.0f));
+  auto M = glm::translate(mat4(1.0f), vec3(0, -6, 0));
+  M = glm::scale(M, vec3(10.0f, 1.0, 10.0f));
   mat3 N(1.0f);
   RGBAInt32 col = GREY;
   mat.set_diffuse(col.tovec4());

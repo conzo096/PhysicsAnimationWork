@@ -10,6 +10,20 @@ namespace phys
 
 	Model::Model(std::vector<glm::vec3> pos)
 	{
+		information = info(pos);
+		// Create bounding volumes.
+		sphere = SphereCollider(pos);
+		box = BoundingBox(pos);
+		CreateBuffers();
+
+	}
+
+	Model::Model(info i)
+	{
+		information = i;
+		sphere = SphereCollider(i.positions);
+		box = BoundingBox(i.positions);
+		CreateBuffers();
 
 	}
 
@@ -22,9 +36,9 @@ namespace phys
 	{
 	
 		// Center is wherever object is.
-		sphere.SetCenter(transformation.GetPosition());
+		sphere.SetCenter(rigidBody.GetPosition());
 
-		box.Update(transformation);
+		box.Update(rigidBody);
 	}
 
 	

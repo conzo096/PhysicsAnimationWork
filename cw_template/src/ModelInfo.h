@@ -90,6 +90,8 @@ namespace phys
 		glm::dquat GetQuat() { return orientation; }
 		glm::dvec3& GetPosition() { return position; }
 
+		void SetMass(float m) { mass = m; inverseMass = 1 / mass; }
+		float GetMass() { return mass; }
 
 		void AddForceAt(const glm::dvec3 &force, const glm::dvec3 &point);
 		void AddAngularForce(const glm::dvec3 &i);

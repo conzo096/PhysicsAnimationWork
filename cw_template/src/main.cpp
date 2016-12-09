@@ -9,8 +9,9 @@
 #include <graphics_framework.h>
 #include <phys_utils.h>
 #include "Model.h"
+#include "PlaneCollider.h"
 #include "ModelInfo.h"
-#include "Game.h"
+#include "Colliding.h"
 #include "MeshCut.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ using namespace phys;
 
 //static vector<unique_ptr<Model>> sceneList;
 static vector<Model> sceneList;
+PlaneCollider sceneFloor;
 effect eff;
 target_camera cam;
 glm::mat4 PV;
@@ -30,44 +32,27 @@ material mat;
 bool load_content()
 {
 	phys::Init();
-	/*unique_ptr<Model> test(new Model());
-	test->SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
-	test->SetBoundingBox(BoundingBox(test->GetModelInfo().positions));
-	test->SetSphereCollider(SphereCollider(test->GetModelInfo().positions));
-	test->UpdateBuffers();
-	sceneList.push_back(move(test));
-	
-	unique_ptr<Model> test1(new Model());
-	test1->SetBoundingBox(BoundingBox(test1->GetModelInfo().positions));
-	test1->SetModelInfo(LoadCube(glm::dvec3(1, 1, 1)));
-	test1->SetSphereCollider(SphereCollider(test1->GetModelInfo().positions));	
-	test1->GetRigidBody().translate(glm::vec3(0, 2, 0));
-	test1->UpdateBuffers();
-	sceneList.push_back(move(test1));*/
 
 	Model test;
 	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-	test.GetRigidBody().SetInitialPosition(glm::dvec3(5, 2, 0));
-	test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
-	test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-	test.CreateBuffers();
+	test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 10, 0));
+	test.GetRigidBody().SetMass(10);
 	sceneList.push_back(test);
 
 	Model test1;
-	test1.SetBoundingBox(BoundingBox(test1.GetModelInfo().positions));
-	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-	test1.SetSphereCollider(SphereCollider(test1.GetModelInfo().positions));
-	test1.GetRigidBody().translate(glm::vec3(0, 0, 0));
-	test1.CreateBuffers();
+	test1.SetModelInfo(LoadCube(glm::vec3(2, 2, 2)));
+	test1.GetRigidBody().SetInitialPosition(glm::vec3(0, 0, 0));
 	sceneList.push_back(test1); 
+
+	sceneFloor = PlaneCollider();
 
 
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
 	eff.add_shader("shaders/phys_phong.frag", GL_FRAGMENT_SHADER);
 	eff.build();
-	cam.set_position(vec3(10.0f, 10.0f, 10.0f));
-	cam.set_target(vec3(0.0f, 0.0f, 0.0f));
+	cam.set_position(vec3(10.0f, 10.0f, 0.0f));
+	cam.set_target(vec3(0.0f, -10.0f, 0.0f));
 	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
 	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 	light.set_ambient_intensity(vec4(0.5f, 0.5f, 0.5f, 1.0f));
@@ -85,15 +70,9 @@ bool update(float delta_time)
 	static double accumulator = 0.0;
 	accumulator += delta_time;
 
-//	for (auto &e : SceneList)
-//	{
-//		e->Update(delta_time);
-//	}
-
-
 	static float rot = 0.0f;
-	rot += 0.2f * delta_time;
-	phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
+	//rot += 0.2f * delta_time;
+	//phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, 1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
@@ -106,18 +85,12 @@ bool update(float delta_time)
 		sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
-		//std::cout << "HERE WE GO" << std::endl;
-		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
-		////Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
-		////Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
-		//Model test;
-		//test.SetModelInfo(SliceModel(sceneList[1], testPlane));
-		//test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
-		//std::cout << to_string(test.GetRigidBody().position) << std::endl;
-		//test.SetBoundingBox(BoundingBox(test.GetModelInfo().positions));
-		//test.SetSphereCollider(SphereCollider(test.GetModelInfo().positions));
-		//test.CreateBuffers();
-		//sceneList.push_back(test);
+		std::cout << "HERE WE GO" << std::endl;
+		Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
+		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
+		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		sceneList.push_back(Model(SliceModel(sceneList[1], testPlane)));
+		std::cout << to_string(sceneList[sceneList.size()-1].GetRigidBody().position) << std::endl;
 	}
 
 
@@ -137,8 +110,7 @@ bool update(float delta_time)
 	{
 		e.Update(delta_time);
 	}
-	//std::cout << to_string(sceneList[0].GetRigidBody().GetPosition()) << std::endl;
-	phys::Update(delta_time);
+	//phys::Update(delta_time);
 	return true;
 }
 
@@ -159,6 +131,7 @@ bool render()
 		glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 		e.Render();
 	}
+	phys::DrawScene();
 	return true;
 }
 

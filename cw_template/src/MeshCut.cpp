@@ -254,27 +254,15 @@ namespace phys
 		}
 
 
+		// Create mesh fragment.
+//		Model newMod = Model(meshFrag);
+//		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition());
+	
+		// Update original model.
+		Model updateMod = Model(meshFrag);
+	//	updateMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition()+glm::dvec3(0,2,0));
+		m = updateMod;
 
-
-		for (int i = 0; i < m.GetModelInfo().positions.size() - 1; i++)
-		{
-			std::cout << "OLD: " << glm::to_string(m.GetModelInfo().positions[i]) << std::endl;
-			std::cout <<"NEW: " << glm::to_string(meshFrag[i]) << std::endl;
-		}
-
-		info updatedModel = info(updateOrigMesh);
-		Model newMod = Model();
-		newMod.SetModelInfo(updatedModel);
-		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition());
-		newMod.SetBoundingBox(BoundingBox(newMod.GetModelInfo().positions));
-		newMod.SetSphereCollider(SphereCollider(newMod.GetModelInfo().positions));
-		newMod.CreateBuffers();
-		m = newMod;
-//		m.SetModelInfo(updatedModel);
-//		m.UpdateBuffers();
-
-		info newFragment = info(meshFrag);
-
-		return newFragment;
+		return info(updateOrigMesh);
 	}
 }

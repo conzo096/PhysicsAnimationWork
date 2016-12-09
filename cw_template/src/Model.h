@@ -16,11 +16,12 @@ namespace phys
 		BoundingBox box;
 		SphereCollider sphere;
 		info information;
-		RigidBody transformation;
+		RigidBody rigidBody;
 		renderInfo render;
 	public:
 		Model();
 		Model(std::vector<glm::vec3> pos);
+		Model(info i);
 		~Model();
 
 
@@ -53,11 +54,17 @@ namespace phys
 		BoundingBox& GetBoundingBox() { return box; }
 		SphereCollider GetSphereCollider() { return sphere; }
 		info& GetModelInfo() { return information; }
-		RigidBody& GetRigidBody() { return transformation; }
+		RigidBody& GetRigidBody() { return rigidBody; }
 
 		void SetBoundingBox(BoundingBox bb) { box = bb; }
 		void SetSphereCollider(SphereCollider sc) { sphere = sc; }
-		void SetModelInfo(info i) { information = i; }
-		void SetRigidBody(RigidBody ti) { transformation = ti; }
+		void SetModelInfo(info i)
+		{
+			information = i;
+			sphere = SphereCollider(information.positions);
+			box = BoundingBox(information.positions);
+			CreateBuffers();
+		}
+		void SetRigidBody(RigidBody ti) { rigidBody = ti; }
 	};
 }
