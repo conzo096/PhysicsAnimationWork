@@ -51,11 +51,11 @@ void phys::RigidBody::Integrate(const double dt)
 	
 	
 	// Remove once floor plane in.
-	if (position.y <= -6.0f)
-	{
-		prev_pos = position + (glm::dvec3(velocity) / 1.2);
-		position += glm::dvec3(0, 6.0, 0) * pow(dt, 2);
-	}
+	//if (position.y <= -6.0f)
+	//{
+	//	prev_pos = position + (glm::dvec3(velocity) / 1.2);
+	//	position += glm::dvec3(0, 6.0, 0) * pow(dt, 2);
+	//}
 	
 	
 	forces = glm::dvec3(0);

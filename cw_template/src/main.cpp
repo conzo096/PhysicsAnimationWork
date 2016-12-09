@@ -46,7 +46,8 @@ bool load_content()
 	sceneList.push_back(test1); 
 
 	sceneFloor = PlaneCollider();
-
+	sceneFloor.SetPosition(glm::vec3(0, -6, 0));
+	sceneFloor.SetNormal(glm::vec3(0, 1, 0));
 
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
@@ -83,20 +84,21 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-		sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
+		//	sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
+		std::cout << to_string(sceneList[0].GetRigidBody().position) << std::endl;
 	if(spacePressed == false)
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
 		spacePressed = true;
 		std::cout << "HERE WE GO" << std::endl;
-		Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
+		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
-		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		Model test;
 		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
 		test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
 		test.CreateBuffers();
-		test.Update(0);
+		test.Update(delta_time);
 		sceneList.push_back(test);
 	}
 
@@ -108,7 +110,7 @@ bool update(float delta_time)
 
 	while (accumulator > physics_tick)
 	{
-		UpdatePhysics(sceneList,t, physics_tick);
+		UpdatePhysics(sceneList,t, physics_tick, sceneFloor);
 		accumulator -= physics_tick;
 		t += physics_tick;
 	}

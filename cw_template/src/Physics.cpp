@@ -4,7 +4,16 @@
 const double coef = 0.5;
 const double rigidcoef = 0.0;
 
-void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
+void ResolveFloorCollision(RigidBody* const b, const CollisionInfo &ci, PlaneCollider pc)
+{
+	// If the angle the cube is 90 degree to the plane normal then there is no anglular rotation.
+	// This is to fix the rotation problem that occurs when the box tries to lie on a plane.
+	glm::dquat rot = b->GetQuat();
+	if (glm::dot(glm::axis(rot), pc.GetNormal()) == 90)
+		std::cout << "90" << std::endl;
+
+}
+void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 {
 
 	dvec3 dv = b->position - b->prev_pos;
@@ -21,7 +30,7 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
-	b->AddLinearImpulse(-newVel/1.2);
+	b->AddLinearImpulse(-newVel);
 	
 	// angular impulse
 	auto gg = cross(r0, ci.normal);
@@ -29,43 +38,55 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci, bool which)
 }
 
 
-void Resolve(const CollisionInfo &ci)
+void Resolve(const CollisionInfo &ci, PlaneCollider& pc)
 {
 
 	auto body1 = ci.c1;
 	auto body2 = ci.c2;
 	
+
+	// If there is only collision then it is because the other is the floor collider, which does not get changed.
+	if (body1 != NULL && body2 == NULL)
+	{
+	//	ResolveFloorCollision(ci.c1, ci, pc);
+	}
+
 	if (body1 != NULL)
 	{
-		ResolveRB(body1, ci, false);
+		ResolveRB(body1, ci);
 	}
 	if (body2 != NULL)
 	{
-		ResolveRB(body2, ci, true);
+		ResolveRB(body2, ci);
 	}
 }
 
-
-
-
-
-void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const double dt)
+void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const double dt, phys::PlaneCollider floor)
 {
 	std::vector<CollisionInfo> collisions;
-	// Check for collisions. 
+
+	// Check if objects collide with each other.
 	for (int i = 0; i < physicsScene.size(); i++)
 		for (int j = i + 1; j < physicsScene.size(); j++)
 			collision::IsColliding(physicsScene,collisions,physicsScene[i], physicsScene[j]);
 
 	for (auto &c : collisions)
 	{
-		Resolve(c);
-		
+		Resolve(c, floor);
+	}
+	collisions.clear();
+	// Check if any object collide with the plane.
+	for (int i = 0; i < physicsScene.size(); i++)
+		collision::OnFloor(collisions, physicsScene[i], floor);
+
+	for (auto &c : collisions)
+	{
+		Resolve(c,floor);		
 	}
 
 	for (auto &e : physicsScene)
 	{
-		//std::cout << to_string(physicsScene[0].GetRigidBody().GetPosition()) << std::endl;
+
 		e.GetRigidBody().Integrate(dt);
 	}
 }

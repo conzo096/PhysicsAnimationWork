@@ -20,7 +20,6 @@ namespace phys
 		renderInfo render;
 	public:
 		Model();
-//		Model(Model& m);
 		Model(std::vector<glm::vec3> pos);
 		Model(info i);
 		~Model();
@@ -29,11 +28,11 @@ namespace phys
 		// Update buffers.
 		void CreateBuffers();
 		void UpdateBuffers();
-		bool UpdateBuffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec2> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
 		// Adds a buffer of vec3 data to the geometry object
-		bool UpdateBuffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec3> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
 		// Adds a buffer of vec4 data to the geometry object
-		bool UpdateBuffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_STREAM_DRAW);
+		bool UpdateBuffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_STATIC_DRAW);
 
 
 
