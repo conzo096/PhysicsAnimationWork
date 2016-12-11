@@ -7,7 +7,7 @@
 % % Citations/references are in report.bib 
 
 \documentclass[conference,backref=page]{acmsiggraph}
-
+\usepackage{listings}
 \TOGonlineid{45678}
 \TOGvolume{0}
 \TOGnumber{0}
@@ -28,14 +28,14 @@
 
 
 \title{Mesh Destruction\\
-	   Design Document}
+	   Final Report}
 
-\author{Conner Weatherston \thanks{e-mail:40167111@live.napier.ac.uk} \\
+\author{Students Name \thanks{e-mail:40167111@live.napier.ac.uk} \\
 Edinburgh Napier University\\
 Physics-Based Animation (SET09119)}
 \pdfauthor{Conner Weatherston}
 
-\keywords{bounding volumes, rigid bodies, real-time, voronoi fracture}
+\keywords{Rigid body, collision detection, bounding volumes, mesh destruction, OpenGL, real-time, physics, computer graphics}
 
 \begin{document}
 
@@ -50,8 +50,10 @@ Physics-Based Animation (SET09119)}
 \raggedbottom
 
 \begin{abstract}
+In most physics based games, any destructible objects are normally loaded in with their fractured components on runtime. What this
+physics simulation is hoping to look at is ways to slice meshes in real time to generate new fragments.
 
-In most physics based games, any destructible objects are normally loaded in with their fractured components on runtime. This physics simulation is looking at using a 3D implementation of voronoi diagrams to create fractures patterns. This technique is known as voronoi fracturing. When an appropriate collision has occurred then the model fragments should be created using the fragment lines as an guide to how the fragments are formed.
+The approach looked at the in the design report suggested a technique called voronoi shattering in order to break the objects up into random fragments. However this was not implemented in the final simulation due to difficulty and time constraints. Therefore a simpler approach was used where the object is split is recursively using a series of random planes which intersect through the model mesh.
 
 \end{abstract}
 
@@ -62,123 +64,124 @@ In most physics based games, any destructible objects are normally loaded in wit
 
 \section{Introduction}
 
-
-\paragraph{What problem are you solving?}
-The introduction sells your physics-based simulation effect.  It tells the reader about the problems and motivation.  It tells the reader about why it is important.  Your introduction should be five clear well defined paragraphs \cite{day2012write}.
-
-This physics-based simulation 
-In most games with destructible objects the fragments have been pre-calculated a loaded into the game and when the main object is destroyed it is replaced with the fragments instead. This simulation is looking at creating model fragments using the original model data. 
-
-
-
-\paragraph{What is the motivation? (What's so interesting and important?)}
-Explain why your simulation is important?  Why would you need it?  Where would it be used?
-
-What makes this simulation so interesting is the ability to create realistic destructible meshes without loading in pre fractured models. This can be used in modelling software or if done efficiently would be used in small real-time simulations 
-
-\paragraph{Challenging \& Limitations}
-Why is it hard? (e.g., why do naive approaches fail?)
-There are several issues with tackling this simulation. The two main ones are generating a voronoi diagram in three dimensions. This can be solved using Delauney triangulation. The second issue is performance, this is due to the creation of several objects when the model fractures. Hence optimisation will be a major part of this simulation to work effectively.
-
-
-\paragraph{Our Work}
-Why hasn't it been solved before or what are you doing differently? How does yours differ?
-What's your approach?  How will you solve the problem?  Are their any specific limitations?
-
-
-\paragraph{Starting examples:}
-This report attempts to addresses the problem of the applicability of …. in ….. by considering …...  It surveys a number of answers to this question.  Our method offers a simplistic, robust, and reliable scheme.
-
-This report attempts to introduce the reader to …… 
-(Catch the readers attention, Anecdotes, Proverbs, Facts, Real-World Examples...)
-
-The problem this report addresses is …..
-
+In most video games, destructible objects are pre-computed models which are the equivalent of the model fragments. The purpose of this simulation is to create proper mesh fragments in real-time just using the original meshes information. A key part of this simulation is optimisation as creating new objects is an expensive process.  
 
 \section{Related Work}
-Refer to literature on the particular physics-based animation effect you want to synthesize (e.g., published articles, books, conference proceedings, web articles) provide a comprehensive review - and use the correct citation format, e.g., \cite{Sako00}. Although the theoretical and/or algorithmic details of the papers you will review may occasionally be beyond your current knowledge, you should be able to grasp the general principles of the techniques used and assess whether you are capable of developing similar techniques, more advanced techniques, or whether you would need to simplify these techniques. 
 
+Currently there are several plugins that use either the same idea or
+has a similar solution. However these are mostly implemented into
+modelling software where optimisation is not an issue as it is not
+required in a real-time environment. The most similar idea is the
+plugin by [Esteve 2011]. The tutorial provided gave a insight on how to split the meshes by using planes.
 
-
-Related work should finish with a summary paragraph - emphasising the crucial similarities or differences between existing methods presented in the literature.  For example: (1) you might want to modify the technique to run on the GPU; (2) or you combine different techniques from different authors; (3) or you are simplifying the algorithm to make it run faster.
-
-
-
-The main inspiration for this physics simulation is the Maya plugin 
-% SIMULATION
 \section{Simulation}
 
 \paragraph{Overview}
-You will start with a brief overview of the core principles and mechanism behind your effect.  This should be reflected in your final implementation, so consider what you will actually be implementing. What components make up the effect and how are they connected.
 
-How does your simulation work and what are the reasons it is important.  This is a decisive section to put together as it will help you in the rest of your physics-based animation development.
 
 \paragraph{Detailed description}
-Provide a more detailed description of how the simulation functions. Consider the following aspects of the simulation:
-\begin{itemize}
-\item {\bf Functionality}: Describe what your simulation does and the anticipated boundaries of its functionality.
- The simulation will have several objects in the scene that interact with each other. When a appropriate collision between two models has occurred. One of the models will shatter.
- 
-\item {\bf Method}: Present the theory underpinning your technique (Mathematical, physics or algorithmic principles) and the technique itself. You should be able to articulate a general algorithm at this stage.
-\item {\bf Control/interactivity}: Describe the interactive how the simulation will be controlled
- This simulation will be interactive as the user can move one of the models around in the scene as well as being able to change the number of fragments a model can generate. 
-\end{itemize}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pseudo code.
-1. Sample points inside the model.
-2. Generate Delaunay triangulation.
-3. Obtain dual voronoi diagrams from Delaunay triagnulation.
-4. For each voronoi cell in model. (Size is number of sample points).
-		for each plane in cell.
-				split model.
-
-
-
-1. Sample points.
-1.1 Get how many fragments are needed.
-1.2 For(int i=0; i <numFragments; i++)
-		1.2.1 change face ray starts on.
-			1.2.2 end point is opposite face.
-			 1.2.3 Find in/out point of ray.
-			 1.2.4 for (samplesPerRay)
-			    1.2.3 samples.add(point);
-			    end for
-			end for
-
-
-3. Detect suitable collisions
 \paragraph{Implementation}
-At the design stage, you are not expected to provide information about the implementation, but you need to consider and reflect on the technical challenges that you will need to address. You also need to provide information about relevant technical aspects of your project. Please consider the following points:
+
+The implementation of this project can be broken into three major segments. These are: rigid bodies, collision detection and meshes. 
+
+\paragraph {Collision detection} \hfill
+
+There are three types of colliders that are used in this simulation. These are the plane collider, the sphere collider and the orientated bounding box.
+
+
+\subparagraph{Collider} \hfill
+
+This is the basic collider, which every other collider will inherit from. As it is the most general form it only contains a position.
+
+\begin{lstlisting}
+Class Collider
+{
+	Vect3 position;
+	
+	// This is used to update the position of the colliders.
+	void Update(); 
+}
+\end{lstlisting}
+
+\subparagraph{Plane collider} \hfill
+
+The plane collider is used to simulate the floor. However as the floor is not meant to have true rigid body properties. i.e it should not 'fall' as it will never move, therefore there is a plane collider and a graphic drawn for it rather than it being a true 'Model' object in the scene.
+
+\begin{lstlisting}
+Class PlaneCollider : public Collider
+{
+	Vec3 normal;
+}
+\end{lstlisting}
+
+\subparagraph{Sphere collider}  \hfill 
+
+This is a simple sphere which encompasses the entire model object. It only requires a position in the world, which is updated whenever the rigid body is updated, and a radius. The radius is calculated by finding the distance from the centre of the model to its furthest point. 
+
+\begin{lstlisting}
+Class SphereCollider : public Collider
+{
+	float radius;
+}
+\end{lstlisting}
+
+\subparagraph{Orientated bounding box}\hfill 
+
+This is similar to an axis aligned box however it can handle rotations. Detecting collisions for an OBB however is more cost as there are more potential ways two OBB can collide. Therefore, in order to minimise calculations, the OBB checks only occur if both object pass the sphere collider check. 
+
+\begin{lstlisting}
+Class BoundingBox : public Collider
+{
+	float topX,topY,topZ;
+	float botX,botY,botZ;
+}
+\end{lstlisting}
+With the 6 points provided the corners of the box can be easily computed.
+
+
+\subparagraph{Intersections}
+
+
+\paragraph{Rigid bodies} \hfill
+
+In order to have a simulation which simulates proper physics, rigid bodies need to be attached to the objects. An rigid body consists of the following: position, previous position, mass, inverse mass, orientation, forces being applied to the object. 
+
+
+\paragraph{Meshes}
+
+\paragraph{Update} \hfill
+
+To create an realistic simulation a concept of a 'physics tick' is required. This is in place in order to decouple the physics from the frame-rate. Thus the physics will run the same if the frame rate is at 10 FPS or 60 FPS.  
+
+There are three parts to the physics update. There are summerised below:
+
+\subparagraph{Colliding object}
+The first stage is detecting if any objects are currently colliding with each other.
+If there is a collision between two objects then a struct called 'CollisionInfo' is created which contains the following data:
 
 \begin{itemize}
-\item  {\bf Major Software Development Tasks} What are the major pieces of development to make the software work?  Identify the main tasks from the simulation design, particularly items you feel will be difficult to implement. 
-\item {\bf Risks} What are the risks in your development?  Consider which pieces of functionality will be difficult to implement, and what are the options if you cannot achieve them.
-\item {\bf External Libraries} Are you using any external libraries or resources to implement your simulation?  If you are using any libraries outside the ones developed in the practical sessions, these will need to be described here.
+\item{Pointer to object A.}
+\item{Pointer to object B.}
+\item{Depth of overlap in objects.}
+\item{Direction to be pushed towards.}
+\item{Position of collision.}
 \end{itemize}
 
-In your final report, this section will present the final implementation details. You should also reflect on the differences between the approach proposed in your design document and the final implementation.
+This struct is then pushed back onto a vector; which contains all the collisions that have happened between the models in this current update.
+\subparagraph{Resolve collisions}\hfill
+
+For each of the collisions that have occurred a resolve stage needs to occur. This calculates what should happen to each object in terms of direction it is now going; the velocity of the objects and if the proper conditions have been met, one of the objects shatter.
+\subparagraph{Integrate rigid bodies}\hfill
+
+After collisions have been sorted, each model need to update there current position, previous position, orientation.
+
+% EVALUATION
+\section{Testing and evaluation}
+
 
 \section{Conclusion and Future work}
-The report should finish with a summary to give a brief overview of what the reader should remember most.  What was most important? The future work part only needs to be covered in your final report.
-
-
+To conclude, I am done.
 % \section*{Acknowledgements}
 
 
