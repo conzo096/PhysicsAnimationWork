@@ -48,7 +48,7 @@ void Resolve(const CollisionInfo &ci, PlaneCollider& pc)
 	// If there is only collision then it is because the other is the floor collider, which does not get changed.
 	if (body1 != NULL && body2 == NULL)
 	{
-	//	ResolveFloorCollision(ci.c1, ci, pc);
+		ResolveFloorCollision(ci.c1, ci, pc);
 	}
 
 	if (body1 != NULL)
@@ -70,11 +70,11 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 		for (int j = i + 1; j < physicsScene.size(); j++)
 			collision::IsColliding(physicsScene,collisions,physicsScene[i], physicsScene[j]);
 
-	for (auto &c : collisions)
-	{
-		Resolve(c, floor);
-	}
-	collisions.clear();
+	//for (auto &c : collisions)
+	//{
+	//	Resolve(c, floor);
+	//}
+	//collisions.clear();
 	// Check if any object collide with the plane.
 	for (int i = 0; i < physicsScene.size(); i++)
 		collision::OnFloor(collisions, physicsScene[i], floor);

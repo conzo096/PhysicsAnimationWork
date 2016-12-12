@@ -98,8 +98,6 @@ phys::info::info(std::vector<glm::vec3> pos)
 	{
 		phys::Plane tri = phys::Plane(pos[i], pos[i + 1], pos[i + 2]);
 		normals.push_back(tri.GetNormal());
-		normals.push_back(tri.GetNormal());
-		normals.push_back(tri.GetNormal());
 
 	}
 	for (unsigned int i = 0; i < 4; ++i)

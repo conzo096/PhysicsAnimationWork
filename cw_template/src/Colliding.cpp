@@ -22,8 +22,8 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 	{
 
 		// Need to apply rotation to this.
-		aCorners[i] = glm::dvec3(aCorners[i] + a.GetPosition());// *c1.GetRigidBody().orientation;
-		bCorners[i] = glm::dvec3(bCorners[i] + b.GetPosition());// *c2.GetRigidBody().orientation;
+		aCorners[i] = glm::dvec3(aCorners[i] + a.GetPosition()) * c1.GetRigidBody().orientation;
+		bCorners[i] = glm::dvec3(bCorners[i] + b.GetPosition()) * c2.GetRigidBody().orientation;
 	}
 
 	float xMin = b.GetPosition().x + b.GetBackBottomLeft().x;
@@ -49,11 +49,11 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 
 	//Find effect of b on a.
 	xMin = a.GetPosition().x + a.GetBackBottomLeft().x,
-		xMax = a.GetPosition().x + a.GetBackBottomRight().x,
-		yMin = a.GetPosition().y + a.GetBackBottomLeft().y,
-		yMax = a.GetPosition().y + a.GetBackTopLeft().y,
-		zMin = a.GetPosition().z + a.GetFrontBottomLeft().z,
-		zMax = a.GetPosition().z + a.GetBackBottomLeft().z;
+	xMax = a.GetPosition().x + a.GetBackBottomRight().x,
+	yMin = a.GetPosition().y + a.GetBackBottomLeft().y,
+	yMax = a.GetPosition().y + a.GetBackTopLeft().y,
+	zMin = a.GetPosition().z + a.GetFrontBottomLeft().z,
+	zMax = a.GetPosition().z + a.GetBackBottomLeft().z;
 
 
 	for (int i = 0; i < 8; i++)
@@ -98,7 +98,7 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 		a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
 
 	for (int i = 0; i < 8; i++)
-		aCorners[i] = glm::dvec3(aCorners[i] + a.GetPosition());// *c1.GetRigidBody().orientation;
+		aCorners[i] = glm::dvec3(aCorners[i] + a.GetPosition()) * c1.GetRigidBody().orientation;
 
 	bool isCollided = false;
 	dvec3 planeNormal = pc.GetNormal();

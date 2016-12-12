@@ -27,7 +27,7 @@ target_camera cam;
 glm::mat4 PV;
 directional_light light;
 material mat;
-
+int counter;
 bool load_content()
 {
 	phys::Init();
@@ -84,22 +84,35 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-		//	sceneList[sceneList.size()-1].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
-		std::cout << to_string(sceneList[0].GetRigidBody().position) << std::endl;
-	if(spacePressed == false)
-	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
+			sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
+		//std::cout << to_string(sceneList[0].GetRigidBody().position) << std::endl;
+	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
 	{
-		spacePressed = true;
+		counter++;
 		std::cout << "HERE WE GO" << std::endl;
 		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
+		//Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		//Plane testPlane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0));
+		
+		
+		// SPLITTING INTO TRIANGLES NOT WORKING.
+		Plane testPlane(glm::vec3(0, 0.5, -0.5), glm::vec3(0, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5));
+
+		//Plane testPlane(glm::vec3(0, -0.4, 0.4), glm::vec3(0, 0.4, -0.4), glm::vec3(0, 0.4, 0.4));
+		//Plane testPlane(glm::vec3(-0.5, -0.2, 0.5), glm::vec3(0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, 0.5));
+
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
-		Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		Model test;
 		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
 		test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
 		test.CreateBuffers();
 		test.Update(delta_time);
 		sceneList.push_back(test);
+
+		//sceneList[0] = test;
+		//sceneList[0].SetBoundingBox(sceneList[0].GetModelInfo().positions);
+		//sceneList[0].SetSphereCollider(sceneList[0].GetModelInfo().positions);
 	}
 
 

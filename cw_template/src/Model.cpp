@@ -8,14 +8,6 @@ namespace phys
 
 	}
 
-	//Model::Model(Model& m)
-	//{
-	//	box = m.GetBoundingBox();
-	//	sphere = m.GetSphereCollider();
-	//	information = m.GetModelInfo();
-	//	rigidBody = m.GetRigidBody();
-	//	render = m.GetRender();
-	//}
 
 	Model::Model(std::vector<glm::vec3> pos)
 	{
@@ -30,7 +22,6 @@ namespace phys
 		information = i;
 		sphere = SphereCollider(i.positions);
 		box = BoundingBox(i.positions);
-	
 	}
 
 
