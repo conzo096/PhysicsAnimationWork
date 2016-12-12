@@ -119,4 +119,10 @@ phys::info::info(std::vector<glm::vec3> pos)
 		tex_coords.push_back(box_texcoords[i] * glm::vec2(1));
 
 
+	// Calcluate centre point of object.
+
+	for (int i = 0; i < positions.size(); i++)
+		midPoint += positions[i];
+	midPoint /= positions.size();
+
 }

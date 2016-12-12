@@ -34,7 +34,7 @@ namespace phys
 			float height = topZ - botZ;
 
 			CalculateVolume(length,width,height);
-			SetRadius(glm::length(glm::dvec3(GetFrontTopLeft()) - GetPosition()));
+			SetRadius(glm::length(glm::dvec3(GetFrontTopLeft()) - glm::dvec3(length/2,width/2,height/2)));
 	}
 
 

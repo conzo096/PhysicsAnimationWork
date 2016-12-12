@@ -32,7 +32,7 @@ void Init() {
   effG.add_shader("shaders/phys_grid.vert", GL_VERTEX_SHADER);
   effG.add_shader("shaders/phys_grid.frag", GL_FRAGMENT_SHADER);
   effG.build();
-  cam.set_position(vec3(10.0f, 10.0f, 10.0f));
+  cam.set_position(vec3(10.0f, 10.0f, 20.0f));
   cam.set_target(vec3(0.0f, 0.0f, 0.0f));
   auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
   cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
@@ -46,7 +46,7 @@ void Init() {
 
 
 void Update(double delta_time) {
- // PV = cam.get_projection() * cam.get_view();
+  PV = cam.get_projection() * cam.get_view();
   //cam.update(static_cast<float>(delta_time));
   renderer::setClearColour(0, 0, 0);
 }

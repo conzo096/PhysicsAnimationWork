@@ -45,9 +45,8 @@ bool load_content()
 	test1.CreateBuffers();
 	sceneList.push_back(test1); 
 
-	sceneFloor = PlaneCollider();
-	sceneFloor.SetPosition(glm::vec3(0, -6, 0));
-	sceneFloor.SetNormal(glm::vec3(0, 1, 0));
+	sceneFloor.SetPosition(glm::dvec3(0, -6, 0));
+	sceneFloor.SetNormal(glm::dvec3(0, 1, 0));
 
 	eff = effect();
 	eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
@@ -84,19 +83,18 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-			sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
-		//std::cout << to_string(sceneList[0].GetRigidBody().position) << std::endl;
+			sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0)*delta_time);
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
 	{
 		counter++;
 		std::cout << "HERE WE GO" << std::endl;
 		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
-		//Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		//Plane testPlane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0));
 		
 		
 		// SPLITTING INTO TRIANGLES NOT WORKING.
-		Plane testPlane(glm::vec3(0, 0.5, -0.5), glm::vec3(0, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5));
+		//Plane testPlane(glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5));
 
 		//Plane testPlane(glm::vec3(0, -0.4, 0.4), glm::vec3(0, 0.4, -0.4), glm::vec3(0, 0.4, 0.4));
 		//Plane testPlane(glm::vec3(-0.5, -0.2, 0.5), glm::vec3(0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, 0.5));
@@ -104,10 +102,15 @@ bool update(float delta_time)
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
 		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		Model test;
+		glm::dvec3 centre = sceneList[1].GetModelInfo().GetMidPoint();
 		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
-		test.GetRigidBody().SetInitialPosition(sceneList[1].GetRigidBody().GetPosition() + glm::dvec3(-3,0,0));
+		glm::dvec3 newMPos = test.GetModelInfo().GetMidPoint();
+		glm::dvec3 diff = newMPos - centre;
+
+		test.GetRigidBody().SetInitialPosition(test.GetRigidBody().GetPosition() + (diff));
 		test.CreateBuffers();
 		test.Update(delta_time);
+
 		sceneList.push_back(test);
 
 		//sceneList[0] = test;
@@ -153,6 +156,8 @@ bool render()
 		glUniformMatrix3fv(eff.get_uniform_location("N"), 1, GL_FALSE, value_ptr(N));
 		e.Render();
 	}
+	phys::DrawScene();
+
 	return true;
 }
 

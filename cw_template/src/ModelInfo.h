@@ -15,6 +15,10 @@ namespace phys
 		info() {}
 
 		info(std::vector <glm::vec3> pos);
+		glm::vec3 GetMidPoint() { return midPoint; };
+
+	private:
+		glm::vec3 midPoint;
 	};
 
 	struct renderInfo

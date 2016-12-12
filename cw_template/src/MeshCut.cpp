@@ -15,7 +15,10 @@ namespace phys
 	
 		std::vector<glm::vec3> meshFrag;
 		std::vector<glm::vec3> updateOrigMesh;
-		glm::vec3 curPos;
+
+
+		glm::dvec3 currentMid = m.GetModelInfo().GetMidPoint();
+
 
 		// For each triangle in the mesh.
 		for (int i = 0; i < m.GetModelInfo().positions.size(); i+=3)
@@ -31,6 +34,17 @@ namespace phys
 			if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint())> 0)
 				pointsInfront++;
 
+			// Now what about if the point lies on the plane?
+			int onPlane = 0;
+			if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint())== 0)
+				onPlane++;
+			if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint())== 0)
+				onPlane++;
+			if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint())== 0)
+				onPlane++;
+
+
+
 			// If no points are on the correct side add points which would lie on the plane.
 			if (pointsInfront == 0)
 			{
@@ -41,7 +55,7 @@ namespace phys
 			else if (pointsInfront != 0)
 			{
 				// If 3 points are on the correct side add complete triangle.
-				if (pointsInfront == 3)
+				if (pointsInfront == 3 || onPlane == 3)
 				{
 					meshFrag.push_back(tri.GetA());
 					meshFrag.push_back(tri.GetB());
@@ -115,6 +129,15 @@ namespace phys
 			if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint())< 0)
 				pointsBehind++;
 
+			// Now what about if the point lies on the plane?
+			int onPlane = 0;
+			if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) == 0)
+				onPlane++;
+			if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) == 0)
+				onPlane++;
+			if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) == 0)
+				onPlane++;
+
 			// If no points are on the correct side add points which would lie on the plane.
 			if (pointsBehind == 0)
 			{
@@ -124,9 +147,8 @@ namespace phys
 			}
 			else if (pointsBehind != 0)
 			{
-				//RayCast ray;
 				// If 3 points are on the correct side add complete triangle.
-				if (pointsBehind == 3)
+				if (pointsBehind == 3 || onPlane == 3)
 				{
 					updateOrigMesh.push_back(tri.GetA());
 					updateOrigMesh.push_back(tri.GetB());
@@ -187,8 +209,15 @@ namespace phys
 		}
 
 
+
+		// If points lie on the plane then they are added to both models.
+
+
 		Model newMod = Model(updateOrigMesh);
 		newMod.SetRigidBody(m.GetRigidBody());
+		glm::dvec3 newMPos = newMod.GetModelInfo().GetMidPoint();
+		glm::dvec3 diff = newMPos - currentMid;
+		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
 		m = newMod;
 		m.CreateBuffers();
 		m.Update(0);
