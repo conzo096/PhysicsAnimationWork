@@ -8,6 +8,7 @@
 
 \documentclass[conference,backref=page]{acmsiggraph}
 \usepackage{listings}
+\usepackage[]{algorithm2e}
 \TOGonlineid{45678}
 \TOGvolume{0}
 \TOGnumber{0}
@@ -148,7 +149,57 @@ With the 6 points provided the corners of the box can be easily computed.
 In order to have a simulation which simulates proper physics, rigid bodies need to be attached to the objects. An rigid body consists of the following: position, previous position, mass, inverse mass, orientation, forces being applied to the object. 
 
 
-\paragraph{Meshes}
+\paragraph{Meshes} \hfill
+
+The mesh information needs to be stored and cannot be put straight onto buffers. The reasons for this is the vertex positions of each triangle are essential when splitting the geometry. This information is stored in a 'ModelInfo' struct, which holds the geometries vertex position, texture coordinates, normals and colours.
+ 
+In order to split a mesh a splitting hyperplane is required. This plane separates the geometry into two segments, One which is the 'new' fragment and the other is the new updated original model which has been fractured. 
+
+In the case of the plane splitting the cube, or cuboid on an individual axis (x,y or z), then the following procedure is followed:
+
+A Triagle is a class that has been created that will store 3 vertices, which is the same as one of the triangles rendered on the model.
+
+\begin{algorithm}
+\KwData{Model to be split, plane to split by}
+\KwResult{New Model}
+Vector3 fragment vertices.  \hfill
+
+\For{each Triangle in ModelInfo positions}
+{
+		Integer pointsInfront = 0; \hfill 
+		
+		\For{each point in Triangle}
+		{
+			\If{dot(TrianglePoint, planeNormal)
+			 - dot(planePoint,planePoint) $>$ 0} 			 
+			{
+				pointsInfront++;
+			}
+		}
+	\If{pointsInfront == 3}
+	{
+		Add triangles points to fragment vertices;
+	}
+	\If{points == 0}
+	{
+		Add closest points to be plane to fragment vertices;
+	}
+	\If{points == 1}
+	{
+		God help us all;
+	}
+	\If{points == 2}
+	{
+		God help us all a little more;
+	}
+}
+ \caption{New fragment creation}
+\end{algorithm}
+
+ The pseudo-code for finding the vertices for updating the original model except, the comparison between the points and the plane is flipped, thus the points should be behind the plane instead of infront of the plane.
+
+
+
 
 \paragraph{Update} \hfill
 
@@ -174,14 +225,24 @@ This struct is then pushed back onto a vector; which contains all the collisions
 For each of the collisions that have occurred a resolve stage needs to occur. This calculates what should happen to each object in terms of direction it is now going; the velocity of the objects and if the proper conditions have been met, one of the objects shatter.
 \subparagraph{Integrate rigid bodies}\hfill
 
-After collisions have been sorted, each model need to update there current position, previous position, orientation.
+After collisions have been sorted, each model need to update their current position, previous position, orientation.
 
 % EVALUATION
 \section{Testing and evaluation}
 
+In order to test the splitting a meshes in this simulation a series of hard coded planes were tested against. The results were already known thus is was just a simple comparison between the expected results and the actual results. If there was a discrepancy then there was an issue with mesh cutting algorithm. The first error was noticed when the split was done in the proper shape however some of the triangles were missing from the polygon. It turned out using rays to try and calculate where the new points should lie if there was a plane intersection would lead to incorrectly sized triangles. This would have been rectified by triangulating the model. However An easier solution was the one presented earlier; where finding the closest point to the plane proved not only simpler, but more accurate as well.
+
+The collisions were done in two stages. The first stage was testing that the colliders recognised that they were in contact with each other. This was tested by having a message print to console when two colliders contacted and the message specified which colliders were in contact. 
+
+The following stage, which was resolving collisions, was more difficult. The only way the test if the algorithm put in place worked properly was to run it several times and used different conditions to ensure that the colliders responded in a sensible manner. What was noticed from this was an OBB collider had issues sitting on other objects. If it was ontop of a plane collider it would keep rotating, If it was on top of another OBB collider it would sink into the object before coming back out and starting jumping on top of it. This was resolved by...   
+
 
 \section{Conclusion and Future work}
 To conclude, I am done.
+
+Future work on this project can be undertaken. The next step would be creating convex shapes instead of just cubes and cuboid, once this has successfully undertaken then it would be possible to undertake the voronoi shattering technique that was originally suggested as this would provide the planes that the model would be split by. In order to create the convex shapes the current way of splitting the mesh should be sufficient, the difficulty would be triangulating the mesh in order for it to be displayed properly.
+
+
 % \section*{Acknowledgements}
 
 
