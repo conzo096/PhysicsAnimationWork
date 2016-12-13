@@ -1,6 +1,4 @@
 #include "physics.h"
-
-
 const double coef = 0.5;
 const double rigidcoef = 0.0;
 
@@ -16,25 +14,63 @@ void ResolveFloorCollision(RigidBody* const b, const CollisionInfo &ci, PlaneCol
 void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 {
 
-	dvec3 dv = b->position - b->prev_pos;
-	dvec3 r0 = b->position - ci.position;
-	dvec3 v0 = dv + cross(b->angVelocity, r0);
+		dvec3 velo2 = ci.c2->position - ci.c2->prev_pos;
+		dvec3 dv = b->position - b->prev_pos;
+		if (glm::dot(velo2, dv)  >= 0)
+		{
+			dvec3 r0 = b->position - ci.position;
+			dvec3 v0 = dv + cross(b->angVelocity, r0);
 
-	// I've butchered this formula pretty bad.
-	double j = -1.0 * (rigidcoef)+
-		dot(dv, ci.normal) /
-		(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
+			// I've butchered this formula pretty bad.
+			double j = -1.0 * (rigidcoef)+
+				dot(dv, ci.normal) /
+				(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
-	// stop sinking
-	j = j - (ci.depth * 0.05);
+			// stop sinking
+			j = j - (ci.depth * 0.05);
 
-	// linear impulse
-	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
-	b->AddLinearImpulse(-newVel);
-	
-	// angular impulse
-	auto gg = cross(r0, ci.normal);
-	b->angVelocity += b->worldInvInertia * cross(r0, ci.normal * j);
+			// linear impulse
+			dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
+			b->AddLinearImpulse(-newVel);
+
+			std::cout << length(newVel) << std::endl;
+			if (length(b->prevForces + ci.c2->prevForces) > 10)
+			{
+				std::cout << "Boom" << std::endl;
+			}
+
+			// angular impulse
+			auto gg = cross(r0, ci.normal);
+			b->angVelocity += b->worldInvInertia * cross(r0, ci.normal * j);
+
+
+		}
+
+		
+		
+		if (glm::dot(velo2, dv) < 0)
+		{
+			dvec3 r0 = b->position - ci.position;
+			dvec3 v0 = dv + cross(b->angVelocity, r0);
+
+			// I've butchered this formula pretty bad.
+			double j = -1.0 * (rigidcoef)+
+				dot(dv, ci.normal) /
+				(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
+
+			// stop sinking
+			j = j - (ci.depth * 0.05);
+
+			// linear impulse
+			dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
+			b->AddLinearImpulse(newVel * 0.05);
+
+			// angular impulse
+			auto gg = cross(r0, ci.normal);
+			b->angVelocity += b->worldInvInertia * cross(r0, ci.normal * j);
+		}
+
+
 }
 
 
@@ -60,7 +96,8 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 
 	// Check if objects collide with each other.
 	for (int i = 0; i < physicsScene.size(); i++)
-		for (int j = i + 1; j < physicsScene.size(); j++)
+		for (int j = i+1; j < physicsScene.size(); j++)
+			//if(i!= j)
 			collision::IsColliding(physicsScene,collisions,physicsScene[i], physicsScene[j]);
 
 	// Check if objects collide with floor.

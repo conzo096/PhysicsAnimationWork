@@ -48,6 +48,7 @@ namespace phys
 		double mass;
 		double inverseMass;
 		glm::dvec3 forces;
+		glm::dvec3 prevForces;
 		glm::dmat3 localInvInertia;
 		glm::dmat3 worldInvInertia;
 		glm::dvec3 angVelocity;

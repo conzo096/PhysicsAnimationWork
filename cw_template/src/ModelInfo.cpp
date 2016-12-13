@@ -13,6 +13,7 @@ void phys::RigidBody::AddAngularForce(const glm::dvec3 & i)
 
 void phys::RigidBody::AddLinearImpulse(const glm::dvec3& v)
 {
+
 	const glm::dvec3 dv = position - prev_pos;
 	const glm::dvec3 newdv = dv + v;
 	prev_pos = position - newdv;
@@ -56,7 +57,6 @@ void phys::RigidBody::Integrate(const double dt)
 	//	prev_pos = position + (glm::dvec3(velocity) / 1.2);
 	//	position += glm::dvec3(0, 6.0, 0) * pow(dt, 2);
 	//}
-	
 	
 	forces = glm::dvec3(0);
 

@@ -34,6 +34,23 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 	float zMin = b.GetPosition().z + b.GetFrontBottomLeft().z;
 	float zMax = b.GetPosition().z + b.GetBackBottomLeft().z;
 
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (bCorners[i].x < xMin)
+			xMin = bCorners[i].x;
+		else if (bCorners[i].x > xMax)
+			xMax = bCorners[i].x;
+		if (bCorners[i].y < yMin)
+			yMin = bCorners[i].y;
+		else if (bCorners[i].y > yMax)
+			yMax = bCorners[i].y;
+		if (bCorners[i].z < zMin)
+			zMin = bCorners[i].z;
+		else if (bCorners[i].z > zMax)
+			zMax = bCorners[i].z;
+	}
+
 	bool col = false;
 
 	// For each corner of the box b.
@@ -49,14 +66,16 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					const dvec3 d = p2 - p1;
 					// Calculate distance between two objects.
 					const double distance = glm::length(d);
-					const double sumRadius = a.GetRadius() + b.GetRadius();
-					auto depth = sumRadius - distance;
+					// Find the distance between colliding centre and colliding point
+					auto depth =  (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
+					
+					//const double sumRadius = a.GetRadius() + b.GetRadius();
+					//auto depth = sumRadius - distance;
 					// Direction that the object is to be pushed towards.
 					auto norm = glm::normalize(d);
 					// How far the object is the be moved in order to be out of the model.
-					auto pos = p1 - norm * (a.GetRadius() - depth);
+					auto pos = p2 - norm *	(length(p2 - bCorners[i]) - depth);
 					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth});
-
 				}
 	}
 
@@ -68,32 +87,51 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 		yMax = a.GetPosition().y + a.GetBackTopRight().y;
 		zMin = a.GetPosition().z + a.GetFrontBottomLeft().z;
 		zMax = a.GetPosition().z + a.GetBackTopRight().z;
-		// For each corner of the box b.
+
+
+		for (int i = 0; i < 8; i++)
+		{
+			if (aCorners[i].x < xMin)
+				xMin = aCorners[i].x;
+			else if (aCorners[i].x > xMax)
+				xMax = aCorners[i].x;
+			if (aCorners[i].y < yMin)
+				yMin = aCorners[i].y;
+			else if (aCorners[i].y > yMax)
+				yMax = aCorners[i].y;
+			if (aCorners[i].z < zMin)
+				zMin = aCorners[i].z;
+			else if (aCorners[i].z > zMax)
+				zMax = aCorners[i].z;
+		}
+
+		 //For each corner of the box b.
 		for (int i = 0; i < 8; i++)
 		{
 			if (CheckCorner(bCorners[i].x, xMin, xMax))
 				if (CheckCorner(bCorners[i].y, yMin, yMax))
 					if (CheckCorner(bCorners[i].z, zMin, zMax))
 					{
-						col = true;
 						const dvec3 p1 = a.GetPosition();
 						const dvec3 p2 = b.GetPosition();
 						const dvec3 d = p1 - p2;
 						// Calculate distance between two objects.
 						const double distance = glm::length(d);
+						// Find the distance between colliding centre and colliding point
+						//auto depth = (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
+
 						const double sumRadius = a.GetRadius() + b.GetRadius();
 						auto depth = sumRadius - distance;
 						// Direction that the object is to be pushed towards.
 						auto norm = glm::normalize(d);
 						// How far the object is the be moved in order to be out of the model.
-						auto pos = p1 - norm * (a.GetRadius() - depth);
-						civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
-
+						auto pos = p1 - norm * (length(p1 - aCorners[i]) - depth);
+						civ.push_back({ &c2.GetRigidBody(), &c1.GetRigidBody(), pos, norm, depth });
 					}
 		}
 	}
 	return col;
-}
+	}
 
 
 
@@ -118,7 +156,7 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 		{
 			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
 			distances[i] * 1.3;
-			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
+			civ.push_back({ &c1.GetRigidBody(), &c1.GetRigidBody(), aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
 			isCollided = true;
 //			return isCollided;
 		}

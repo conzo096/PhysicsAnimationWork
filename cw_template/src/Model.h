@@ -4,8 +4,11 @@
 #include "SphereCollider.h"
 #include "ModelInfo.h"
 #include <graphics_framework.h>
+#include <vector>
+#include "Plane.h"
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
+#include "Sampler.h"
 using namespace graphics_framework;
 namespace phys
 {
@@ -18,6 +21,10 @@ namespace phys
 		info information;
 		RigidBody rigidBody;
 		renderInfo render;
+
+		// splitting planes.
+		std::vector<Plane> splittingPlanes = std::vector<Plane>();
+
 	public:
 		Model();
 		Model(std::vector<glm::vec3> pos);
@@ -58,14 +65,14 @@ namespace phys
 		renderInfo& GetRender() { return render; }
 
 
-		void SetBoundingBox(BoundingBox bb) { box = bb; }
+		void SetBoundingBox(BoundingBox bb) { box = bb; }// splittingPlanes = CreateSplittingPlanes(box, 4);}
 		void SetSphereCollider(SphereCollider sc) { sphere = sc; }
 		void SetModelInfo(info i)
 		{
 			information = i;
 			sphere = SphereCollider(information.positions);
 			box = BoundingBox(information.positions);
-			//CreateBuffers();
+			//splittingPlanes = CreateSplittingPlanes(box, 4);
 		}
 		void SetRigidBody(RigidBody ti) { rigidBody = ti; }
 	};

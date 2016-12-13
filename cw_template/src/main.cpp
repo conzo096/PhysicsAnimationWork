@@ -121,8 +121,7 @@ bool update(float delta_time)
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-			sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0)*delta_time);
-
+		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
 	{
 		counter++;

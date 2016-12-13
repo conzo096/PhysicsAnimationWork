@@ -1,9 +1,8 @@
+#pragma once
 #include "stdafx.h"
 
 namespace phys
 {
-//	enum side {BEHIND = -1, ON = 0, INFRONT = 1};
-
 	class Plane
 	{
 		glm::vec3 point;
@@ -12,6 +11,7 @@ namespace phys
 		public:
 		Plane() {};
 		Plane(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+		Plane(glm::vec3 pos, glm::vec3 norm) { point = pos; normal = glm::normalize(norm); };
 		~Plane() {};
 
 		int SideOfPlane(glm::vec3 p);

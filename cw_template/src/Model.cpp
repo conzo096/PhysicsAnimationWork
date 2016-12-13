@@ -15,6 +15,7 @@ namespace phys
 		// Create bounding volumes.
 		sphere = SphereCollider(pos);
 		box = BoundingBox(pos);
+		//splittingPlanes = CreateSplittingPlanes(box, 4);
 		//CreateBuffers();
 		//Update(0);
 	}
@@ -24,6 +25,7 @@ namespace phys
 		information = i;
 		sphere = SphereCollider(i.positions);
 		box = BoundingBox(i.positions);
+		//splittingPlanes = CreateSplittingPlanes(box, 4);
 		//CreateBuffers();
 		//Update(0);
 	}

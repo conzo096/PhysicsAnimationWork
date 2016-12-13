@@ -2,13 +2,13 @@
 namespace phys
 {
 
-	glm::vec3  RayPlaneResult(RayCast ray, Plane pl)
-	{
-		float scale = -(glm::dot(ray.GetOrigin(), pl.GetNormal() + pl.GetDistance()));
-		scale /= glm::dot(ray.GetDirection(), pl .GetNormal());
-		return ray.GetOrigin() + (scale*ray.GetDirection());
-		
-	}
+	//glm::vec3  RayPlaneResult(RayCast ray, Plane pl)
+	//{
+	//	float scale = -(glm::dot(ray.GetOrigin(), pl.GetNormal() + pl.GetDistance()));
+	//	scale /= glm::dot(ray.GetDirection(), pl .GetNormal());
+	//	return ray.GetOrigin() + (scale*ray.GetDirection());
+	//	
+	//}
 
 	info SliceModel(Model& m,Plane p)
 	{

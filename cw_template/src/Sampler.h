@@ -1,25 +1,12 @@
+// This class is used to create the splitting planes for the models.
 #pragma once
 #include <vector>
-#include "Model.h"
-#include "RayCast.h"
+#include "Plane.h"
+#include "BoundingBox.h"
 #include <glm/glm.hpp>
-#include <algorithm>
 #include "stdafx.h"
 
 namespace phys
 {
-	class Sampler
-	{
-
-	public:
-		Sampler();
-		~Sampler();
-
-
-		std::vector<glm::vec3> SamplePoints(Model model, int samples);
-		std::vector<glm::vec3> SampleShell(Model model);
-		std::vector<glm::vec3> SampleInterior(Model model);
-		glm::vec3 SampleRandomPoint(Model model, RayCast ray);
-
-	};
+	std::vector<Plane> CreateSplittingPlanes(BoundingBox bb, int samples);
 }

@@ -1,24 +1,33 @@
 #include "Sampler.h"
 namespace phys
 {
-	Sampler::Sampler()
+	glm::vec3 RandomPointOnLine(glm::vec3 maxBound, glm::vec3 minBound)
 	{
+
+		// Broke.
+		glm::vec3 point = glm::vec3(0, 0, 0);
+		
+		int range = maxBound.x - minBound.x + 1;
+		point.x = rand() % (int)(range + minBound.x);
+		range = maxBound.y - minBound.y + 1;
+		point.y = rand() % (int)(range + minBound.y);
+		range = maxBound.z - minBound.z + 1;
+		point.z = rand() % (int)(range + minBound.z);
+
+		return point;
 	}
 
-	Sampler::~Sampler()
-	{
-	}
 
-	std::vector<glm::vec3> Sampler::SamplePoints(Model model, int numSamples)
+	std::vector<Plane> CreateSplittingPlanes(BoundingBox bb, int numSamples)
 	{
-		std::vector<glm::vec3> samplePoints = std::vector<glm::vec3>();
-		// How many rays to be shot through each face?
-		int raysPerFace = std::min(numSamples, std::max(5, numSamples / 3));
+		std::vector<Plane> splittingPlanes;
+		glm::vec3 startPoint(0.0);
+		glm::vec3 endPoint(0.0);
+		glm::vec3 norm(0.0);
 		int i = 0;
 		// What face to start ray from.
 		int face = 0;
 		// Ray to find intersection points.
-		RayCast ray;
 		while (i < numSamples)
 		{
 			// Change to a new face.
@@ -27,73 +36,69 @@ namespace phys
 			{
 			case 0: // bottom face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomRight(), model.GetBoundingBox().GetBackBottomLeft());
-				ray.SetDirection(glm::vec3(0, 1, 0));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackTopRight()));
+				startPoint = (bb.GetFrontBottomRight(), bb.GetBackBottomLeft());
+				endPoint = RandomPointOnLine(bb.GetFrontTopRight(), bb.GetBackTopLeft());
+				endPoint.y = startPoint.y;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+				
 				break;
 			case 1: // top face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontTopRight(), model.GetBoundingBox().GetBackTopLeft());
-				ray.SetDirection(glm::vec3(0, -1, 0));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackTopRight()));
-
+				startPoint = RandomPointOnLine(bb.GetFrontTopRight(), bb.GetBackTopLeft());
+				endPoint = (bb.GetFrontBottomRight(), bb.GetBackBottomLeft());
+				endPoint.y = startPoint.y;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+				
 				break;
 			case 2: // left face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomLeft(), model.GetBoundingBox().GetBackTopLeft());
-				ray.SetDirection(glm::vec3(1, 0, 0));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackBottomLeft()));
-
+				startPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetBackTopLeft());
+				endPoint = RandomPointOnLine(bb.GetFrontBottomRight(), bb.GetBackTopRight());
+				endPoint.x = startPoint.x;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+				
+				
 				break;
 			case 3: // right face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomRight(), model.GetBoundingBox().GetBackTopRight());
-				ray.SetDirection(glm::vec3(-1, 0, 0));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetBackBottomLeft()));
-
+				startPoint = RandomPointOnLine(bb.GetFrontBottomRight(), bb.GetBackTopRight());
+				endPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetBackTopLeft());
+				endPoint.x = startPoint.x;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+				
 				break;
 			case 4: // front face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetFrontBottomLeft(), model.GetBoundingBox().GetFrontTopRight());
-				ray.SetDirection(glm::vec3(0, 0, 1));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetFrontBottomRight()));
+				startPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetFrontTopRight());
+				endPoint = RandomPointOnLine(bb.GetBackBottomLeft(), bb.GetBackTopRight());
+				endPoint.z = startPoint.z;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+				
 				break;
 			case 5: // back face
 
-				ray.SetRandomOrigin(model.GetBoundingBox().GetBackBottomLeft(), model.GetBoundingBox().GetBackTopRight());
-				ray.SetDirection(glm::vec3(0, 0, -1));
-				ray.SetRange(glm::distance(model.GetBoundingBox().GetBackBottomRight(), model.GetBoundingBox().GetFrontBottomRight()));
+				startPoint = RandomPointOnLine(bb.GetBackBottomLeft(), bb.GetBackTopRight());
+				endPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetFrontTopRight());
+				endPoint.z = startPoint.z;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+
 				break;
-		
+
 			default: break;
-			}
-			// Sample points from the ray.
-			for (int i = 0; i < raysPerFace; i++)
-			{
-				samplePoints.push_back(SampleRandomPoint(model, ray));
-				if (i >= numSamples)
-					break;
+
 
 			}
+
+			i++;
+			if (i >= numSamples)
+				break;
 		}
-
-		return samplePoints;
-	}
-
-	std::vector<glm::vec3> Sampler::SampleShell(Model model)
-	{
-		return std::vector<glm::vec3>();
-	}
-
-	std::vector<glm::vec3> Sampler::SampleInterior(Model model)
-	{
-		return std::vector<glm::vec3>();
-	}
-
-	glm::vec3 Sampler::SampleRandomPoint(Model model, RayCast ray)
-	{
-		glm::vec3 point1, point2, point3;
-
-		return glm::vec3();
+		return splittingPlanes;
 	}
 }
