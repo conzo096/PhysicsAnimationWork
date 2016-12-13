@@ -15,6 +15,8 @@ namespace phys
 		// Create bounding volumes.
 		sphere = SphereCollider(pos);
 		box = BoundingBox(pos);
+		//CreateBuffers();
+		//Update(0);
 	}
 
 	Model::Model(info i)
@@ -22,8 +24,9 @@ namespace phys
 		information = i;
 		sphere = SphereCollider(i.positions);
 		box = BoundingBox(i.positions);
+		//CreateBuffers();
+		//Update(0);
 	}
-
 
 	Model::~Model()
 	{

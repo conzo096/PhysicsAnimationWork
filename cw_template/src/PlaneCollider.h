@@ -1,21 +1,21 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "Collider.h"
 namespace phys
 {
 	class PlaneCollider :public Collider
 	{
 	private:
-		glm::dvec3 normal;
+		const glm::dvec3 normal = glm::dvec3(0,1,0);
 
 
 	public:
 		PlaneCollider();
+		PlaneCollider(glm::dvec3 pos) { SetPosition(pos); }
 		~PlaneCollider();		
-		
-		void SetNormal(glm::dvec3 n) { normal = n; }
-		glm::dvec3 GetNormal() { return normal; }
+		const glm::dvec3 GetNormal() { return normal; }
 
-		virtual void Update(double delta) {};
+		void Update(double delta) {};
 
 	
 	};

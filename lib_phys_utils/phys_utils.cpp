@@ -45,9 +45,10 @@ void Init() {
 
 
 
-void Update(double delta_time) {
+void Update(double delta_time)
+{
   PV = cam.get_projection() * cam.get_view();
-  //cam.update(static_cast<float>(delta_time));
+  cam.update(static_cast<float>(delta_time));
   renderer::setClearColour(0, 0, 0);
 }
 
@@ -197,6 +198,13 @@ void SetCameraPos(const glm::vec3 &p0) {
 void SetCameraTarget(const glm::vec3 &p0) {
   cam.set_target(p0);
   PV = cam.get_projection() * cam.get_view();
+}
+
+void SetCamera(free_camera& mCam)
+{
+	cam.set_target(mCam.get_target());
+	cam.set_position(mCam.get_position());
+	PV = cam.get_projection() * cam.get_view();
 }
 
 void RGBAInt32::tofloat(float *const arr) const {

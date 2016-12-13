@@ -4,6 +4,7 @@
 #include <glm\glm.hpp>
 #include <iostream>
 #include "..\\cw_template\src\ModelInfo.h"
+using namespace graphics_framework;
 #define RED                                                                                                            \
   { 4278190335 }
 #define GREEN                                                                                                          \
@@ -40,6 +41,7 @@ void Init();
 void Update(double delta_time);
 void SetCameraPos(const glm::vec3 &p0);
 void SetCameraTarget(const glm::vec3 &p0);
+void SetCamera(free_camera &mCam);
 void DrawLine(const glm::vec3 &p0, const glm::vec3 &p1, const bool depth = true, const RGBAInt32 col = RED);
 void DrawLineCross(const glm::vec3 &p0, float radius = 1.0f, const bool depth = true, const RGBAInt32 col = RED);
 

@@ -52,11 +52,45 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					const double sumRadius = a.GetRadius() + b.GetRadius();
 					auto depth = sumRadius - distance;
 					// Direction that the object is to be pushed towards.
-					auto norm = -glm::normalize(d);
+					auto norm = glm::normalize(d);
 					// How far the object is the be moved in order to be out of the model.
-					auto pos = p1 - norm * (a.GetRadius() - depth * 0.5f);
-					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth*1.1 });
+					auto pos = p1 - norm * (a.GetRadius() - depth);
+					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth});
+
 				}
+	}
+
+	if (col == false)
+	{
+		xMin = a.GetPosition().x + a.GetBackBottomLeft().x;
+		xMax = a.GetPosition().x + a.GetFrontTopRight().x;
+		yMin = a.GetPosition().y + a.GetFrontBottomLeft().y;
+		yMax = a.GetPosition().y + a.GetBackTopRight().y;
+		zMin = a.GetPosition().z + a.GetFrontBottomLeft().z;
+		zMax = a.GetPosition().z + a.GetBackTopRight().z;
+		// For each corner of the box b.
+		for (int i = 0; i < 8; i++)
+		{
+			if (CheckCorner(bCorners[i].x, xMin, xMax))
+				if (CheckCorner(bCorners[i].y, yMin, yMax))
+					if (CheckCorner(bCorners[i].z, zMin, zMax))
+					{
+						col = true;
+						const dvec3 p1 = a.GetPosition();
+						const dvec3 p2 = b.GetPosition();
+						const dvec3 d = p1 - p2;
+						// Calculate distance between two objects.
+						const double distance = glm::length(d);
+						const double sumRadius = a.GetRadius() + b.GetRadius();
+						auto depth = sumRadius - distance;
+						// Direction that the object is to be pushed towards.
+						auto norm = glm::normalize(d);
+						// How far the object is the be moved in order to be out of the model.
+						auto pos = p1 - norm * (a.GetRadius() - depth);
+						civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
+
+					}
+		}
 	}
 	return col;
 }
@@ -64,25 +98,29 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 
 
 bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollider pc)
-{
-	BoundingBox a = c1.GetBoundingBox();
+{	
 	
+	BoundingBox a = c1.GetBoundingBox();
 	glm::dvec3 aCorners[8] = { a.GetBackBottomLeft(),a.GetBackBottomRight(),a.GetBackTopLeft(),a.GetBackTopRight(),
 		a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
 
-	const mat4 m = glm::translate(c1.GetRigidBody().position) * glm::mat4_cast(c1.GetRigidBody().orientation);
+	const mat4 m = glm::translate(c1.GetRigidBody().position) *glm::mat4_cast(c1.GetRigidBody().orientation);
 	for (int i = 0; i < 8; i++)
 		aCorners[i] = dvec3(m * dvec4(aCorners[i], 1.0));
 
 	bool isCollided = false;
+	double distances[8];
 	for (int i = 0; i < 8; i++)
 	{
-		double distance = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
-		if (distance > 0)
+		distances[i] = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
+		//distances[i] = glm::dot(pc.GetNormal(), aCorners[i] - pc.GetPosition());
+		if (distances[i] > 0)
 		{
-			civ.push_back({ &c1.GetRigidBody(), &c1.GetRigidBody(), aCorners[i] + pc.GetNormal() * distance, pc.GetNormal(), distance});
+			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
+			distances[i] * 1.3;
+			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
 			isCollided = true;
-			return isCollided;
+//			return isCollided;
 		}
 	}
 	return isCollided;
