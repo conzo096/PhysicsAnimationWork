@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.11.14)  12 DEC 2016 20:22
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.11.14)  13 DEC 2016 20:39
 entering extended mode
 **report.tex
 
@@ -482,57 +482,64 @@ LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <12> not available
 LaTeX Font Info:    Font shape `OT1/phv/b/n' will be
 (Font)              scaled to size 11.03998pt on input line 53.
 LaTeX Font Info:    Font shape `OT1/phv/m/n' will be
-(Font)              scaled to size 8.27998pt on input line 83.
+(Font)              scaled to size 8.27998pt on input line 79.
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <9> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 83.
+(Font)              Font shape `OT1/phv/b/n' tried instead on input line 79.
 LaTeX Font Info:    Font shape `OT1/phv/b/n' will be
-(Font)              scaled to size 8.27998pt on input line 83.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 100.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\omsptm.fd"
-File: omsptm.fd 
-)
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 100.
-
-Overfull \hbox (104.65852pt too wide) in paragraph at lines 103--104
-[][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
+(Font)              scaled to size 8.27998pt on input line 79.
 [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
  <C:/Users/conner/Documents/GitHub/PhysicsAnimationWork/report template/images/
 sampleteaser.png>]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 99.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\omsptm.fd"
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 99.
+
+Overfull \hbox (104.65852pt too wide) in paragraph at lines 102--103
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (7.45753pt too wide) in paragraph at lines 103--104
+[][][][][][][][][][][][][][] 
+ []
+
 [2]
 ("C:\Users\conner\Documents\GitHub\PhysicsAnimationWork\report template\report.
 bbl"
 ("C:\Users\conner\Documents\GitHub\PhysicsAnimationWork\report template\report.
 brf")
 \tf@brf=\write3
-)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 252.
- [3
 
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 252.
+
+LaTeX Warning: Empty `thebibliography' environment on input line 3.
+
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 264.
+ [3]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 264.
 
 ("C:\Users\conner\Documents\GitHub\PhysicsAnimationWork\report template\report.
 aux")
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 252.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 252.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 264.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 264.
 Package rerunfilecheck Info: File `report.brf' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 252.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 264.
  ) 
 Here is how much of TeX's memory you used:
- 9794 strings out of 493921
- 146360 string characters out of 3147278
- 259489 words of memory out of 3000000
- 12928 multiletter control sequences out of 15000+200000
- 26038 words of font info for 53 fonts, out of 3000000 for 9000
+ 9792 strings out of 493921
+ 146362 string characters out of 3147278
+ 266414 words of memory out of 3000000
+ 12919 multiletter control sequences out of 15000+200000
+ 24314 words of font info for 51 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 43i,15n,40p,826b,1105s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,15n,40p,826b,1324s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Program Files/MiKTeX 
 2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Program Files/MiKTeX 2.9/fonts
@@ -541,9 +548,9 @@ blic/amsfonts/cm/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/helveti
 c/uhvb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/
 Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiK
 TeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (3 pages, 1460709 bytes).
+Output written on report.pdf (3 pages, 1461812 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 56 named destinations out of 1000 (max. 500000)
+ 129 PDF objects out of 1000 (max. 8388607)
+ 65 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

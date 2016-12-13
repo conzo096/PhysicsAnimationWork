@@ -28,10 +28,10 @@
 }
 
 
-\title{Mesh Destruction\\
+\title{Model shattering using real-time collisions\\
 	   Final Report}
 
-\author{Students Name \thanks{e-mail:40167111@live.napier.ac.uk} \\
+\author{Conner Weatherston \thanks{e-mail:40167111@live.napier.ac.uk} \\
 Edinburgh Napier University\\
 Physics-Based Animation (SET09119)}
 \pdfauthor{Conner Weatherston}
@@ -51,10 +51,9 @@ Physics-Based Animation (SET09119)}
 \raggedbottom
 
 \begin{abstract}
-In most physics based games, any destructible objects are normally loaded in with their fractured components on runtime. What this
-physics simulation is hoping to look at is ways to slice meshes in real time to generate new fragments.
+In most physics based games, destructible objects are typically loaded in with their shattered fragments on run-time. This means that sometimes the fracture look unnatural. The aim of this physics simulation is hoping to look at is ways to slice meshes in real time to generate new fragments.
 
-The approach looked at the in the design report suggested a technique called voronoi shattering in order to break the objects up into random fragments. However this was not implemented in the final simulation due to difficulty and time constraints. Therefore a simpler approach was used where the object is split is recursively using a series of random planes which intersect through the model mesh.
+The approach looked at the in the design report suggested a technique called voronoi shattering in order to break the objects up into random fragments. However this was not implemented in the final simulation due to difficulty of producing 'Delaney Triangulation' and time constraints. Therefore a simpler approach was used where the object is split is recursively using a series of random planes which intersect through the model mesh.
 
 \end{abstract}
 
@@ -65,7 +64,7 @@ The approach looked at the in the design report suggested a technique called vor
 
 \section{Introduction}
 
-In most video games, destructible objects are pre-computed models which are the equivalent of the model fragments. The purpose of this simulation is to create proper mesh fragments in real-time just using the original meshes information. A key part of this simulation is optimisation as creating new objects is an expensive process.  
+In most video games, destructible objects are pre-computed models which are the equivalent of the model fragments. The purpose of this simulation is to create proper mesh fragments in real-time just using the original meshes information. A key part of this simulation is optimisation as creating new objects is an expensive process.
 
 \section{Related Work}
 
@@ -77,31 +76,31 @@ plugin by [Esteve 2011]. The tutorial provided gave a insight on how to split th
 
 \section{Simulation}
 
-\paragraph{Overview}
+\paragraph{Overview} \hfill
 
-
-\paragraph{Detailed description}
+The simulation is revolved around having objects in a real-time environment interact with each other. In this simulation, the objects have been kept to cube or cuboid shapes for simplicity. There is also a plane which acts as the 'floor' of the scene. When objects collide with each other they respond in a realistic manner. In order for a collision to cause an object to break a certain threshold must be reached. If this limit is reached for the object then it will split apart depending on its splitting planes, which determine how the model will shatter.
 
 \paragraph{Implementation}
 
-The implementation of this project can be broken into three major segments. These are: rigid bodies, collision detection and meshes. 
+The implementation of this project can be identified by three major components.  These are: rigid bodies, collision detection and meshes. 
 
 \paragraph {Collision detection} \hfill
 
-There are three types of colliders that are used in this simulation. These are the plane collider, the sphere collider and the orientated bounding box.
+It is incredibly inefficient to test meshes directly against each other as this would require testing each vertex of object A against every vertex in object B. Therefore bounding volumes are required which are there to provide, simpler tests that are not costly in performance. The downside to this is the response may not be accurate when a collision is detected depending on what collider approach is used. In this simulation three types of colliders have been utilised. These are the plane collider, the sphere collider and the orientated bounding box (shortened to OBB). 
 
+As this simulation is focused on cubes the most suitable collider is the OBB as it fits well with the objects. However a sphere collider is attached in order to improve performance. Instead of testing for an OBB to OBB collision each tick, it is cheaper and faster to check two sphere colliders, thus if two sphere colliders are in contact then an OBB OBB intersection check shall be performed. 
 
 \subparagraph{Collider} \hfill
 
-This is the basic collider, which every other collider will inherit from. As it is the most general form it only contains a position.
+This is an abstract class which all colliders will inherit from. As every collider requires a position and an update method it has been initialised here.
 
 \begin{lstlisting}
-Class Collider
+abstract Class Collider
 {
-	Vect3 position;
+	Vec3 position;
 	
 	// This is used to update the position of the colliders.
-	void Update(); 
+	virtual void Update(double deltaTime); 
 }
 \end{lstlisting}
 
@@ -118,18 +117,18 @@ Class PlaneCollider : public Collider
 
 \subparagraph{Sphere collider}  \hfill 
 
-This is a simple sphere which encompasses the entire model object. It only requires a position in the world, which is updated whenever the rigid body is updated, and a radius. The radius is calculated by finding the distance from the centre of the model to its furthest point. 
-
+The sphere collider encompasses the model in a sphere shape. In order to do this a new variables needs to be held. This is the radius of the sphere.
 \begin{lstlisting}
 Class SphereCollider : public Collider
 {
 	float radius;
+	void Update(deltaTime){}
 }
 \end{lstlisting}
 
 \subparagraph{Orientated bounding box}\hfill 
 
-This is similar to an axis aligned box however it can handle rotations. Detecting collisions for an OBB however is more cost as there are more potential ways two OBB can collide. Therefore, in order to minimise calculations, the OBB checks only occur if both object pass the sphere collider check. 
+This is a stage further in complexity to an axis aligned box, however it can handle rotations. As there are more checks that a required for an OBB to OBB intersection it is important to only check when it is necessary to, and not every tick. In order to create an OBB the corners are required. To reduce the memory required to store an OBB, only two opposite corners are stored, as the other corners can be produced using a combination of these two corners.
 
 \begin{lstlisting}
 Class BoundingBox : public Collider
@@ -138,15 +137,28 @@ Class BoundingBox : public Collider
 	float botX,botY,botZ;
 }
 \end{lstlisting}
-With the 6 points provided the corners of the box can be easily computed.
 
-
+The rotation of the box is done in the intersection check. The rotation is taking from the orientation of the rigid body. This will ensure that the object stays inside the bounding volume.
 \subparagraph{Intersections}
 
 
 \paragraph{Rigid bodies} \hfill
 
 In order to have a simulation which simulates proper physics, rigid bodies need to be attached to the objects. An rigid body consists of the following: position, previous position, mass, inverse mass, orientation, forces being applied to the object. 
+\begin{lstlisting}
+Struct RigidBody
+{
+	double mass;
+	double inverseMass;
+	dvec3 position;
+	dvec3 previousPosition;
+	dvec3 forces;
+	dvec3 torques;
+	dquat orientation;
+}
+
+\end{lstlisting}
+
 
 
 \paragraph{Meshes} \hfill
