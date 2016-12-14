@@ -108,7 +108,8 @@ namespace phys
 		// put here temp
 		splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
 		splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
-	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0)));
+		splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0)));
+	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, -0.5), glm::vec3(-0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, -0.5)));
 	//	splittingPlanes.push_back(Plane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10)));
 	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, 0.5), glm::vec3(0.5, 0.2, -0.5), glm::vec3(0.5, 0.2, 0.5)));
 	}

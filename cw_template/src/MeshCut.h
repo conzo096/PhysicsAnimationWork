@@ -7,6 +7,6 @@
 #include "Model.h"
 namespace phys
 {
-		void SliceModel(Model& m,Plane p, std::vector<Model>& newFragments);
+		void SliceModel(Model& m, std::vector<Plane>pl, std::vector<Model>& newFragments);
 
 }

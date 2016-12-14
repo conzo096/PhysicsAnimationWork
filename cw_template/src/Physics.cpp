@@ -9,6 +9,10 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 		dvec3 r0 = b->position - ci.position;
 		dvec3 v0 = dv + cross(b->angVelocity, r0);
 
+
+
+
+
 		// I've butchered this formula pretty bad.
 		double j = -1.0 * (rigidcoef)+
 			dot(dv, ci.normal) /
@@ -17,7 +21,8 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 		// stop sinking
 		j = j - (ci.depth*0.005);
 
-		// linear impulse
+		
+	// linear impulse
 		dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
 		b->AddLinearImpulse(-newVel);
 		// angular impulse
@@ -60,10 +65,9 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 				glm::vec3 veloB = (physicsScene[j].GetRigidBody().prev_pos - physicsScene[j].GetRigidBody().position) / dt;
 				veloB *= physicsScene[j].GetRigidBody().mass;
 
-				if (length(veloA + veloB) > 100)
-					
+				if (length(veloA + veloB) > 200)		
 					for(int i =0; i < physicsScene[i].GetSplittingPlanes().size(); i++)
-						SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes()[i], newFragments);
+						SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes(), newFragments);
 			}
 		}
 	}
@@ -71,7 +75,16 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 
 	// Check if objects collide with floor.
 	for (auto &m : physicsScene)
-		collision::OnFloor(collisions, m, floor);
+	{
+		if (collision::OnFloor(collisions, m, floor) == true)
+		{
+			glm::vec3 veloA = (m.GetRigidBody().prev_pos - m.GetRigidBody().position) / dt;
+			veloA *= m.GetRigidBody().mass;
+			if (length(veloA) > 100)
+				for (int i = 0; i <m.GetSplittingPlanes().size(); i++)
+					SliceModel(m, m.GetSplittingPlanes(), newFragments);
+		}
+	}
 
 	for (auto &c : collisions)
 	{

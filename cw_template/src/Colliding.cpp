@@ -153,8 +153,8 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 		if (distances[i] > 0)
 		{
 			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
-			distances[i] * 1.3;
-			civ.push_back({ &c1.GetRigidBody(), &c1.GetRigidBody(), aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
+			distances[i] *= 0.05;
+			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
 			isCollided = true;
 		}
 	}

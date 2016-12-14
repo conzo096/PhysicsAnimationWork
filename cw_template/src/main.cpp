@@ -38,6 +38,7 @@ int counter;
 double cursor_x, cursor_y;
 bool load_content()
 {
+
 	// Remove cursor from simulation.
 	glfwSetInputMode(renderer::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	phys::Init();
@@ -70,7 +71,7 @@ bool load_content()
 	eff.build();
 	// Initilize camera.
 	cam.set_position(vec3(10.0f, 10.0f, 20.0f));
-	cam.set_target(vec3(0.0f, 0.0f, 0.0f));
+	cam.set_target(vec3(-5.0f, 10.0f, 0.0f));
 	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
 	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 	// Set the material and lighting information.
@@ -126,6 +127,9 @@ bool update(float delta_time)
 		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
 	{
+	
+
+
 		//counter++;
 		//std::cout << "HERE WE GO" << std::endl;
 		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
