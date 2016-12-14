@@ -10,7 +10,7 @@ namespace phys
 	//	
 	//}
 
-	info SliceModel(Model& m,Plane p)
+	void SliceModel(Model& m,Plane p, std::vector<Model> & newFragments)
 	{
 	
 		std::vector<glm::vec3> meshFrag;
@@ -212,17 +212,27 @@ namespace phys
 
 		// If points lie on the plane then they are added to both models.
 
+		Model test = Model(meshFrag);
+		glm::dvec3 centre = m.GetModelInfo().GetMidPoint();
+		glm::dvec3 newMPos = test.GetModelInfo().GetMidPoint();
+		glm::dvec3 diff = newMPos - centre;
+		CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
+		test.SetRigidBody(m.GetRigidBody());
+		test.GetRigidBody().SetInitialPosition(test.GetRigidBody().GetPosition() + (diff));
+		test.CreateBuffers();
+		test.Update(0);
 
 		Model newMod = Model(updateOrigMesh);
 		newMod.SetRigidBody(m.GetRigidBody());
-		glm::dvec3 newMPos = newMod.GetModelInfo().GetMidPoint();
-		glm::dvec3 diff = newMPos - currentMid;
+		newMPos = newMod.GetModelInfo().GetMidPoint();
+		diff = newMPos - currentMid;
+		CreateSplittingPlanes(newMod.GetBoundingBox(), 4, newMod.GetSplittingPlanes());
 		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
 		m = newMod;
 		m.CreateBuffers();
 		m.Update(0);
 
-		return info(meshFrag);
+		newFragments.push_back(test);
 
 	}
 }

@@ -8,5 +8,5 @@
 
 namespace phys
 {
-	std::vector<Plane> CreateSplittingPlanes(BoundingBox bb, int samples);
+	void CreateSplittingPlanes(BoundingBox bb, int samples, std::vector<Plane> & splittingPlanes);
 }

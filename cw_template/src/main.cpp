@@ -48,6 +48,7 @@ bool load_content()
 	test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 10, 0));
 	test.GetRigidBody().SetMass(10);
 	test.CreateBuffers();
+	CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
 	sceneList.push_back(test);
 
 	// Create second model for simulation.
@@ -55,6 +56,7 @@ bool load_content()
 	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
 	test1.GetRigidBody().SetInitialPosition(glm::vec3(0, 0, 0));
 	test1.CreateBuffers();
+	CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
 	sceneList.push_back(test1); 
 
 	// Set the position of the floor.
@@ -124,10 +126,10 @@ bool update(float delta_time)
 		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
 	{
-		counter++;
-		std::cout << "HERE WE GO" << std::endl;
+		//counter++;
+		//std::cout << "HERE WE GO" << std::endl;
 		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
-		Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
+		//Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
 		//Plane testPlane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0));
 		
 		
@@ -139,21 +141,7 @@ bool update(float delta_time)
 
 		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
 		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
-		Model test;
-		glm::dvec3 centre = sceneList[1].GetModelInfo().GetMidPoint();
-		test.SetModelInfo(SliceModel(sceneList[1], testPlane));
-		glm::dvec3 newMPos = test.GetModelInfo().GetMidPoint();
-		glm::dvec3 diff = newMPos - centre;
 
-		test.GetRigidBody().SetInitialPosition(test.GetRigidBody().GetPosition() + (diff));
-		test.CreateBuffers();
-		test.Update(delta_time);
-
-		sceneList.push_back(test);
-
-		//sceneList[0] = test;
-		//sceneList[0].SetBoundingBox(sceneList[0].GetModelInfo().positions);
-		//sceneList[0].SetSphereCollider(sceneList[0].GetModelInfo().positions);
 	}
 
 

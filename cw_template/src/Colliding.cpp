@@ -53,7 +53,7 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 
 	bool col = false;
 
-	// For each corner of the box b.
+	// For each corner of  box b.
 	for (int i = 0; i < 8; i++)
 	{
 		if (CheckCorner(aCorners[i].x, xMin, xMax))
@@ -67,11 +67,11 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					// Calculate distance between two objects.
 					const double distance = glm::length(d);
 					// Find the distance between colliding centre and colliding point
-					auto depth =  (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
+					auto depth =  (length(p1 - aCorners[i]) + length(p2 - bCorners[i])) - distance;
 					
-					//const double sumRadius = a.GetRadius() + b.GetRadius();
-					//auto depth = sumRadius - distance;
+				
 					// Direction that the object is to be pushed towards.
+					//auto t = aCorners[i] - p1;
 					auto norm = glm::normalize(d);
 					// How far the object is the be moved in order to be out of the model.
 					auto pos = p2 - norm *	(length(p2 - bCorners[i]) - depth);
@@ -79,57 +79,55 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 				}
 	}
 
-	if (col == false)
-	{
-		xMin = a.GetPosition().x + a.GetBackBottomLeft().x;
-		xMax = a.GetPosition().x + a.GetFrontTopRight().x;
-		yMin = a.GetPosition().y + a.GetFrontBottomLeft().y;
-		yMax = a.GetPosition().y + a.GetBackTopRight().y;
-		zMin = a.GetPosition().z + a.GetFrontBottomLeft().z;
-		zMax = a.GetPosition().z + a.GetBackTopRight().z;
+	//if (col == false)
+	//if (glm::length (c2.GetRigidBody().prev_pos - c2.GetRigidBody().position) < 1 || glm::length(c1.GetRigidBody().prev_pos - c1.GetRigidBody().position) < 1)
+	//{
+	//	xMin = a.GetPosition().x + a.GetBackBottomLeft().x;
+	//	xMax = a.GetPosition().x + a.GetBackBottomRight().x;
+	//	yMin = a.GetPosition().y + a.GetBackBottomLeft().y;
+	//	yMax = a.GetPosition().y + a.GetBackTopLeft().y;
+	//	zMin = a.GetPosition().z + a.GetFrontBottomLeft().z;
+	//	zMax = a.GetPosition().z + a.GetBackBottomLeft().z;
 
 
-		for (int i = 0; i < 8; i++)
-		{
-			if (aCorners[i].x < xMin)
-				xMin = aCorners[i].x;
-			else if (aCorners[i].x > xMax)
-				xMax = aCorners[i].x;
-			if (aCorners[i].y < yMin)
-				yMin = aCorners[i].y;
-			else if (aCorners[i].y > yMax)
-				yMax = aCorners[i].y;
-			if (aCorners[i].z < zMin)
-				zMin = aCorners[i].z;
-			else if (aCorners[i].z > zMax)
-				zMax = aCorners[i].z;
-		}
+	//	for (int i = 0; i < 8; i++)
+	//	{
+	//		if (aCorners[i].x < xMin)
+	//			xMin = aCorners[i].x;
+	//		else if (aCorners[i].x > xMax)
+	//			xMax = aCorners[i].x;
+	//		if (aCorners[i].y < yMin)
+	//			yMin = aCorners[i].y;
+	//		else if (aCorners[i].y > yMax)
+	//			yMax = aCorners[i].y;
+	//		if (aCorners[i].z < zMin)
+	//			zMin = aCorners[i].z;
+	//		else if (aCorners[i].z > zMax)
+	//			zMax = aCorners[i].z;
+	//	}
 
-		 //For each corner of the box b.
-		for (int i = 0; i < 8; i++)
-		{
-			if (CheckCorner(bCorners[i].x, xMin, xMax))
-				if (CheckCorner(bCorners[i].y, yMin, yMax))
-					if (CheckCorner(bCorners[i].z, zMin, zMax))
-					{
-						const dvec3 p1 = a.GetPosition();
-						const dvec3 p2 = b.GetPosition();
-						const dvec3 d = p1 - p2;
-						// Calculate distance between two objects.
-						const double distance = glm::length(d);
-						// Find the distance between colliding centre and colliding point
-						//auto depth = (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
-
-						const double sumRadius = a.GetRadius() + b.GetRadius();
-						auto depth = sumRadius - distance;
-						// Direction that the object is to be pushed towards.
-						auto norm = glm::normalize(d);
-						// How far the object is the be moved in order to be out of the model.
-						auto pos = p1 - norm * (length(p1 - aCorners[i]) - depth);
-						civ.push_back({ &c2.GetRigidBody(), &c1.GetRigidBody(), pos, norm, depth });
-					}
-		}
-	}
+	//	 //For each corner of the box b.
+	//	for (int i = 0; i < 8; i++)
+	//	{
+	//		if (CheckCorner(bCorners[i].x, xMin, xMax))
+	//			if (CheckCorner(bCorners[i].y, yMin, yMax))
+	//				if (CheckCorner(bCorners[i].z, zMin, zMax))
+	//				{
+	//					const dvec3 p1 = a.GetPosition();
+	//					const dvec3 p2 = b.GetPosition();
+	//					const dvec3 d = p1 - p2;
+	//					// Calculate distance between two objects.
+	//					const double distance = glm::length(d);
+	//					// Find the distance between colliding centre and colliding point
+	//					auto depth = (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
+	//					// Direction that the object is to be pushed towards.
+	//					auto norm = glm::normalize(d);
+	//					// How far the object is the be moved in order to be out of the model.
+	//					auto pos = p1 - norm * (length(p1 - aCorners[i]) - depth);
+	//					civ.push_back({ &c2.GetRigidBody(), &c1.GetRigidBody(), pos, norm, depth });
+	//				}
+	//	}
+	//}
 	return col;
 	}
 
@@ -158,7 +156,6 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 			distances[i] * 1.3;
 			civ.push_back({ &c1.GetRigidBody(), &c1.GetRigidBody(), aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
 			isCollided = true;
-//			return isCollided;
 		}
 	}
 	return isCollided;
