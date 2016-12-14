@@ -14,10 +14,10 @@ namespace phys
 	{
 	
 		// Choose a random plane to split on.
-		//int output = rand() % (pl.size() - 1);
 		for (int i = 0; i < pl.size(); i++)
 		{
-			Plane p = pl[i];
+			int randomPlane = rand() % (pl.size()-1);
+			Plane p = pl[randomPlane];
 			std::vector<glm::vec3> meshFrag;
 			std::vector<glm::vec3> updateOrigMesh;
 
@@ -32,23 +32,20 @@ namespace phys
 				Triangle tri = Triangle(m.GetModelInfo().positions[i], m.GetModelInfo().positions[i + 1], m.GetModelInfo().positions[i + 2]);
 				// Check how many points of the triangle are on the correct side of the plane.
 				int pointsInfront = 0;
-				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) > 0)
+				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) >= 0)
 					pointsInfront++;
-				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) > 0)
+				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) >= 0)
 					pointsInfront++;
-				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) > 0)
+				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) >= 0)
 					pointsInfront++;
 
-				// Now what about if the point lies on the plane?
-				int onPlane = 0;
+				int pointsOnPlane = 0;
 				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) == 0)
-					onPlane++;
+					pointsOnPlane++;
 				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) == 0)
-					onPlane++;
+					pointsOnPlane++;
 				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) == 0)
-					onPlane++;
-
-
+					pointsOnPlane++;
 
 				// If no points are on the correct side add points which would lie on the plane.
 				if (pointsInfront == 0)
@@ -60,7 +57,7 @@ namespace phys
 				else if (pointsInfront != 0)
 				{
 					// If 3 points are on the correct side add complete triangle.
-					if (pointsInfront == 3 || onPlane == 3)
+					if (pointsInfront == 3)
 					{
 						meshFrag.push_back(tri.GetA());
 						meshFrag.push_back(tri.GetB());
@@ -71,14 +68,14 @@ namespace phys
 					// One point on correct side - Two intersections.
 					else if (pointsInfront == 1)
 					{
-						if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) > 0)
+						if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) >= 0)
 						{
 							meshFrag.push_back(tri.GetA());
 							meshFrag.push_back(p.ClosestPointOnPlane(tri.GetB()));
 							meshFrag.push_back(p.ClosestPointOnPlane(tri.GetC()));
 
 						}
-						if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) > 0)
+						if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) >= 0)
 						{
 							meshFrag.push_back(p.ClosestPointOnPlane(tri.GetA()));
 							meshFrag.push_back(tri.GetB());
@@ -86,7 +83,7 @@ namespace phys
 						}
 
 
-						if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) > 0)
+						if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) >= 0)
 						{
 							meshFrag.push_back(p.ClosestPointOnPlane(tri.GetA()));
 							meshFrag.push_back(p.ClosestPointOnPlane(tri.GetB()));
@@ -116,6 +113,7 @@ namespace phys
 						}
 					}
 				}
+
 			}
 
 			// To find the vertices for the original mesh. Just flip the calculations.
@@ -127,21 +125,12 @@ namespace phys
 				Triangle tri = Triangle(m.GetModelInfo().positions[i], m.GetModelInfo().positions[i + 1], m.GetModelInfo().positions[i + 2]);
 				// Check how many points of the triangle are on the correct side of the plane.
 				int pointsBehind = 0;
-				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) < 0)
+				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) <= 0)
 					pointsBehind++;
-				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) < 0)
+				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) <= 0)
 					pointsBehind++;
-				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) < 0)
+				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) <= 0)
 					pointsBehind++;
-
-				// Now what about if the point lies on the plane?
-				int onPlane = 0;
-				if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) == 0)
-					onPlane++;
-				if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) == 0)
-					onPlane++;
-				if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) == 0)
-					onPlane++;
 
 				// If no points are on the correct side add points which would lie on the plane.
 				if (pointsBehind == 0)
@@ -153,7 +142,7 @@ namespace phys
 				else if (pointsBehind != 0)
 				{
 					// If 3 points are on the correct side add complete triangle.
-					if (pointsBehind == 3 || onPlane == 3)
+					if (pointsBehind == 3)
 					{
 						updateOrigMesh.push_back(tri.GetA());
 						updateOrigMesh.push_back(tri.GetB());
@@ -165,14 +154,14 @@ namespace phys
 					else if (pointsBehind == 1)
 					{
 						//Check if a is behind plane.
-						if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) < 0)
+						if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) <= 0)
 						{
 							updateOrigMesh.push_back(tri.GetA());
 							updateOrigMesh.push_back(p.ClosestPointOnPlane(tri.GetB()));
 							updateOrigMesh.push_back(p.ClosestPointOnPlane(tri.GetC()));
 						}
 						// Check if b is behind plane.
-						if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) < 0)
+						if (glm::dot(p.GetNormal(), tri.GetB() - p.GetPoint()) <= 0)
 						{
 							updateOrigMesh.push_back(p.ClosestPointOnPlane(tri.GetA()));
 							updateOrigMesh.push_back(tri.GetB());
@@ -180,7 +169,7 @@ namespace phys
 						}
 
 						// Check if c is behind plane.
-						if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) < 0)
+						if (glm::dot(p.GetNormal(), tri.GetC() - p.GetPoint()) <= 0)
 						{
 							updateOrigMesh.push_back(p.ClosestPointOnPlane(tri.GetA()));
 							updateOrigMesh.push_back(p.ClosestPointOnPlane(tri.GetB()));

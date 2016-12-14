@@ -34,6 +34,7 @@ directional_light light;
 material mat;
 // Ensures space function only executed once. Remove once destrution by collisions is done.
 int counter;
+int prevCounter;
 // Hold x,y positions of the cursor.
 double cursor_x, cursor_y;
 bool load_content()
@@ -55,9 +56,10 @@ bool load_content()
 	// Create second model for simulation.
 	Model test1;
 	test1.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-	test1.GetRigidBody().SetInitialPosition(glm::vec3(0, 0, 0));
+	test1.GetRigidBody().SetInitialPosition(glm::vec3(-3, 45, 0));
+	test1.GetRigidBody().AddLinearImpulse(glm::dvec3(0, -0.5, 0));
+	CreateSplittingPlanes(test1.GetBoundingBox(), 4, test1.GetSplittingPlanes());
 	test1.CreateBuffers();
-	CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
 	sceneList.push_back(test1); 
 
 	// Set the position of the floor.
@@ -125,29 +127,20 @@ bool update(float delta_time)
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
 		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
-	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter ==0)
+	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter  < 10)
 	{
-	
-
-
-		//counter++;
-		//std::cout << "HERE WE GO" << std::endl;
-		//Plane testPlane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5));
-		//Plane testPlane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
-		//Plane testPlane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0));
-		
-		
-		// SPLITTING INTO TRIANGLES NOT WORKING.
-		//Plane testPlane(glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5));
-
-		//Plane testPlane(glm::vec3(0, -0.4, 0.4), glm::vec3(0, 0.4, -0.4), glm::vec3(0, 0.4, 0.4));
-		//Plane testPlane(glm::vec3(-0.5, -0.2, 0.5), glm::vec3(0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, 0.5));
-
-		//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
-		//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
-
+		if (prevCounter == counter)
+		{
+			Model test;
+			test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
+			test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 10, 0));
+			test.GetRigidBody().SetMass(10);
+			test.CreateBuffers();
+			CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
+			sceneList.push_back(test);
+			counter++;
+		}
 	}
-
 
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));
@@ -168,6 +161,7 @@ bool update(float delta_time)
 		e.Update(delta_time);
 	}
 	phys::Update(delta_time);
+	prevCounter = counter;
 	return true;
 }
 

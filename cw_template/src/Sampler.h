@@ -5,6 +5,7 @@
 #include "BoundingBox.h"
 #include <glm/glm.hpp>
 #include "stdafx.h"
+#include <random>
 
 namespace phys
 {

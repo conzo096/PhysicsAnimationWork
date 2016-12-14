@@ -18,6 +18,8 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 	glm::dvec3 bCorners[8] = { b.GetBackBottomLeft(),b.GetBackBottomRight(),b.GetBackTopLeft(),b.GetBackTopRight(),
 		b.GetFrontBottomLeft(),b.GetFrontBottomRight(),b.GetFrontTopLeft(),b.GetFrontTopRight() };
 
+
+
 	const mat4 m = glm::translate(c1.GetRigidBody().position) * glm::mat4_cast(c1.GetRigidBody().orientation);
 	const mat4 m2 = glm::translate(c2.GetRigidBody().position) * glm::mat4_cast(c2.GetRigidBody().orientation);
 	for (int i = 0; i < 8; i++)
@@ -67,7 +69,7 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					// Calculate distance between two objects.
 					const double distance = glm::length(d);
 					// Find the distance between colliding centre and colliding point
-					auto depth =  (length(p1 - aCorners[i]) + length(p2 - bCorners[i])) - distance;
+					auto depth =  ((length(p1 - aCorners[i]) + length(p2 - bCorners[i])) - distance)*0.05;
 					
 				
 					// Direction that the object is to be pushed towards.
@@ -153,7 +155,7 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 		if (distances[i] > 0)
 		{
 			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
-			distances[i] *= 0.05;
+			
 			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i]});
 			isCollided = true;
 		}

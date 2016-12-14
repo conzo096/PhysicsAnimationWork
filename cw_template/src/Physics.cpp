@@ -6,20 +6,29 @@ const double rigidcoef = 0.0;
 void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 {
 		dvec3 dv = b->position - b->prev_pos;
+
+		if (ci.c2 != NULL)
+		{
+			dvec3 dvc2 = ci.c2->position - ci.c2->prev_pos;
+
+			if (glm::dot(dv, dvc2) > 0)
+				return;
+		}
+		
 		dvec3 r0 = b->position - ci.position;
+		
+
+		
+		
+		
 		dvec3 v0 = dv + cross(b->angVelocity, r0);
-
-
-
-
-
 		// I've butchered this formula pretty bad.
 		double j = -1.0 * (rigidcoef)+
 			dot(dv, ci.normal) /
 			(dot(ci.normal, ci.normal) * (b->inverseMass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 		// stop sinking
-		j = j - (ci.depth*0.005);
+		j = j - (ci.depth*0.5);
 
 		
 	// linear impulse
@@ -78,7 +87,7 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 	{
 		if (collision::OnFloor(collisions, m, floor) == true)
 		{
-			glm::vec3 veloA = (m.GetRigidBody().prev_pos - m.GetRigidBody().position) / dt;
+			glm::vec3 veloA = (m.GetRigidBody().prev_pos - m.GetRigidBody().position) / dt; 
 			veloA *= m.GetRigidBody().mass;
 			if (length(veloA) > 100)
 				for (int i = 0; i <m.GetSplittingPlanes().size(); i++)

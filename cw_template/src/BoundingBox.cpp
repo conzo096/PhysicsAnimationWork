@@ -29,10 +29,9 @@ namespace phys
 		}
 
 			// Square and square root to ensure it is a positive number?
-			float length = topX - botX;
-			float width = topY - botY;
-			float height = topZ - botZ;
-
+		length = glm::length(glm::vec3(botX, 0, 0)) + glm::length(glm::vec3(topX, 0, 0));
+		height = glm::length(glm::vec3(botY, 0, 0)) + glm::length(glm::vec3(topY, 0, 0));
+		width = glm::length(glm::vec3(botZ, 0, 0))  + glm::length(glm::vec3(topZ, 0, 0));
 			CalculateVolume(length,width,height);
 			//SetRadius(glm::length(glm::dvec3(GetFrontTopLeft()) - glm::dvec3(length/2,width/2,height/2)));
 	}

@@ -56,7 +56,7 @@ namespace phys
 		double angularDamping;
 
 		// Creates a transform object
-		RigidBody() : scale(glm::vec3(1.0f, 1.0f, 1.0f)), angularDamping(0.5), position(glm::vec3(0,0,0)), mass(5), inverseMass(0.2) { }
+		RigidBody() : scale(glm::vec3(1.0f, 1.0f, 1.0f)), angularDamping(0.05), position(glm::vec3(0,0,0)), mass(5), inverseMass(0.2) { }
 
 		// Translates the 3D object
 		void translate(const glm::vec3 &translation) { position += translation;}

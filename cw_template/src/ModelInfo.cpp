@@ -50,14 +50,6 @@ void phys::RigidBody::Integrate(const double dt)
 	position += velocity + (forces + GRAVITY * inverseMass) * pow(dt, 2);
 	//position += velocity + (forces + GRAVITY) * pow(dt, 2);
 	
-	
-	// Remove once floor plane in.
-	//if (position.y <= -6.0f)
-	//{
-	//	prev_pos = position + (glm::dvec3(velocity) / 1.2);
-	//	position += glm::dvec3(0, 6.0, 0) * pow(dt, 2);
-	//}
-	
 	forces = glm::dvec3(0);
 
 	angVelocity += worldInvInertia * torques * dt;
@@ -82,6 +74,7 @@ phys::info::info(std::vector<glm::vec3> pos)
 	// Box texture coordinates
 	glm::vec2 box_texcoords[4] = { glm::vec2(1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f) };
+
 	glm::vec3 box_normals[6] = { glm::vec3(0.0f, 0.0f, 1.0f),  glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f) };
 
@@ -90,8 +83,8 @@ phys::info::info(std::vector<glm::vec3> pos)
 
 	for (int i = 0; i < pos.size(); i++)
 	{
-		colours.push_back(glm::vec4(1.0f, 0,0,1.0f));
-		normals.push_back(box_normals[i/4]);
+		colours.push_back(glm::vec4(1.0f, 1.0f,0,1.0f));
+		normals.push_back(box_normals[i/6]);
 	}
 	// NEED TO FIX NORMALS.
 	for (int i = 0; i < pos.size(); i += 3)

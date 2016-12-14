@@ -16,6 +16,9 @@ namespace phys
 		float botX = 0, botY = 0, botZ = 0;
 
 		float volume;
+		float length =0;
+		float width =0;
+		float height =0;
 		glm::dquat rotation;
 
 		// USE TRANSFORM?
@@ -24,10 +27,12 @@ namespace phys
 		BoundingBox(std::vector<glm::vec3> points);
 		~BoundingBox();
 
-		//void  CalculateVolume();
 		void  CalculateVolume(float length, float width, float height);
+	
+		float GetLength() { return length; }
+		float GetWidth() { return width; }
+		float GetHeight() { return height; }
 
-		//bool TestCollision(BoundingBox bb);
 		bool TestMouseCollision(glm::vec2 pos);
 
 		// Set and gets.

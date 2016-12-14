@@ -1,114 +1,106 @@
 #include "Sampler.h"
 namespace phys
 {
-	glm::vec3 RandomPointOnLine(glm::vec3 maxBound, glm::vec3 minBound)
+	double RandomPoint(float range, float minValue)
 	{
 
 		// Broke.
-		glm::vec3 point = glm::vec3(0, 0, 0);
+		double point;
+		srand((int)time(0));
 		
-		/*int range = minBound.x - maxBound.x + 1;
-		point.x = rand() % (int)(range + minBound.x);
-		range = minBound.y - maxBound.y + 1;
-		point.y = rand() % (int)(range + minBound.y);
-		range = minBound.z - maxBound.z + 1;
-		point.z = rand() % (int)(range + minBound.z);*/
+		point = ((rand() % (int)(range)) / range*0.5) + minValue;
 
+		
 		return point;
 	}
 
 
 	void CreateSplittingPlanes(BoundingBox bb, int numSamples, std::vector<Plane> &splittingPlanes)
 	{
-		//glm::vec3 startPoint(0.0);
-		//glm::vec3 endPoint(0.0);
-		//glm::vec3 norm(0.0);
-		//int i = 0;
-		//// What face to start ray from.
-		//int face = 0;
-		//// Ray to find intersection points.
-		//while (i < numSamples)
-		//{
-		//	// Change to a new face.
-		//	face = (face + 1) % 6;
-		//	switch (face)
-		//	{
-		//	case 0: // bottom face
+		glm::vec3 startPoint(0.0);
+		glm::vec3 endPoint(0.0);
+		glm::vec3 norm(0.0);
+		int i = 0;
+		// What face to start ray from.
+		int face = 0;
+		// Ray to find intersection points.
+		while (i < numSamples)
+		{
+			// Change to a new face.
 
-		//		startPoint = (bb.GetFrontBottomRight(), bb.GetBackBottomLeft());
-		//		endPoint = RandomPointOnLine(bb.GetFrontTopRight(), bb.GetBackTopLeft());
-		//		endPoint.y = startPoint.y;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-		//		
-		//		break;
-		//	case 1: // top face
+			srand((time(NULL)));
+			face =	(face + (rand() % numSamples)) % 4;
+			switch (face)
+			{
+			case 0: //Cut along y axis.
 
-		//		startPoint = RandomPointOnLine(bb.GetFrontTopRight(), bb.GetBackTopLeft());
-		//		endPoint = (bb.GetFrontBottomRight(), bb.GetBackBottomLeft());
-		//		endPoint.y = startPoint.y;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-		//		
-		//		break;
-		//	case 2: // left face
+				/*startPoint.x = RandomPoint(bb.GetLength(),bb.GetFrontBottomRight().x);
+				startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
+				startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
 
-		//		startPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetBackTopLeft());
-		//		endPoint = RandomPointOnLine(bb.GetFrontBottomRight(), bb.GetBackTopRight());
-		//		endPoint.x = startPoint.x;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-		//		
-		//		
-		//		break;
-		//	case 3: // right face
+				endPoint.x = RandomPoint(bb.GetHeight(), bb.GetFrontTopRight().y);
+				endPoint.y = startPoint.y;
+				endPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontTopRight().z);
 
-		//		startPoint = RandomPointOnLine(bb.GetFrontBottomRight(), bb.GetBackTopRight());
-		//		endPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetBackTopLeft());
-		//		endPoint.x = startPoint.x;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-		//		
-		//		break;
-		//	case 4: // front face
-
-		//		startPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetFrontTopRight());
-		//		endPoint = RandomPointOnLine(bb.GetBackBottomLeft(), bb.GetBackTopRight());
-		//		endPoint.z = startPoint.z;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-		//		
-		//		break;
-		//	case 5: // back face
-
-		//		startPoint = RandomPointOnLine(bb.GetBackBottomLeft(), bb.GetBackTopRight());
-		//		endPoint = RandomPointOnLine(bb.GetFrontBottomLeft(), bb.GetFrontTopRight());
-		//		endPoint.z = startPoint.z;
-		//		norm = glm::normalize(glm::cross(startPoint, endPoint));
-		//		splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-
-		//		break;
-
-		//	default: break;
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));*/
 
 
-		//	}
+				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
 
-		//	i++;
-		//	
+				break;
+			case 1: // Cut along x axis.
+
+
+				//startPoint.x = RandomPoint(bb.GetLength(), bb.GetFrontBottomRight().x);
+				//startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
+				//startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
+
+				//endPoint.x = startPoint.x;
+				//endPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontTopLeft().y);
+				//endPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontTopLeft().z);
+
+
+				//norm = glm::normalize(glm::cross(startPoint, endPoint));
+				//splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
+
+				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
+
+				break;
+			case 2: // Cut along z axis.
+
+				/*startPoint.x = RandomPoint(bb.GetLength(), bb.GetFrontBottomRight().x);
+				startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
+				startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
+
+				endPoint.x = RandomPoint(bb.GetLength(), bb.GetBackBottomRight().x);
+				endPoint.y = RandomPoint(bb.GetWidth(), bb.GetBackBottomRight().y);
+				endPoint.z = startPoint.z;
+				
+				norm = glm::normalize(glm::cross(startPoint, endPoint));
+				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));*/
+
+				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
+				break;
+			case 4:
+				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, 0.5), glm::vec3(0.5, 0.2, -0.5), glm::vec3(0.5, 0.2, 0.5)));
+				break;
+			default: break;
+
+			}
+			i++;	
+			if (i >= numSamples)
+				break;
+		}
+
+
 		//	//Plane testPlane(glm::vec3(0, -0.4, 0.4), glm::vec3(0, 0.4, -0.4), glm::vec3(0, 0.4, 0.4));
 		//	//Plane testPlane(glm::vec3(-0.5, -0.2, 0.5), glm::vec3(0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, 0.5));
 
 		//	//Plane testPlane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10));
 		//	//Plane testPlane(glm::vec3(-0.5, 0,0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5));
-		//	if (i >= numSamples)
-		//		break;
-		//}
 
-		// put here temp
-		splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
-		splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
-		splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0)));
+	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.5, 0), glm::vec3(0.5, -0.5, 0), glm::vec3(0.5, 0.5, 0)));
 	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, -0.5), glm::vec3(-0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, -0.5)));
 	//	splittingPlanes.push_back(Plane(glm::vec3(-10, -10, 10), glm::vec3(-10, 10, -10), glm::vec3(-10, 10, 10)));
 	//	splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, 0.5), glm::vec3(0.5, 0.2, -0.5), glm::vec3(0.5, 0.2, 0.5)));
