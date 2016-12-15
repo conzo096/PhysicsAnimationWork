@@ -2,24 +2,16 @@
 namespace phys
 {
 
-	//glm::vec3  RayPlaneResult(RayCast ray, Plane pl)
-	//{
-	//	float scale = -(glm::dot(ray.GetOrigin(), pl.GetNormal() + pl.GetDistance()));
-	//	scale /= glm::dot(ray.GetDirection(), pl .GetNormal());
-	//	return ray.GetOrigin() + (scale*ray.GetDirection());
-	//	
-	//}
-
+	// This class cuts a mesh in half updates the model that has broken. 
 	void SliceModel(Model& m,Plane p, std::vector<Model>& newFragments)
 	{
 
+		// Stores the vertex positions of the new fragment.
 		std::vector<glm::vec3> meshFrag;
+		// Stores the vertex positions of the updated original model..
 		std::vector<glm::vec3> updateOrigMesh;
-
-
+		// Current center point of the model. - used to calculate the displacement.
 		glm::dvec3 currentMid = m.GetModelInfo().GetMidPoint();
-
-
 		// For each triangle in the mesh.
 		for (int i = 0; i < m.GetModelInfo().positions.size(); i += 3)
 		{
@@ -51,8 +43,7 @@ namespace phys
 					meshFrag.push_back(tri.GetB());
 					meshFrag.push_back(tri.GetC());
 				}
-				// Other cases have an intersection, find out where.
-
+		
 				// One point on correct side - Two intersections.
 				else if (pointsInfront == 1)
 				{
@@ -165,7 +156,7 @@ namespace phys
 
 					}
 				}
-				//	// Find intersection point. - THIS IS WHAT IS BORKEN
+				//	// Find intersection point.
 				else if (pointsBehind == 2)
 				{
 					if (glm::dot(p.GetNormal(), tri.GetA() - p.GetPoint()) > 0)
@@ -191,35 +182,33 @@ namespace phys
 		}
 
 
-		// Reduce number of splits possible.
-
+		// Reduce number of splits possible on new fragments..
 		int numSplit = m.GetSplittingPlanes().size();
 		if (numSplit > 1)
 			numSplit -= 1;
-		// If points lie on the plane then they are added to both models.
 
-			
 		Model test = Model(meshFrag);
 		glm::dvec3 centre = m.GetModelInfo().GetMidPoint();
 		glm::dvec3 newMPos = test.GetModelInfo().GetMidPoint();
-		glm::dvec3 diff = newMPos - centre;
+		glm::dvec3 diff = (newMPos - centre);
 		CreateSplittingPlanes(test.GetBoundingBox(),numSplit , test.GetSplittingPlanes());
 		test.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
-		test.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0,2,0))*0.05);
+		test.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0,1,0))*0.05);
 		test.CreateBuffers();
 		test.Update(0);
 
 		Model newMod = Model(updateOrigMesh);
-		newMod.SetRigidBody(m.GetRigidBody());
+		newMod.GetRigidBody().orientation = m.GetRigidBody().orientation;
 		newMPos = newMod.GetModelInfo().GetMidPoint();
 		diff = newMPos - currentMid;
 		CreateSplittingPlanes(newMod.GetBoundingBox(), numSplit, newMod.GetSplittingPlanes());
 		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
-		newMod.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0, 2, 0))*0.05);
+		newMod.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0, 1, 0))*0.05);
 		m = newMod;
 		m.CreateBuffers();
 		m.Update(0);
 
+		// Push back the new fragment to the vector which hold all of them.
 		newFragments.push_back(test);
 	}
 }

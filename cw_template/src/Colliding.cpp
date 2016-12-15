@@ -80,14 +80,64 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 					civ.push_back({ &c1.GetRigidBody(), &c2.GetRigidBody(), pos, norm, depth });
 				}
 	}
+
+	//if (col == false)
+	//if (glm::length (c2.GetRigidBody().prev_pos - c2.GetRigidBody().position) < 1 || glm::length(c1.GetRigidBody().prev_pos - c1.GetRigidBody().position) < 1)
+	//{
+	//	xMin = a.GetPosition().x + a.GetBackBottomLeft().x;
+	//	xMax = a.GetPosition().x + a.GetBackBottomRight().x;
+	//	yMin = a.GetPosition().y + a.GetBackBottomLeft().y;
+	//	yMax = a.GetPosition().y + a.GetBackTopLeft().y;
+	//	zMin = a.GetPosition().z + a.GetFrontBottomLeft().z;
+	//	zMax = a.GetPosition().z + a.GetBackBottomLeft().z;
+
+
+	//	for (int i = 0; i < 8; i++)
+	//	{
+	//		if (aCorners[i].x < xMin)
+	//			xMin = aCorners[i].x;
+	//		else if (aCorners[i].x > xMax)
+	//			xMax = aCorners[i].x;
+	//		if (aCorners[i].y < yMin)
+	//			yMin = aCorners[i].y;
+	//		else if (aCorners[i].y > yMax)
+	//			yMax = aCorners[i].y;
+	//		if (aCorners[i].z < zMin)
+	//			zMin = aCorners[i].z;
+	//		else if (aCorners[i].z > zMax)
+	//			zMax = aCorners[i].z;
+	//	}
+
+	//	 //For each corner of the box b.
+	//	for (int i = 0; i < 8; i++)
+	//	{
+	//		if (CheckCorner(bCorners[i].x, xMin, xMax))
+	//			if (CheckCorner(bCorners[i].y, yMin, yMax))
+	//				if (CheckCorner(bCorners[i].z, zMin, zMax))
+	//				{
+	//					const dvec3 p1 = a.GetPosition();
+	//					const dvec3 p2 = b.GetPosition();
+	//					const dvec3 d = p1 - p2;
+	//					// Calculate distance between two objects.
+	//					const double distance = glm::length(d);
+	//					// Find the distance between colliding centre and colliding point
+	//					auto depth = (length(p1 - aCorners[i]) + length(p2 - bCorners[i]) - distance);
+	//					// Direction that the object is to be pushed towards.
+	//					auto norm = glm::normalize(d);
+	//					// How far the object is the be moved in order to be out of the model.
+	//					auto pos = p1 - norm * (length(p1 - aCorners[i]) - depth);
+	//					civ.push_back({ &c2.GetRigidBody(), &c1.GetRigidBody(), pos, norm, depth });
+	//				}
+	//	}
+	//}
 	return col;
-	}
+}
 
 
 
 bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollider pc)
-{	
-	
+{
+
 	BoundingBox a = c1.GetBoundingBox();
 	glm::dvec3 aCorners[8] = { a.GetBackBottomLeft(),a.GetBackBottomRight(),a.GetBackTopLeft(),a.GetBackTopRight(),
 		a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
@@ -97,22 +147,25 @@ bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollid
 		aCorners[i] = dvec3(m * dvec4(aCorners[i], 1.0));
 
 	bool isCollided = false;
-	double distance;
+	double distances[8];
 	for (int i = 0; i < 8; i++)
 	{
-		distance = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
-		if (distance > 0)
-		{		
-			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distance, pc.GetNormal(), distance});
+		distances[i] = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
+		//distances[i] = glm::dot(pc.GetNormal(), aCorners[i] - pc.GetPosition());
+		if (distances[i] > 0)
+		{
+			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
+
+			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distances[i], pc.GetNormal(), distances[i] });
 			isCollided = true;
 		}
 	}
 	return isCollided;
 }
 
-bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionInfo> &civ, Model &c1,Model &c2)
+bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionInfo> &civ, Model &c1, Model &c2)
 {
-	
+
 	// Check sphere sphere collision before box collision.
 	const dvec3 p1 = c1.GetSphereCollider().GetCenter();
 	const dvec3 p2 = c2.GetSphereCollider().GetCenter();
@@ -123,7 +176,7 @@ bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionI
 	if (distance < sumRadius)
 	{
 		CheckObbObb(civ, c1, c2);
-			return true;
+		return true;
 	}
 	return false;
 }

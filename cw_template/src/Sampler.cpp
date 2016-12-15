@@ -17,14 +17,11 @@ namespace phys
 		glm::vec3 norm(0.0);
 		std::vector<glm::vec3> linePoints;
 		int i = 0;
-		// What face to start ray from.
+		// What face to start mesh split from.
 		int face = 0;
-		// Ray to find intersection points.
 		while (i < numSamples)
 		{
 			// Change to a new face.
-
-			//srand((time(NULL)));
 			face =	(face + 1);
 			switch (face)
 			{
@@ -39,12 +36,12 @@ namespace phys
 					std::shuffle(linePoints.begin(),linePoints.end(),std::default_random_engine());
 				}
 
-				norm = glm::vec3(0,1,0);
+			
 				// Shuffle is random so just take first point.
-				splittingPlanes.push_back(Plane(linePoints[0], norm));
-				splittingPlanes.push_back(Plane(linePoints[2], norm));
+				splittingPlanes.push_back(Plane(linePoints[0], linePoints[1],linePoints[2]));
+			//	splittingPlanes.push_back(Plane(linePoints[2], norm));
 
-				//splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
+				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), cross(linePoints[1], linePoints[2])));
 
 				break;
 			case 1: // Cut along x axis.
@@ -61,10 +58,10 @@ namespace phys
 
 				norm = glm::vec3(1, 0, 0);
 				// Shuffle is random so just take first point.
-				splittingPlanes.push_back(Plane(linePoints[0], norm));
-				splittingPlanes.push_back(Plane(linePoints[2], norm));
-
-			//	splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
+			//	splittingPlanes.push_back(Plane(linePoints[0], norm));
+			//	splittingPlanes.push_back(Plane(linePoints[2], norm));
+				splittingPlanes.push_back(Plane(linePoints[0], linePoints[1], cross(linePoints[1], linePoints[2])));
+				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
 
 				break;
 			case 2: // Cut along z axis.
@@ -81,10 +78,10 @@ namespace phys
 
 				norm = glm::vec3(0, 0, 1);
 				// Shuffle is random so just take first point.
-				splittingPlanes.push_back(Plane(linePoints[0], norm));
-				splittingPlanes.push_back(Plane(linePoints[2], norm));
-
-				//				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
+				//splittingPlanes.push_back(Plane(linePoints[0], norm));
+				//splittingPlanes.push_back(Plane(linePoints[2], norm));
+				splittingPlanes.push_back(Plane(linePoints[0], linePoints[1], cross(linePoints[1],linePoints[2])));
+				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
 				
 				break;
 			case 4:
