@@ -62,17 +62,21 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 			{
 
 				// Check if the threshold is met for the model to break.
-				glm::vec3 veloA = (physicsScene[i].GetRigidBody().prev_pos - physicsScene[i].GetRigidBody().position) / dt;
-				veloA *= physicsScene[i].GetRigidBody().mass;
-				glm::vec3 veloB = (physicsScene[j].GetRigidBody().prev_pos - physicsScene[j].GetRigidBody().position) / dt;
-				veloB *= physicsScene[j].GetRigidBody().mass;
+				glm::vec3 speedA = (physicsScene[i].GetRigidBody().prev_pos - physicsScene[i].GetRigidBody().position) / dt;
+				speedA *= physicsScene[i].GetRigidBody().mass;
+				glm::vec3 speedB = (physicsScene[j].GetRigidBody().prev_pos - physicsScene[j].GetRigidBody().position) / dt;
+				speedB *= physicsScene[j].GetRigidBody().mass;
 
-				if (length(veloA + veloB) > 200)
+				// Find combined speed between two objects.
+				if (length(speedA + speedB) > 200)
 				{ 
 					std::shuffle(physicsScene[i].GetSplittingPlanes().begin(), physicsScene[i].GetSplittingPlanes().end(),
 						std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
-					for (int k = 0; k < physicsScene[j].GetSplittingPlanes().size(); k++)
-						SliceModel(physicsScene[j], physicsScene[j].GetSplittingPlanes()[k], newFragments);
+					if (physicsScene.size() < 60)
+						for (int k = 0; k < physicsScene[i].GetSplittingPlanes().size(); k++)
+							SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes()[k], newFragments);
+					else
+						break;
 				}
 			}
 		}
@@ -86,12 +90,17 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 		{
 			glm::vec3 speedA = (m.GetRigidBody().prev_pos - m.GetRigidBody().position) / dt;
 			speedA *= m.GetRigidBody().mass;
-			if (length(speedA) > 100)
-				for (int i = 0; i <m.GetSplittingPlanes().size(); i++)
-					SliceModel(m, m.GetSplittingPlanes()[i], newFragments);
+			// Floor is a constant value as it has infinite mass.
+			if (length(speedA) > 200)
+				for (int i = 0; i < m.GetSplittingPlanes().size(); i++)
+					if (physicsScene.size() < 60)
+						SliceModel(m, m.GetSplittingPlanes()[i], newFragments);
+					else
+						break;
 		}
 	}
 
+	// Resolve any collisions that have occured.
 	for (auto &c : collisions)
 	{
 		Resolve(c, floor);
@@ -100,7 +109,11 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 	for (auto &e : physicsScene)
 		e.GetRigidBody().Integrate(dt);
 	for (auto &f : newFragments)
-		physicsScene.push_back(f);
+		// Currently hard coded to prevent scene from freezing. Ideally tie this to Frames per second?
+		if (physicsScene.size() < 60)
+			physicsScene.push_back(f);
+		else
+			break;
 }
 
 void InitPhysics() {}

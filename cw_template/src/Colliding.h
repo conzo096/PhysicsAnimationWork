@@ -1,3 +1,5 @@
+/* This class contains the methods for bounding volume detection.*/
+
 #pragma once
 #include "Model.h"
 #include "ModelInfo.h"

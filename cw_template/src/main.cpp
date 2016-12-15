@@ -44,7 +44,6 @@ bool load_content()
 	glfwSetInputMode(renderer::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	phys::Init();
 	
-	//sceneList.resize(15);
 	// Create first model for simulation.
 	Model test;
 	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
@@ -128,19 +127,10 @@ bool update(float delta_time)
 		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
 		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
-	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE) && counter  < 10)
+	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
-		if (prevCounter == counter)
-		{
-			Model test;
-			test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-			test.GetRigidBody().SetInitialPosition(cam.get_target());
-			test.GetRigidBody().SetMass(7);
-			test.CreateBuffers();
-			CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
-			sceneList.push_back(test);
-			counter++;
-		}
+		for (auto & m : sceneList)
+			m.GetRigidBody().AddLinearImpulse(glm::vec3(0, 2, 0)*delta_time);
 	}
 
 	PV = cam.get_projection() * cam.get_view();

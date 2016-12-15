@@ -27,33 +27,14 @@ namespace phys
 			if (pos.z < botZ)
 				botZ = pos.z;
 		}
+		
+		// Set the radius.
+		glm::vec3 centre;
+		for (int i = 0; i < points.size(); i++)
+			centre += points[i];
+		centre /= points.size();
 
-			// Square and square root to ensure it is a positive number?
-		length = glm::length(glm::vec3(botX, 0, 0)) + glm::length(glm::vec3(topX, 0, 0));
-		height = glm::length(glm::vec3(botY, 0, 0)) + glm::length(glm::vec3(topY, 0, 0));
-		width = glm::length(glm::vec3(botZ, 0, 0))  + glm::length(glm::vec3(topZ, 0, 0));
-			CalculateVolume(length,width,height);
-			//SetRadius(glm::length(glm::dvec3(GetFrontTopLeft()) - glm::dvec3(length/2,width/2,height/2)));
-	}
-
-
-	void BoundingBox::CalculateVolume(float length, float width, float height)
-	{
-		volume = length * width *height;
-	}
-
-	bool BoundingBox::TestMouseCollision(glm::vec2 pos)
-	{
-		 // Need to add transfrom.
-		glm::dvec2 topXY = glm::dvec2(topX, topY);
-		glm::dvec2 botXY = glm::dvec2(botX, botY);
-		glm::dvec2 topXBotY = glm::dvec2(topX, botY);
-		glm::dvec2 botXTopY = glm::dvec2(botX, topY);
-
-		// Check if it is in range.
-		if (pos.x > botX || pos.x < topX) return false;
-		if (pos.y > botY || pos.y < topY) return false;
-		return true;
+		SetRadius(glm::length(centre - GetFrontTopRight()));
 	}
 
 	BoundingBox::~BoundingBox()

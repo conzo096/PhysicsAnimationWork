@@ -96,8 +96,6 @@ namespace phys
 		}
 
 		// To find the vertices for the original mesh. Just flip the calculations.
-
-
 		for (int i = 0; i < m.GetModelInfo().positions.size(); i += 3)
 		{
 			// Get mesh triangle.
@@ -191,7 +189,7 @@ namespace phys
 		glm::dvec3 centre = m.GetModelInfo().GetMidPoint();
 		glm::dvec3 newMPos = test.GetModelInfo().GetMidPoint();
 		glm::dvec3 diff = (newMPos - centre);
-		CreateSplittingPlanes(test.GetBoundingBox(),numSplit , test.GetSplittingPlanes());
+		CreateSplittingPlanes(test.GetBoundingBox(),numSplit, test.GetSplittingPlanes());
 		test.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
 		test.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0,1,0))*0.05);
 		test.CreateBuffers();
@@ -203,7 +201,7 @@ namespace phys
 		diff = newMPos - currentMid;
 		CreateSplittingPlanes(newMod.GetBoundingBox(), numSplit, newMod.GetSplittingPlanes());
 		newMod.GetRigidBody().SetInitialPosition(m.GetRigidBody().GetPosition() + (diff));
-		newMod.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0, 1, 0))*0.05);
+		newMod.GetRigidBody().AddLinearImpulse((diff + glm::dvec3(0, 1, 0))*0.15);
 		m = newMod;
 		m.CreateBuffers();
 		m.Update(0);
