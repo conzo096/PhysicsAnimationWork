@@ -3,19 +3,19 @@ const double coef = 0.5;	// Value between 0- 1, higher value = more bounciness o
 const double rigidcoef = 0.0; // Use for springs.
 
 
-void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
+void ResolveRB(phys::RigidBody*const b, const phys::CollisionInfo &ci)
 {
-	dvec3 dv = b->position - b->prev_pos;
+	glm::dvec3 dv = b->position - b->prev_pos;
 	if (ci.c2 != NULL)
 	{
-		dvec3 dvc2 = ci.c2->position - ci.c2->prev_pos;
+		glm::dvec3 dvc2 = ci.c2->position - ci.c2->prev_pos;
 		// If they are moving in opposite directions already ignore.
 		if (glm::dot(dv, dvc2) > 0)
 			return;
 	}
-	dvec3 r0 = b->position - ci.position;
+	glm::dvec3 r0 = b->position - ci.position;
 
-	dvec3 v0 = dv + cross(b->angVelocity, r0);
+	glm::dvec3 v0 = dv + cross(b->angVelocity, r0);
 	// I've butchered this formula pretty bad.
 	double j = -1.0 * (rigidcoef)+
 		dot(dv, ci.normal) /
@@ -24,7 +24,7 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 	// stop sinking
 	j = j - (ci.depth*0.5);
 	// linear impulse
-	dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
+	glm::dvec3 newVel = dv + (b->inverseMass * ci.normal * j);
 	b->AddLinearImpulse(-newVel);
 	// angular impulse
 	auto gg = cross(r0, ci.normal);
@@ -32,7 +32,7 @@ void ResolveRB(RigidBody*const b, const CollisionInfo &ci)
 }
 
 
-void Resolve(const CollisionInfo &ci, PlaneCollider& pc)
+void Resolve(const phys::CollisionInfo &ci, phys::PlaneCollider& pc)
 {
 	auto body1 = ci.c1;
 	auto body2 = ci.c2;
@@ -47,12 +47,12 @@ void Resolve(const CollisionInfo &ci, PlaneCollider& pc)
 	}
 }
 
-void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const double dt, phys::PlaneCollider floor)
+void UpdatePhysics(std::vector<phys::Model>& physicsScene, const double t, const double dt, phys::PlaneCollider floor)
 {
 	// Stores all the collisions that have happened.
-	std::vector<CollisionInfo> collisions;
+	std::vector<phys::CollisionInfo> collisions;
 	// Stores any new fragments that are created. Add to the physics scene after current objects have been calculated to avoid recursive loop.
-	std::vector<Model> newFragments;
+	std::vector<phys::Model> newFragments;
 	// Check if objects collide with each other.
 	for (int i = 0; i < physicsScene.size(); i++)
 	{

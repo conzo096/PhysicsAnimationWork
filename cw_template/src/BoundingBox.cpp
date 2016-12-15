@@ -1,11 +1,7 @@
 #include "BoundingBox.h"
 namespace phys
 {
-
-	BoundingBox::BoundingBox()
-	{
-
-	}
+	BoundingBox::BoundingBox(){}
 
 	BoundingBox::BoundingBox(std::vector<glm::vec3> points)
 	{
@@ -33,11 +29,9 @@ namespace phys
 		for (int i = 0; i < points.size(); i++)
 			centre += points[i];
 		centre /= points.size();
-
+			
 		SetRadius(glm::length(centre - GetFrontTopRight()));
 	}
 
-	BoundingBox::~BoundingBox()
-	{
-	}
+	BoundingBox::~BoundingBox(){}
 }

@@ -1,3 +1,4 @@
+// Holds some of the structures needed for the central model class. 
 #pragma once
 #include "stdafx.h"
 #include "RigidBody.h"

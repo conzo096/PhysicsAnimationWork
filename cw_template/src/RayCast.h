@@ -1,3 +1,4 @@
+// Ray casting class. Was first used to try and split meshes. Currently it is not used in any classes or methods.
 #pragma once
 #include <glm/glm.hpp>
 #include "Model.h"

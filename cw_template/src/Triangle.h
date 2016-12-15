@@ -1,3 +1,4 @@
+// Triangle class is a helped class used for splitting meshes. Instead of checking each individual point it was easier to put them into a triangle structure.
 #pragma once
 #include "stdafx.h"
 namespace phys

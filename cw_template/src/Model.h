@@ -1,3 +1,4 @@
+// This class represents the models that are interacting within the scene. 
 #pragma once
 #include "stdafx.h"
 #include "BoundingBox.h"
@@ -6,7 +7,6 @@
 #include <graphics_framework.h>
 #include <vector>
 #include "Plane.h"
-#include <glm/ext.hpp>
 #include <glm/glm.hpp>
 #include "Sampler.h"
 using namespace graphics_framework;
@@ -15,14 +15,17 @@ namespace phys
 	class Model
 	{
 	private:
-
+		// Bounding volumes.
 		BoundingBox box;
 		SphereCollider sphere;
+		// info - holds all the visual data required to render a model. vertices, normals, texture coordinates, vertex colours.
 		info information;
+		// Physics based rigidbody.
 		RigidBody rigidBody;
+		// Holds the OpenGl buffers needed to render a model.
 		renderInfo render;
 
-		// splitting planes.
+		// Planes in which the model can split on.
 		std::vector<Plane> splittingPlanes = std::vector<Plane>();
 
 	public:
@@ -31,8 +34,7 @@ namespace phys
 		Model(info i);
 		~Model();
 
-
-		// Update buffers.
+		// Creates the buffers. Needed AFTER it is created, will fail if created in a constructor.
 		void CreateBuffers();
 
 		// Adds a buffer of vec2 data to the geometry object
@@ -43,8 +45,9 @@ namespace phys
 		bool add_buffer(const std::vector<glm::vec4> &buffer, GLuint index, GLenum buffer_type = GL_DYNAMIC_DRAW);
 		// Adds an index buffer to the geometry object
 		bool add_index_buffer(const std::vector<GLuint> &buffer);
-
+		// Updates the bounding volume positions.
 		void Update(float deltaTime);
+		// Renders the model.
 		void Render();
 
 

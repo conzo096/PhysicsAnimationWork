@@ -8,7 +8,6 @@ namespace phys
 
 	}
 
-
 	Model::Model(std::vector<glm::vec3> pos)
 	{
 		information = info(pos);

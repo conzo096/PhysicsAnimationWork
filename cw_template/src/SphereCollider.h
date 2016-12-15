@@ -1,3 +1,4 @@
+// Sphere collider, inherits from collider.
 #pragma once
 #include <glm/glm.hpp>
 #include "stdafx.h"

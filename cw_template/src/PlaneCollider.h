@@ -1,3 +1,4 @@
+// Plane collider class, inherits from the collider class. This is used for the floor in the scene.
 #pragma once
 #include <glm/glm.hpp>
 #include "Collider.h"

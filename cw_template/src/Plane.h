@@ -1,3 +1,4 @@
+// Simple plane class, is mainly used to split the split meshes up.
 #pragma once
 #include "stdafx.h"
 
@@ -11,8 +12,8 @@ namespace phys
 		public:
 		Plane() {};
 		Plane(glm::vec3 a, glm::vec3 b, glm::vec3 c);
-		Plane(glm::vec3 pos, glm::vec3 norm) { point = pos; normal = glm::normalize(norm); };
-		~Plane() {};
+		Plane(glm::vec3 pos, glm::vec3 norm) { point = pos; normal = glm::normalize(norm); }
+		~Plane() {}
 
 		int SideOfPlane(glm::vec3 p);
 		glm::vec3 ClosestPointOnPlane(glm::vec3 p);

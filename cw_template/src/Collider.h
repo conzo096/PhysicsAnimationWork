@@ -1,6 +1,8 @@
+// This is the base collider class which any collider created will inherit from.
 #pragma once
 #include <glm/glm.hpp>
 #include "stdafx.h"
+#include "RigidBody.h"
 namespace phys
 {
 	class Collider

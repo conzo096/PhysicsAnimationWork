@@ -1,23 +1,18 @@
+// This is the orientated bounding box. It inherits from the base collider class.
 #pragma once
-#include "stdafx.h"
 #include <glm/glm.hpp>
-#include <vector>
-#include <glm/ext.hpp>
-#include <iostream>
-#include "ModelInfo.h"
-#include "SphereCollider.h"
 #include "Collider.h"
 namespace phys
 {
 	class BoundingBox : public Collider
 	{
 	private:
+		// Top corner values of cube.
 		float topX = 0, topY = 0, topZ = 0;
+		// Bottom corner values of cube.
 		float botX = 0, botY = 0, botZ = 0;
-
+		// Rotation of the cube. This is the same as the rigid body it is attached too.
 		glm::dquat rotation;
-
-		// USE TRANSFORM?
 	public:
 		BoundingBox();
 		BoundingBox(std::vector<glm::vec3> points);
@@ -31,7 +26,6 @@ namespace phys
 		glm::vec3 GetBackTopLeft() { return glm::vec3(botX, topY, topZ); };
 
 		// Corners using max x.
-
 		glm::vec3 GetFrontBottomRight() { return glm::vec3(topX, botY, botZ); };
 		glm::vec3 GetFrontTopRight() { return glm::vec3(topX, topY, botZ); };
 
