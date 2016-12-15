@@ -44,6 +44,7 @@ bool load_content()
 	glfwSetInputMode(renderer::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	phys::Init();
 	
+	//sceneList.resize(15);
 	// Create first model for simulation.
 	Model test;
 	test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
@@ -133,8 +134,8 @@ bool update(float delta_time)
 		{
 			Model test;
 			test.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
-			test.GetRigidBody().SetInitialPosition(glm::dvec3(0, 10, 0));
-			test.GetRigidBody().SetMass(10);
+			test.GetRigidBody().SetInitialPosition(cam.get_target());
+			test.GetRigidBody().SetMass(7);
 			test.CreateBuffers();
 			CreateSplittingPlanes(test.GetBoundingBox(), 4, test.GetSplittingPlanes());
 			sceneList.push_back(test);

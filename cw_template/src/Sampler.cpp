@@ -1,25 +1,21 @@
 #include "Sampler.h"
 namespace phys
 {
-	double RandomPoint(float range, float minValue)
+	glm::vec3 RandomPoint(glm::vec3 minValue, glm::vec3 maxValue)
 	{
-
-		// Broke.
-		double point;
-		srand((int)time(0));
-		
-		point = ((rand() % (int)(range)) / range*0.5) + minValue;
-
-		
-		return point;
+	
+		glm::vec3 direction = maxValue - minValue;
+		direction *= 0.5; // Midway.
+		glm::vec3 midPoint = minValue + direction;
+		return midPoint;
 	}
 
 
 	void CreateSplittingPlanes(BoundingBox bb, int numSamples, std::vector<Plane> &splittingPlanes)
 	{
-		glm::vec3 startPoint(0.0);
-		glm::vec3 endPoint(0.0);
+		glm::vec3 midPoint(0.0);
 		glm::vec3 norm(0.0);
+		std::vector<glm::vec3> linePoints;
 		int i = 0;
 		// What face to start ray from.
 		int face = 0;
@@ -28,59 +24,68 @@ namespace phys
 		{
 			// Change to a new face.
 
-			srand((time(NULL)));
-			face =	(face + (rand() % numSamples)) % 4;
+			//srand((time(NULL)));
+			face =	(face + 1);
 			switch (face)
 			{
 			case 0: //Cut along y axis.
 
-				/*startPoint.x = RandomPoint(bb.GetLength(),bb.GetFrontBottomRight().x);
-				startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
-				startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
+				linePoints.clear();
+				linePoints.push_back(bb.GetBackBottomRight());
+				linePoints.push_back(bb.GetBackTopLeft());
+				for (int i = 0; i < 3; i++)
+				{
+					linePoints.push_back(RandomPoint(bb.GetBackBottomRight(), bb.GetBackTopRight()));
+					std::shuffle(linePoints.begin(),linePoints.end(),std::default_random_engine());
+				}
 
-				endPoint.x = RandomPoint(bb.GetHeight(), bb.GetFrontTopRight().y);
-				endPoint.y = startPoint.y;
-				endPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontTopRight().z);
+				norm = glm::vec3(0,1,0);
+				// Shuffle is random so just take first point.
+				splittingPlanes.push_back(Plane(linePoints[0], norm));
+				splittingPlanes.push_back(Plane(linePoints[2], norm));
 
-				norm = glm::normalize(glm::cross(startPoint, endPoint));
-				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));*/
-
-
-				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
+				//splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
 
 				break;
 			case 1: // Cut along x axis.
 
+				linePoints.clear();
+				linePoints.push_back(bb.GetBackBottomRight());
+				linePoints.push_back(bb.GetBackTopLeft());
+				for (int i = 0; i < 3; i++)
+				{
+					linePoints.push_back(RandomPoint(bb.GetBackBottomRight(), bb.GetBackTopRight()));
+					std::shuffle(linePoints.begin(), linePoints.end(),
+						std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
+				}
 
-				//startPoint.x = RandomPoint(bb.GetLength(), bb.GetFrontBottomRight().x);
-				//startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
-				//startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
+				norm = glm::vec3(1, 0, 0);
+				// Shuffle is random so just take first point.
+				splittingPlanes.push_back(Plane(linePoints[0], norm));
+				splittingPlanes.push_back(Plane(linePoints[2], norm));
 
-				//endPoint.x = startPoint.x;
-				//endPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontTopLeft().y);
-				//endPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontTopLeft().z);
-
-
-				//norm = glm::normalize(glm::cross(startPoint, endPoint));
-				//splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));
-
-				splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
+			//	splittingPlanes.push_back(Plane(glm::vec3(0, -0.5, 0.5), glm::vec3(0, 0.5, -0.5), glm::vec3(0, 0.5, 0.5)));
 
 				break;
 			case 2: // Cut along z axis.
 
-				/*startPoint.x = RandomPoint(bb.GetLength(), bb.GetFrontBottomRight().x);
-				startPoint.y = RandomPoint(bb.GetHeight(), bb.GetFrontBottomRight().y);
-				startPoint.z = RandomPoint(bb.GetWidth(), bb.GetFrontBottomRight().z);
+				linePoints.clear();
+				linePoints.push_back(bb.GetBackBottomRight());
+				linePoints.push_back(bb.GetBackTopLeft());
+				for (int i = 0; i < 3; i++)
+				{
+					linePoints.push_back(RandomPoint(bb.GetBackBottomRight(), bb.GetBackTopRight()));
+					std::shuffle(linePoints.begin(), linePoints.end(),
+						std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
+				}
 
-				endPoint.x = RandomPoint(bb.GetLength(), bb.GetBackBottomRight().x);
-				endPoint.y = RandomPoint(bb.GetWidth(), bb.GetBackBottomRight().y);
-				endPoint.z = startPoint.z;
+				norm = glm::vec3(0, 0, 1);
+				// Shuffle is random so just take first point.
+				splittingPlanes.push_back(Plane(linePoints[0], norm));
+				splittingPlanes.push_back(Plane(linePoints[2], norm));
+
+				//				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
 				
-				norm = glm::normalize(glm::cross(startPoint, endPoint));
-				splittingPlanes.push_back(Plane(glm::cross(startPoint, endPoint), norm));*/
-
-				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0, 0.5), glm::vec3(0.5, 0, -0.5), glm::vec3(0.5, 0, 0.5)));
 				break;
 			case 4:
 				splittingPlanes.push_back(Plane(glm::vec3(-0.5, 0.2, 0.5), glm::vec3(0.5, 0.2, -0.5), glm::vec3(0.5, 0.2, 0.5)));
@@ -93,6 +98,9 @@ namespace phys
 				break;
 		}
 
+		// Shuffle the order of the splitting planes. Should make each fracture unique.
+		std::shuffle(splittingPlanes.begin(), splittingPlanes.end(),
+			std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
 
 		//	//Plane testPlane(glm::vec3(0, -0.4, 0.4), glm::vec3(0, 0.4, -0.4), glm::vec3(0, 0.4, 0.4));
 		//	//Plane testPlane(glm::vec3(-0.5, -0.2, 0.5), glm::vec3(0.5, -0.2, -0.5), glm::vec3(0.5, -0.2, 0.5));
