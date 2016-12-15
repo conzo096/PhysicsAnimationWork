@@ -73,10 +73,31 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 					std::shuffle(physicsScene[i].GetSplittingPlanes().begin(), physicsScene[i].GetSplittingPlanes().end(),
 						std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
 					if (physicsScene.size() < 60)
-						for (int k = 0; k < physicsScene[i].GetSplittingPlanes().size(); k++)
-							SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes()[k], newFragments);
-					else
-						break;
+					{
+						// Decide if 0,1 or both objects break.
+						int decision = std::rand() % 4;
+						switch (decision)
+						{
+							case 1: break;
+							case 2:
+								for (int k = 0; k < physicsScene[i].GetSplittingPlanes().size(); k++)
+									SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes()[k], newFragments);
+								break;
+							case 3:
+								for (int k = 0; k < physicsScene[j].GetSplittingPlanes().size(); k++)
+									SliceModel(physicsScene[j], physicsScene[j].GetSplittingPlanes()[k], newFragments);
+								break;
+							case 4:
+								for (int k = 0; k < physicsScene[i].GetSplittingPlanes().size(); k++)
+									SliceModel(physicsScene[i], physicsScene[i].GetSplittingPlanes()[k], newFragments);
+								for (int k = 0; k < physicsScene[j].GetSplittingPlanes().size(); k++)
+									SliceModel(physicsScene[j], physicsScene[j].GetSplittingPlanes()[k], newFragments);
+								break;
+							default: break;
+
+						}
+
+					}
 				}
 			}
 		}
@@ -109,11 +130,12 @@ void UpdatePhysics(vector<phys::Model>& physicsScene, const double t, const doub
 	for (auto &e : physicsScene)
 		e.GetRigidBody().Integrate(dt);
 	for (auto &f : newFragments)
-		// Currently hard coded to prevent scene from freezing. Ideally tie this to Frames per second?
-		if (physicsScene.size() < 60)
-			physicsScene.push_back(f);
-		else
-			break;
+		physicsScene.push_back(f);
+
+
+	// Update the collider positions each tick. This is more performance costly but makes collisions more accurate.
+	for (auto &e : physicsScene)
+		e.Update(0);
 }
 
 void InitPhysics() {}

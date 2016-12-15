@@ -24,19 +24,11 @@ namespace phys
 				dist = glm::distance(t, points[i]);
 
 
-		center = t;
+		SetPosition(t);
 		SetRadius(dist);
 
 	}
 	SphereCollider::~SphereCollider()
 	{
-	}
-	bool SphereCollider::SphereSphereCollision(SphereCollider b)
-	{
-		// Calculate squared distacne between centers
-		glm::vec3 d = center - b.center;
-		float dist2 = glm::dot(d, d);
-		float radiusSum = GetRadius() + b.GetRadius();
-		return dist2 <= radiusSum * radiusSum;
 	}
 }

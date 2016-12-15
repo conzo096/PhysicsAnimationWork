@@ -34,17 +34,14 @@ namespace phys
 
 	void Model::Update(float deltaTime)
 	{
-	
 		// Center is wherever object is.
-		sphere.SetCenter(rigidBody.GetPosition());
-
+		sphere.SetPosition(rigidBody.GetPosition());
 		box.Update(rigidBody);
 	}
 
 	
 	void Model::CreateBuffers()
 	{
-		//render._vao = 0;
 		// Add the buffers to the geometry
 		add_buffer(information.positions, BUFFER_INDEXES::POSITION_BUFFER);
 		add_buffer(information.colours, BUFFER_INDEXES::COLOUR_BUFFER);
@@ -52,39 +49,8 @@ namespace phys
 			add_buffer(information.normals, BUFFER_INDEXES::NORMAL_BUFFER);
 		if (information.tex_coords.size() != 0)
 			add_buffer(information.tex_coords, BUFFER_INDEXES::TEXTURE_COORDS_0);
-		//if (information.indices.size() != 0)
-		//	add_index_buffer(information.indices);
-	}
-	void Model::UpdateBuffers()
-	{
-		// Update model buffers.
-		UpdateBuffer(information.positions, BUFFER_INDEXES::POSITION_BUFFER);
-		UpdateBuffer(information.colours, BUFFER_INDEXES::COLOUR_BUFFER);
-		if (information.normals.size() != 0)
-			UpdateBuffer(information.normals, BUFFER_INDEXES::NORMAL_BUFFER);
-		if (information.tex_coords.size() != 0)
-			UpdateBuffer(information.tex_coords, BUFFER_INDEXES::TEXTURE_COORDS_0);
-		if (information.indices.size() != 0)
-			add_index_buffer(information.indices);
 	}
 
-	bool Model::UpdateBuffer(const std::vector<glm::vec2>& buffer, GLuint index, GLenum buffer_type)
-	{
-		glBufferSubData(GL_ARRAY_BUFFER,0, buffer.size() * sizeof(glm::vec2), &buffer[0]);
-		return true;
-	}
-	bool Model::UpdateBuffer(const std::vector<glm::vec3>& buffer, GLuint index, GLenum buffer_type)
-	{
-		//glClearBufferData​(GLenum target​​, GLenum internalformat​, GLenum format​, GLenum type​, const void * data​);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size() * sizeof(glm::vec3), &buffer[0]);
-		return true;
-	}	
-	bool Model::UpdateBuffer(const std::vector<glm::vec4>& buffer, GLuint index, GLenum buffer_type)
-	{
-		//glClearBufferData​(GLenum target​​, GLenum internalformat​, GLenum format​, GLenum type​, const void * data​);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size() * sizeof(glm::vec4), &buffer[0]);
-		return true;
-	}
 	void Model::Render()
 	{
 		glBindVertexArray(render._vao);

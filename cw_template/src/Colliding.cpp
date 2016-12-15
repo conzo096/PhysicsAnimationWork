@@ -86,43 +86,54 @@ bool CheckObbObb(std::vector<CollisionInfo> &civ, Model& c1, Model& c2)
 bool collision::OnFloor(std::vector<CollisionInfo> & civ, Model &c1, PlaneCollider pc)
 {
 
-	BoundingBox a = c1.GetBoundingBox();
-	glm::dvec3 aCorners[8] = { a.GetBackBottomLeft(),a.GetBackBottomRight(),a.GetBackTopLeft(),a.GetBackTopRight(),
-		a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
+	const dvec3 sp = c1.GetSphereCollider().GetPosition();
+	// Calculate a vector from a point on the plane to the center of the sphere
+	const dvec3 vecTemp(sp - pc.GetPosition());
 
-	const mat4 m = glm::translate(c1.GetRigidBody().position) *glm::mat4_cast(c1.GetRigidBody().orientation);
-	for (int i = 0; i < 8; i++)
-		aCorners[i] = dvec3(m * dvec4(aCorners[i], 1.0));
+	// Calculate the distance: dot product of the new vector with the plane's normal
+	double dist = glm::dot(vecTemp, pc.GetNormal());
 
-	bool isCollided = false;
-	double distance;
-	for (int i = 0; i < 8; i++)
+	if (dist <= c1.GetSphereCollider().GetRadius())
 	{
-		distance = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
-		if (distance > 0)
-		{
-			// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
+		BoundingBox a = c1.GetBoundingBox();
+		glm::dvec3 aCorners[8] = { a.GetBackBottomLeft(),a.GetBackBottomRight(),a.GetBackTopLeft(),a.GetBackTopRight(),
+			a.GetFrontBottomLeft(),a.GetFrontBottomRight(),a.GetFrontTopLeft(),a.GetFrontTopRight() };
 
-			civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distance, pc.GetNormal(), distance*5 });
-			isCollided = true;
+		const mat4 m = glm::translate(c1.GetRigidBody().position) *glm::mat4_cast(c1.GetRigidBody().orientation);
+		for (int i = 0; i < 8; i++)
+			aCorners[i] = dvec3(m * dvec4(aCorners[i], 1.0));
+
+		bool isCollided = false;
+		double distance;
+		for (int i = 0; i < 8; i++)
+		{
+			distance = dot(pc.GetPosition(), pc.GetNormal()) - dot(aCorners[i], pc.GetNormal());
+			if (distance > 0)
+			{
+				// If there is a collision between the plane that needs to be resolved. Amplify the distance it is pushed up by in order to have the cube sit on top.
+
+				civ.push_back({ &c1.GetRigidBody(), NULL, aCorners[i] + pc.GetNormal() * distance, pc.GetNormal(), distance * 5 });
+				isCollided = true;
+			}
 		}
+		return isCollided;
 	}
-	return isCollided;
+	return false;
 }
 
 bool collision::IsColliding(std::vector<Model>&sceneList, std::vector<CollisionInfo> &civ, Model &c1, Model &c2)
 {
 
 	// Check sphere sphere collision before box collision.
-	const dvec3 p1 = c1.GetSphereCollider().GetCenter();
-	const dvec3 p2 = c2.GetSphereCollider().GetCenter();
+	const dvec3 p1 = c1.GetSphereCollider().GetPosition();
+	const dvec3 p2 = c2.GetSphereCollider().GetPosition();
 	const dvec3 d = p2 - p1;
 	const double distance = glm::length(d);
 	const double sumRadius = c1.GetSphereCollider().GetRadius() + c2.GetSphereCollider().GetRadius();
 	// If it is in the sphere, check the bounding box collision.
 	if (distance < sumRadius)
 	{
-		CheckObbObb(civ, c1, c2);
+			CheckObbObb(civ, c1, c2);
 		return true;
 	}
 	return false;

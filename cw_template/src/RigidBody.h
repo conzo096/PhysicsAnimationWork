@@ -59,7 +59,7 @@ namespace phys
 		}
 		// Gets the normal matrix representing the defined transform
 		glm::dmat3 get_normal_matrix() { return glm::mat3_cast(orientation); }
-		glm::dquat GetQuat() { return orientation; }
+		glm::dquat& GetQuat() { return orientation; }
 		glm::dvec3& GetPosition() { return position; }
 
 		void SetMass(float m) { mass = m; inverseMass = 1 / mass; }

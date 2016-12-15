@@ -32,9 +32,10 @@ glm::mat4 PV;
 directional_light light;
 // Material all objects are made from.
 material mat;
-// Ensures space function only executed once. Remove once destrution by collisions is done.
-int counter;
-int prevCounter;
+// index of object to be controlled.
+int controlIndex = 0;
+
+
 // Hold x,y positions of the cursor.
 double cursor_x, cursor_y;
 bool load_content()
@@ -61,6 +62,31 @@ bool load_content()
 	CreateSplittingPlanes(test1.GetBoundingBox(), 4, test1.GetSplittingPlanes());
 	test1.CreateBuffers();
 	sceneList.push_back(test1); 
+
+	// Create third model for simulation.
+	Model test2;
+	test2.SetModelInfo(LoadCube(glm::vec3(2, 2, 2)));
+	test2.GetRigidBody().SetInitialPosition(glm::vec3(20, 10, 0));
+	CreateSplittingPlanes(test2.GetBoundingBox(), 4, test2.GetSplittingPlanes());
+	test2.GetRigidBody().AddLinearImpulse(glm::dvec3(0, -1, 0));
+	test2.CreateBuffers();
+	sceneList.push_back(test2);
+
+	// Create fourth model for simulation.
+	Model test3;
+	test3.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
+	test3.GetRigidBody().SetInitialPosition(glm::vec3(-10, 10, 10));
+	CreateSplittingPlanes(test3.GetBoundingBox(), 8, test3.GetSplittingPlanes());
+	test3.CreateBuffers();
+	sceneList.push_back(test3);
+
+	// Create fifth model for simulation.
+	Model test4;
+	test4.SetModelInfo(LoadCube(glm::vec3(1, 1, 1)));
+	test4.GetRigidBody().SetInitialPosition(glm::vec3(5, 15, 0));
+	CreateSplittingPlanes(test4.GetBoundingBox(), 7, test4.GetSplittingPlanes());
+	test4.CreateBuffers();
+	sceneList.push_back(test4);
 
 	// Set the position of the floor.
 	sceneFloor.SetPosition(glm::dvec3(0, -6, 0));
@@ -113,25 +139,31 @@ bool update(float delta_time)
 		cam.move(glm::vec3(-5.0f, 0.0f, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_RIGHT))
 		cam.move(glm::vec3(5.0f, 0.0f, 0.0f)*delta_time);
-
 	cam.update(delta_time);
 	glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
 
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
-		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, 1, 0.0f)*delta_time);
+		sceneList[controlIndex].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, 1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
-		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, -1, 0.0f)*delta_time);
+		sceneList[controlIndex].GetRigidBody().AddLinearImpulse(glm::vec3(0.0f, -1, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
-		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
+		sceneList[controlIndex].GetRigidBody().AddLinearImpulse(glm::vec3(-1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
-		sceneList[0].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
+		sceneList[controlIndex].GetRigidBody().AddLinearImpulse(glm::vec3(1.0f, 0, 0.0f)*delta_time);
 	if (glfwGetKey(renderer::get_window(), GLFW_KEY_Q))
-		sceneList[0].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
+		sceneList[controlIndex].GetRigidBody().AddAngularForce(glm::vec3(0, 0, 5.0));
 	if(glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE))
 	{
 		for (auto & m : sceneList)
 			m.GetRigidBody().AddLinearImpulse(glm::vec3(0, 2, 0)*delta_time);
 	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_1))
+	{
+		controlIndex++;
+		if (controlIndex > sceneList.size()-1)
+			controlIndex = 0;
+	}
+
 
 	PV = cam.get_projection() * cam.get_view();
 	cam.update(static_cast<float>(delta_time));
@@ -146,13 +178,10 @@ bool update(float delta_time)
 		accumulator -= physics_tick;
 		t += physics_tick;
 	}
-
+	// Collider information also updated outside of physics tick to help detect faster moving objects.
 	for (auto &e : sceneList)
-	{
 		e.Update(delta_time);
-	}
 	phys::Update(delta_time);
-	prevCounter = counter;
 	return true;
 }
 
