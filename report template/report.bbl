@@ -1,18 +1,15 @@
 \begin{thebibliography}{\protect\citename{Erwin~Coumans }2016}
 
 \bibitem[\protect\citename{contributors }2016]{BoundingVolume}
-{\sc contributors, W.}
-\newblock 2016.
+{\sc contributors, W.}, 2016.
 \newblock Bounding volume.
 
 \bibitem[\protect\citename{Erwin~Coumans }2016]{Physics}
-{\sc Erwin~Coumans, e.~a.}
-\newblock 2016.
+{\sc Erwin~Coumans, e.~a.}, 2016.
 \newblock Real-time physics simulation.
 
-\bibitem[\protect\citename{Esteve }2011]{voronoishattering}
-{\sc Esteve, J.~M.}
-\newblock 2011.
+\bibitem[\protect\citename{Esteve }2011]{voronoi}
+{\sc Esteve, J.~M.}, 2011.
 \newblock Voronoi shattering.
 
 \end{thebibliography}

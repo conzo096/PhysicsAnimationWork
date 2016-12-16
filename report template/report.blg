@@ -1,12 +1,5 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: report.aux
-Case mismatch error between cite keys voronoiShattering and voronoishattering
----line 20 of file report.aux
- : \citation{voronoiShattering
- :                            }
-I'm skipping whatever remains of this command
 The style file: acmsiggraph.bst
 Database file #1: report.bib
-Warning--empty journal in BoundingVolume
-Warning--empty journal in Physics
-Warning--empty journal in voronoishattering
-(There was 1 error message)
+Warning--I didn't find a database entry for "voronoishattering"
+(There was 1 warning)

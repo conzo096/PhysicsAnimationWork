@@ -53,7 +53,7 @@ Physics-Based Animation (SET09119)}
 \begin{abstract}
 In most physics based games, destructible objects are typically loaded in with their shattered fragments on run-time. This means that sometimes the fracture look unnatural. The aim of this physics simulation is hoping to look at is ways to slice meshes in real time to generate new fragments.
 
-The approach looked at the in the design report suggested a technique called voronoi shattering \cite{voronoishattering} in order to break the objects up into random fragments. However this was not implemented in the final simulation due to difficulty of producing 'Delaney Triangulation' and time constraints. Therefore a simpler approach was used where the object is split recursively using a series of random planes which intersect through the model mesh. Each fragment produced would have one less splitting plane, thus putting a cap on how far a model can fracture.
+The approach looked at the in the design report suggested a technique called voronoi shattering \cite{voronoi} in order to break the objects up into random fragments. However this was not implemented in the final simulation due to difficulty of producing 'Delaney Triangulation' and time constraints. Therefore a simpler approach was used where the object is split recursively using a series of pseudo-random planes which intersect through the model mesh. Each fragment produced would have one less splitting plane, thus putting a cap on how far a model can fracture.
 
 \end{abstract}
 
@@ -65,7 +65,9 @@ In most video games, destructible objects are pre-computed models which are the 
 
 \section{Related Work}
 
-Currently there are several plugins that use either the same idea or has a similar solution. However these are mostly implemented into modelling software where optimisation is not an issue as it is not required in a real-time environment. The tutorial provided by \cite{voronoiShattering} helped to provide a solution on slicing meshes using planes. \cite{Physics} bullet physics library provided help in creating the physics for this simulation. 
+Currently there are several plugins that solve a similar problem. However these are mostly implemented into modelling software where optimisation is not an issue as it is not required in a real-time environment. The tutorial provided by \cite{voronoi} helped to provide a solution on slicing meshes using planes. \cite{Physics} bullet physics library provided help in creating the physics for this simulation. 
+
+This project was inspired by the voronoi shattering technique that is done in the maya animation environment. A link to this video is provided \href{https://www.youtube.com/watch?v=FIPu9_OGFgc}{\color{blue}here \color{black}}.
 
 \section{Simulation}
 
@@ -73,9 +75,15 @@ Currently there are several plugins that use either the same idea or has a simil
 
 The simulation is revolved around having objects in a real-time environment interact with each other. In this simulation, the objects have been kept to cube or cuboid shapes for simplicity. There is also a plane which acts as the 'floor' of the scene. When objects collide with each other they respond in a realistic manner. In order for a collision to cause an object to break a certain threshold must be reached. If this limit is reached for the object then it will split apart depending on its splitting planes, which determine how the model will shatter. Another condition is also in place to determine if both or one of the models will shatter.
 
+\paragraph{Interactivity \ Limitations} \hfill
+
+This simulation can be interacted with using the wasd keys. This will move a cube around in the scene. Pressing '1' will change the object being interacted with to another cube. The arrow keys will move the free camera which has been enabled in the scene. Moving the cursor will change the target of the camera. 
+
+There are several limitations on this project. The planes that the geometry split on is pseudo-random due to having true randomness resulted in several errors, most of which resulting in the fragments no longer being rendered. Another limitation was the number of fragments/ models being created. As it is incredibly slow to add information to the OpenGL buffers, there is a cap on how much the geometry can shatter. This problem could be solved by having the object creation on a separate thread. However this adds complexity to the project as this would then result in synchronization issues. Further research into this area would have helped with optimising the project. More interactivity could have been added by allowing the user to change the planes that the model splits by, or even increasing/decreasing the number of planes that it splits on. 
+
 \paragraph{Implementation} \hfill
 
-The implementation of this project can be broken down into three major parts. Rigid bodies, collisions and meshes.
+The implementation of this project can be broken down into three major parts. collision detection, rigid bodies and meshes.
 
 \paragraph {Collision detection} \hfill
 
@@ -118,7 +126,10 @@ The base class is esentially a sphere collider, as it has all the same propierti
 \begin{lstlisting}
 Class SphereCollider : public Collider
 {
-	void Update(Vec3 newPosition) { SetPosition(newPosition);  }
+	void Update(Vec3 newPosition)
+	{
+		SetPosition(newPosition);
+	}
 }
 \end{lstlisting}
 
@@ -133,7 +144,11 @@ Class BoundingBox : public Collider
 	double botX,botY,botZ;
 	quat rotation;
 	
-	void Update(RigidBody body) {rotation = body.orientation; SetPosition(body.position);}
+	void Update(RigidBody body)
+	{
+		rotation = body.orientation;
+		SetPosition(body.position);
+	}
 	
 }
 \end{lstlisting}
@@ -173,54 +188,52 @@ The sphere detection is used to calculate when an object is almost in collision 
 \begin{algorithm}
 	\KwData{Sphere collider A, Plane collider P}
 	\KwResult{Boolean}
-	Vec3 tempVec = A.position - P.position;
-	double distance = dot(tempVec,P.normal);
-	\If{(distance <= A.radius)}
+	Vec3 tempVec = A.position - P.position; \hfill
+	
+	double distance = dot(tempVec,P.normal); \hfill
+	
+	\If{(distance $<$= A.radius)}
 	{
 		return true;
 	}
 	return false;
 	\caption{Sphere - Plane detection}
 \end{algorithm}
-
 \begin{algorithm}
 	\KwData{Bounding Box A, Plane collider P}
 	\KwResult{Boolean}
 	\For{each corner in A}
 	{
-		distance = dot(p.position, P.normal) - dot(corner, p.normal);
-		\If{(distance > 0)}
+		distance = dot(p.position, P.normal) - dot(corner, p.normal);\hfill
+		
+		\If{(distance $>$ 0)}
 		{
 			return true;
 		}
 	}
 	return false;
-	
-	
+		
 	\caption{Box - Plane detection}
 \end{algorithm}
-
 \begin{algorithm}
 	\KwData{Bounding Box A, Bounding Box B}
 	\KwResult{Boolean}
 	\For{each corner in A}
 	{
-		\If{(corner in max/ min x range of B)}
+		\If{(corner in max | min x range of B)}
 		{
-			\If{(corner in max/ min y range of B)}
+			\If{(corner in max | min y range of B)}
 			{
-				\If{(corner in max/ min z range of B)}
+				\If{(corner in max | min z range of B)}
 				{
 					return true;	
 				}	
 			}
 		}
 	}
-	return false;
-	
+	return false;	
 	\caption{Box - Box detection}
 \end{algorithm}
-
 
 \paragraph{Rigid bodies} \hfill
 
@@ -236,8 +249,9 @@ Struct RigidBody
 	dvec3 torques;
 	dquat orientation;
 }
-
 \end{lstlisting}
+
+This rigid body gets updated each tick to keep it updated in real time.
 
 \paragraph{Meshes} \hfill
 
@@ -255,6 +269,7 @@ Vector$<$Vec3$>$ fragment vertices.  \hfill
 \For{each Triangle in ModelInfo positions}
 {
 		Integer pointsInfront = 0; \hfill 
+		
 		\For{each point in Triangle}
 		{
 			\If{dot(TrianglePoint, planeNormal)
@@ -289,11 +304,6 @@ Vector$<$Vec3$>$ fragment vertices.  \hfill
 
 The algorithm is reversed to find the vertices of the updated model. Essentially where there is a $>$ replace it with a $<$ and vice versa.
 
-
-
-
-
-
 \paragraph{Update} \hfill
 
 To create an realistic simulation a concept of a 'physics tick' is required. This is in place in order to decouple the physics from the frame-rate. Thus the physics will run the same if the frame rate is at 10 FPS or 60 FPS.  
@@ -313,12 +323,34 @@ If there is a collision between two objects then a struct called 'CollisionInfo'
 \end{itemize}
 
 This struct is then pushed back onto a vector; which contains all the collisions that have happened between the models in this current update.
+
+After all the collisions have been calculated, they are then resolved which makes sure the models do not go inside each other.
 \subparagraph{Resolve collisions}\hfill
+
 
 For each of the collisions that have occurred a resolve stage needs to occur. This calculates what should happen to each object in terms of direction it is now going; the velocity of the objects and if the proper conditions have been met, zero, one or both objects shatter.
 \subparagraph{Integrate rigid bodies}\hfill
 
 After collisions have been sorted, each model need to update their current position, previous position, orientation. This is done by a form of Euler integration as this is an impulsed based physics simulation.
+
+\begin{lstlisting}
+void Integrate(const double dt)
+{
+dvec3 velocity = position - prev_pos;
+prev_pos = position;
+position += velocity
++ (forces + GRAVITY * inverseMass)
+* pow(dt, 2);
+forces = dvec3(0);
+angVelocity += worldInvInertia * torques * dt;
+angVelocity *=
+glm::min(pow(angularDamping, dt), 1.0);
+orientation += glm::dquat(angVelocity * dt)
+ * orientation;
+orientation = normalize(orientation);
+torques = dvec3(0);
+}
+\end{lstlisting}
 
 % EVALUATION
 \section{Testing and evaluation}

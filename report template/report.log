@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.12.16)  16 DEC 2016 14:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.12.16)  16 DEC 2016 16:06
 entering extended mode
 **./report.tex
 (report.tex
@@ -486,66 +486,55 @@ LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <12> not available
 (Font)              Font shape `OT1/phv/b/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `OT1/phv/b/n' will be
 (Font)              scaled to size 11.03998pt on input line 53.
-
-LaTeX Warning: Citation 'voronoiShattering' on page 1 undefined on input line 6
-8.
-
 LaTeX Font Info:    Font shape `OT1/phv/m/n' will be
-(Font)              scaled to size 8.27998pt on input line 72.
+(Font)              scaled to size 8.27998pt on input line 74.
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <9> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 72.
+(Font)              Font shape `OT1/phv/b/n' tried instead on input line 74.
 LaTeX Font Info:    Font shape `OT1/phv/b/n' will be
-(Font)              scaled to size 8.27998pt on input line 72.
+(Font)              scaled to size 8.27998pt on input line 74.
 [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
  <./images/sampleteaser.png>]
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 95.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 103.
 
-Overfull \hbox (7.45753pt too wide) in paragraph at lines 100--101
+Overfull \hbox (7.45753pt too wide) in paragraph at lines 108--109
 [][][][][][][][][][][][][][] 
  []
 
-
-Overfull \hbox (120.85869pt too wide) in paragraph at lines 121--122
-[][][][][][][][][][][][][][][][][][][][][]
+[2] [3]
+Overfull \hbox (7.45753pt too wide) in paragraph at lines 345--346
+[][][][][][][][][][][][][][][][][] 
  []
 
-
-Overfull \hbox (266.66017pt too wide) in paragraph at lines 136--138
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-[2] [3] (report.bbl (report.brf)
+(report.bbl (report.brf)
 \tf@brf=\write3
 \openout3 = `report.brf'.
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 345.
- [4
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 345.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 377.
+ [4]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 377.
  (report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 345.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 345.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 377.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 377.
 Package rerunfilecheck Info: File `report.brf' has not changed.
-(rerunfilecheck)             Checksum: 6CA7ACFF8517EC985A87EDB3D8972AEF;197.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 345.
+(rerunfilecheck)             Checksum: A00FB802D07527AE9E13FCD9F67D3956;177.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 377.
  )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 9539 strings out of 493335
- 144994 string characters out of 3136670
- 274880 words of memory out of 3000000
- 12872 multiletter control sequences out of 15000+200000
+ 9563 strings out of 493335
+ 145280 string characters out of 3136670
+ 270870 words of memory out of 3000000
+ 12871 multiletter control sequences out of 15000+200000
  26038 words of font info for 53 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,18n,40p,788b,3552s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,18n,40p,869b,2841s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.
 enc}<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi9.pfb
 ><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C
@@ -555,9 +544,9 @@ ram Files (x86)/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program File
 s (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiK
 TeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
 ts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (4 pages, 366093 bytes).
+Output written on report.pdf (4 pages, 370977 bytes).
 PDF statistics:
- 162 PDF objects out of 1000 (max. 8388607)
- 85 named destinations out of 1000 (max. 500000)
+ 194 PDF objects out of 1000 (max. 8388607)
+ 110 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
